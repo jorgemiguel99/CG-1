@@ -1,11 +1,13 @@
-
+#include <fstream>
 #include <iostream>
 #include <ostream>
 #include <string>
 #include <vector>
 #include <sstream>
+#include <windows.h>
 using namespace std;
 
+string desktop = "C:\\Users\\zecar\\Desktop\\";
 string filename, fileExtension = ".3d";
 
 //operation name has 100 char at max
@@ -61,6 +63,34 @@ vector<string> split(string str, char delimiter) {
 	return internal;
 }
 
+//create filename.3d in Desktop and in .exe folder
+void create3dFile(string fileNm) {
+	ofstream File(filename);
+	ofstream desktopFile(desktop + filename);
+}
+
+//write xml into .xml file create before
+void writeXMLFile(string fileNm) {
+	string aux = "generator.xml";
+	ofstream fileXML;
+	fileXML.open(aux.c_str());
+	fileXML << "<scene>\n\t<model file = ”" << fileNm << "” />\n</scene>" << endl;
+	fileXML.close();
+
+	ofstream desktopXMLFile(desktop + aux);
+	desktopXMLFile << "<scene>\n\t<model file = ”" << fileNm << "” />\n</scene>" << endl;
+
+	/* write xml into .3d file create before
+	ofstream file;
+	file.open(fileNm.c_str());
+	file << "<scene>\n\t<model file = ”" << fileNm << "” />\n</scene>" << endl;
+	file.close();
+
+	ofstream desktopFile(desktop + filename);
+	desktopFile << "<scene>\n\t<model file = ”" << fileNm << "” />\n</scene>" << endl;
+	*/
+}
+
 int main(int argc, char **argv) {
 
 	string operationLine, operation;
@@ -79,7 +109,7 @@ int main(int argc, char **argv) {
 
 	 float aux = stof(splitted[1]);
 	 cout << "StringToFloat ---->" << aux << endl;
-	 */
+	*/
 
 	//stof is a function that transforms the content of string into float
 	if (splitted[0] == "Generator" || splitted[0] == "generator") {
@@ -110,5 +140,9 @@ int main(int argc, char **argv) {
 					  break;
 		}
 	}
+	else cout << "Try again with this usage: generator operationName inputs filename" << endl;
+
+	create3dFile(filename);
+	writeXMLFile(filename);
 	return 1;
 }

@@ -1,7 +1,7 @@
 ﻿  generator.cpp
   Generating code
-  58 of 246 functions (23.6%) were compiled, the rest were copied from previous compilation.
-    36 functions were new in current compilation
-    34 functions had inline decision re-evaluated but remain unchanged
+  8 of 306 functions ( 2.6%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    40 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   ConsoleApplication2.vcxproj -> C:\Users\zecar\Documents\Visual Studio 2015\Projects\ConsoleApplication2\Release\ConsoleApplication2.exe
