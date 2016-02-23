@@ -3,6 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+float dimension = 0.1;
 
 void changeSize(int w, int h) {
 
@@ -41,7 +42,9 @@ void renderScene(void) {
 	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
 
 	// put drawing instructions here
-    //glutWireCube (float dimension);
+    glutWireCube (dimension);
+    //enable growing effect
+    if(dimension < 1.5) dimension+=0.001;
 	
 
 	// End of frame
@@ -58,7 +61,7 @@ int main(int argc, char **argv) {
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(800, 800);
-	glutCreateWindow("Aula 1");
+	glutCreateWindow("Box");
 
 	// put callback registration here
 	glutDisplayFunc(renderScene);
