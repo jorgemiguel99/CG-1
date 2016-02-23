@@ -15,6 +15,8 @@ using namespace std;
 string desktop = "C:\\Users\\zecar\\Desktop\\";
 string filename, fileExtension = ".3d";
 
+vector<string> splitted;
+
 //operation name has 100 char at max
 #define MAX 100
 
@@ -55,6 +57,8 @@ void renderScene(void) {
     gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
     
     // put drawing instructions here
+    
+    //use values of global variable splitted!!!
     //glutWireSphere (float radius, int slices, int stacks);
     //glutWireCone (float baseRadius, float height, int slices, int stacks);
     //glutWireCube (float dimension);
@@ -149,7 +153,7 @@ int main(int argc, char **argv) {
 	cout << "Insert your operation:" << endl;
 	getline(cin, operationLine);
 	//guarda a string no vector com as substrings separadas por um espaço
-	vector<string> splitted = split(operationLine, ' ');
+	splitted = split(operationLine, ' ');
 
 	 //Percorrer string operationLine
 	/* Teste!!!
