@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-float baseRadius = 0.1;
+float radius = 0.1;
 int slices = 5 , stacks = 3;
 
 void changeSize(int w, int h) {
@@ -43,10 +43,10 @@ void renderScene(void) {
 	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
 
 	// put drawing instructions here
-    glutWireSphere (baseRadius,slices,stacks);
+    glutWireSphere (radius,slices,stacks);
     //enable growing effect
-    if (baseRadius < 1.5 | slices < 15 | stacks < 30) {
-        baseRadius+=0.01;
+    if (radius < 1.5 | slices < 15 | stacks < 30) {
+        radius+=0.01;
         slices+=1;
         stacks+=1;
     }

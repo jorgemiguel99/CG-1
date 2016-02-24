@@ -12,14 +12,20 @@
 
 using namespace std;
 
+//Global Variables Handling Files
 string desktop = "C:\\Users\\zecar\\Desktop\\";
 string filename, fileExtension = ".3d";
 
-float baseRadius, height;
-int slices, stacks;		
+//Global Variables Glut functions
+float dimension; //Box
+float radius; //Sphere
+float baseRadius, height; //Cone
+int slices, stacks; //Sphere & Cone
 
-string op;
+//Plane needs 4 points(X,Y), points A,B,C & D ????
+float coordenateXA,coordenateYA,coordenateXB,coordenateYB,coordenateXC,coordenateYC,coordenateXD,coordenateYD; //Plane
 
+//Global Variable Process Input
 vector<string> splitted;
 
 //operation name has 100 char at max
@@ -58,17 +64,30 @@ void renderScene(void) {
     gluLookAt(2.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
     
     // put drawing instructions here
-    //use values of global variable splitted!!!
-	if(op == "sphere") {
-		glutWireSphere(baseRadius, slices, stacks);
-		if (baseRadius < 1.5 | slices < 15 | stacks < 30) {
-			baseRadius += 0.01;
-			slices += 1;
-			stacks += 1;
-		}
-	}
-	else if (op == "cone") {
+    //use values of global variable splitted
+    
+    if(checkOP(splitted[1])==1) { //Plane
+        //Glut functions missing!!!!
+        cout << "Plane Operation is not finished!!!" << endl;
+        //enable growing effect
+    }
+    else if(checkOP(splitted[1])==2) { //Box
+        glutWireCube (dimension);
+        //enable growing effect
+        if(dimension < 1.5) dimension+=0.001;
+    }
+    else if(checkOP(splitted[1])==3) { //Sphere
+        glutWireSphere(radius, slices, stacks);
+        //enable growing effect
+        if (radius < 1.5 | slices < 15 | stacks < 30) {
+            radius += 0.01;
+            slices += 1;
+            stacks += 1;
+        }
+    }
+    else if(checkOP(splitted[1])==4) { //Cone
 		glutWireCone(baseRadius, height, slices, stacks);
+         //enable growing effect
 		if (baseRadius < 1.5 | height < 1.5 | slices < 15 | stacks < 30) {
 			baseRadius += 0.01;
 			height += 0.01;
@@ -79,44 +98,6 @@ void renderScene(void) {
 
     // End of frame
     glutSwapBuffers();
-}
-
-//loads the coordenates to make a box
-void box(float X, float Y, float Z) {
-	cout << "This is the Drawing of a Box with " << X << ", " << Y << " and " << Z << " as inputs in file: " << filename << endl;
-}
-
-//loads the coordenates to make a plane with square == 2 triangles => 4 points => 8 coordenates X,Y
-void plane(float Xa, float Ya, float Xb, float Yb, float Xc, float Yc, float Xd, float Yd) {
-	//put the formulas to draw the plane
-	cout << "This is the Drawing of a Plane with "
-		<< "(" << Xa << "," << Ya << ")" << ";"
-		<< "(" << Xb << "," << Yb << ")" << ";"
-		<< "(" << Xc << "," << Yc << ")" << " & "
-		<< "(" << Xd << "," << Yd << ")" << "in file: "
-		<< filename
-		<< endl;
-}
-
-//loads the inputs in order to produce a sphere
-void sphere(float radiusV, float sliceV, float stackV) {
-	// clear buffers
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// set the camera
-	glLoadIdentity();
-	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
-
-	// put drawing instructions here
-	glutSwapBuffers();
-	//put the formulas to draw the sphere
-	//cout << "This is the Drawing of a Sphere with " << radiusV << ", " << sliceV << " and " << stackV << " as inputs in file: " << filename << endl;
-	
-}
-
-//loads the inputs in order to produce a cone
-void cone(float bottomRadius, float heightC, float slicesC, float stacksC) {
-	cout << "This is the Drawing of a Cone with " << bottomRadius << ", " << heightC << ", " << slicesC << " and " << stacksC << " as inputs in file: " << filename << endl;
 }
 
 //Return the number to be used on the switch in main function; splitted[1]<=>operation name 
@@ -157,16 +138,6 @@ void writeXMLFile(string fileNm) {
 
 	ofstream desktopXMLFile(desktop + aux);
 	desktopXMLFile << "<scene>\n\t<model file = ”" << fileNm << "” />\n</scene>" << endl;
-
-	/* write xml into .3d file create before
-	ofstream file;
-	file.open(fileNm.c_str());
-	file << "<scene>\n\t<model file = ”" << fileNm << "” />\n</scene>" << endl;
-	file.close();
-
-	ofstream desktopFile(desktop + filename);
-	desktopFile << "<scene>\n\t<model file = ”" << fileNm << "” />\n</scene>" << endl;
-	*/
 }
 
 int main(int argc, char **argv) {
@@ -174,49 +145,46 @@ int main(int argc, char **argv) {
 
 	cout << "Insert your operation:" << endl;
 	getline(cin, operationLine);
-	splitted = split(operationLine, ' ');	//guarda a string no vector com as substrings separadas por um espaço
-
-	 //Percorrer string operationLine
-	/* Teste!!!
-	 int i;
-	 cout << "Vector Size = " << splitted.size() << endl;
-	 for (i = 0; i < splitted.size(); i++)
-		cout << "Vector Position-" << i << "===>" << splitted[i] << endl;
-
-	 float aux = stof(splitted[1]);
-	 cout << "StringToFloat ---->" << aux << endl;
-	*/
+	splitted = split(operationLine, ' ');	//guarda a string no vector com as substrings separadas por um espaco
 
 	//stof is a function that transforms the content of string into float
 	if (splitted[0] == "Generator" || splitted[0] == "generator") {
 		switch (checkOP(splitted[1])) {
 			case 1:		  
-				if (splitted.size() == 11) {
+				if (splitted.size() == 11) { //Plane
 					filename = splitted[10] + fileExtension;
-					plane(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]), stof(splitted[5]), stof(splitted[6]), stof(splitted[7]), stof(splitted[8]), stof(splitted[9]));
+                    //update Glut Functions args used in renderScene
+                    coordenateXA=stof(splitted[2]);
+                    coordenateYA=stof(splitted[3]);
+                    coordenateXB=stof(splitted[4]);
+                    coordenateYB=stof(splitted[5]);
+                    coordenateXC=stof(splitted[6]);
+                    coordenateYC=stof(splitted[7]);
+                    coordenateXD=stof(splitted[8]);
+                    coordenateYD=stof(splitted[9]);
 				}
 				break;
-			case 2:       
-				if (splitted.size() == 6) {
-			        filename = splitted[5] + fileExtension;
-					box(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]));
+			case 2:
+				if (splitted.size() == 4) { //Box
+			        filename = splitted[3] + fileExtension;
+                    //update Glut Functions args used in renderScene
+					dimension=stof(splitted[2]);
 				}
 				break;
 			case 3:       
-				if (splitted.size() == 6) {
+				if (splitted.size() == 6) { //Sphere
 			        filename = splitted[5] + fileExtension;
-					//sphere(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]));
-					op = "sphere";
-					baseRadius = stof(splitted[2]);
+                    //update Glut Functions args used in renderScene
+					radius = stof(splitted[2]);
 					slices = stof(splitted[3]);
-					stacks = stof(splitted[2]);
+					stacks = stof(splitted[4]);
 				}
 				break;
 			case 4:       
-				if (splitted.size() == 7) {
+				if (splitted.size() == 7) { //Cone
 			        filename = splitted[6] + fileExtension;
-					//cone(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]), stof(splitted[5]));
-					op = "cone";
+                    filename = splitted[5] + fileExtension;
+                    //update Glut Functions args used in renderScene
 					baseRadius = stof(splitted[2]);
 					height = stof(splitted[3]);
 					slices = stof(splitted[4]);
