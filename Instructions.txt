@@ -1,0 +1,7 @@
+Esfera:	
+	"generator sphere <baseRadius> <slices> <stacks> sphere"
+	"generator sphere 0.1 5 3 sphere"
+
+Cone:
+	"generator cone <baseRadius> <height> <slices> <stacks> cone"
+	"generator cone 0.1 0.5 5 3 cone"

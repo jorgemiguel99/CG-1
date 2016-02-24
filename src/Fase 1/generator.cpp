@@ -15,13 +15,17 @@ using namespace std;
 string desktop = "C:\\Users\\zecar\\Desktop\\";
 string filename, fileExtension = ".3d";
 
+float baseRadius, height;
+int slices, stacks;		
+
+string op;
+
 vector<string> splitted;
 
 //operation name has 100 char at max
 #define MAX 100
 
 void changeSize(int w, int h) {
-    
     // Prevent a divide by zero, when window is too short
     // (you cant make a window with zero width).
     if (h == 0) h = 1;
@@ -45,28 +49,37 @@ void changeSize(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-
-
 void renderScene(void) {
-    
     // clear buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     // set the camera
     glLoadIdentity();
-    gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
+    gluLookAt(2.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
     
     // put drawing instructions here
-    
     //use values of global variable splitted!!!
-    //glutWireSphere (float radius, int slices, int stacks);
-    //glutWireCone (float baseRadius, float height, int slices, int stacks);
-    //glutWireCube (float dimension);
-    
+	if(op == "sphere") {
+		glutWireSphere(baseRadius, slices, stacks);
+		if (baseRadius < 1.5 | slices < 15 | stacks < 30) {
+			baseRadius += 0.01;
+			slices += 1;
+			stacks += 1;
+		}
+	}
+	else if (op == "cone") {
+		glutWireCone(baseRadius, height, slices, stacks);
+		if (baseRadius < 1.5 | height < 1.5 | slices < 15 | stacks < 30) {
+			baseRadius += 0.01;
+			height += 0.01;
+			slices += 1;
+			stacks += 1;
+		}
+	}
+
     // End of frame
     glutSwapBuffers();
 }
-
 
 //loads the coordenates to make a box
 void box(float X, float Y, float Z) {
@@ -87,8 +100,18 @@ void plane(float Xa, float Ya, float Xb, float Yb, float Xc, float Yc, float Xd,
 
 //loads the inputs in order to produce a sphere
 void sphere(float radiusV, float sliceV, float stackV) {
+	// clear buffers
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// set the camera
+	glLoadIdentity();
+	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
+
+	// put drawing instructions here
+	glutSwapBuffers();
 	//put the formulas to draw the sphere
-	cout << "This is the Drawing of a Sphere with " << radiusV << ", " << sliceV << " and " << stackV << " as inputs in file: " << filename << endl;
+	//cout << "This is the Drawing of a Sphere with " << radiusV << ", " << sliceV << " and " << stackV << " as inputs in file: " << filename << endl;
+	
 }
 
 //loads the inputs in order to produce a cone
@@ -147,13 +170,11 @@ void writeXMLFile(string fileNm) {
 }
 
 int main(int argc, char **argv) {
-
 	string operationLine, operation;
 
 	cout << "Insert your operation:" << endl;
 	getline(cin, operationLine);
-	//guarda a string no vector com as substrings separadas por um espaço
-	splitted = split(operationLine, ' ');
+	splitted = split(operationLine, ' ');	//guarda a string no vector com as substrings separadas por um espaço
 
 	 //Percorrer string operationLine
 	/* Teste!!!
@@ -169,36 +190,48 @@ int main(int argc, char **argv) {
 	//stof is a function that transforms the content of string into float
 	if (splitted[0] == "Generator" || splitted[0] == "generator") {
 		switch (checkOP(splitted[1])) {
-
-		case 1:		  if (splitted.size() == 11) {
-			                filename = splitted[10] + fileExtension;
-							plane(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]), stof(splitted[5]), stof(splitted[6]), stof(splitted[7]), stof(splitted[8]), stof(splitted[9]));
-					  }
-					  break;
-		case 2:       if (splitted.size() == 6) {
-			                filename = splitted[5] + fileExtension;
-							box(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]));
-					  }
-					  break;
-		case 3:       if (splitted.size() == 6) {
-			                filename = splitted[5] + fileExtension;
-							sphere(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]));
-					  }
-					  break;
-		case 4:       if (splitted.size() == 7) {
-			                filename = splitted[6] + fileExtension;
-							cone(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]), stof(splitted[5]));
-					  }
-					  break;
-		default:      cout << "Not an operation!\n" << endl;
-					  filename = "invalid.3d";
-					  break;
+			case 1:		  
+				if (splitted.size() == 11) {
+					filename = splitted[10] + fileExtension;
+					plane(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]), stof(splitted[5]), stof(splitted[6]), stof(splitted[7]), stof(splitted[8]), stof(splitted[9]));
+				}
+				break;
+			case 2:       
+				if (splitted.size() == 6) {
+			        filename = splitted[5] + fileExtension;
+					box(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]));
+				}
+				break;
+			case 3:       
+				if (splitted.size() == 6) {
+			        filename = splitted[5] + fileExtension;
+					//sphere(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]));
+					op = "sphere";
+					baseRadius = stof(splitted[2]);
+					slices = stof(splitted[3]);
+					stacks = stof(splitted[2]);
+				}
+				break;
+			case 4:       
+				if (splitted.size() == 7) {
+			        filename = splitted[6] + fileExtension;
+					//cone(stof(splitted[2]), stof(splitted[3]), stof(splitted[4]), stof(splitted[5]));
+					op = "cone";
+					baseRadius = stof(splitted[2]);
+					height = stof(splitted[3]);
+					slices = stof(splitted[4]);
+					stacks = stof(splitted[5]);
+				}
+				break;
+			default:      
+				cout << "Not an operation!\n" << endl;
+				filename = "invalid.3d";
+				break;
 		}
 	}
 	else cout << "Try again with this usage: generator operationName inputs filename" << endl;
     
-    
-    // put init here
+	// put init here
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100, 100);
