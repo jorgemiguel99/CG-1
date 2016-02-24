@@ -31,6 +31,28 @@ vector<string> splitted;
 //operation name has 100 char at max
 #define MAX 100
 
+//Return the number to be used on the switch in main function; splitted[1]<=>operation name
+int checkOP(string str){
+    if (str == "Plane" || str == "plane") return 1;
+    else if (str == "Box" || str == "box") return 2;
+    else if (str == "Sphere" || str == "sphere") return 3;
+    else if (str == "Cone" || str == "cone") return 4;
+    else return -1;
+}
+
+//function that splits a string into its substrings accordingly to its delimiter that must be provided
+vector<string> split(string str, char delimiter) {
+    vector<string> internal;
+    stringstream ss(str); // Turn the string into a stream.
+    string tok;
+    
+    while (getline(ss, tok, delimiter)) {
+        internal.push_back(tok);
+    }
+    
+    return internal;
+}
+
 void changeSize(int w, int h) {
     // Prevent a divide by zero, when window is too short
     // (you cant make a window with zero width).
@@ -98,28 +120,6 @@ void renderScene(void) {
 
     // End of frame
     glutSwapBuffers();
-}
-
-//Return the number to be used on the switch in main function; splitted[1]<=>operation name 
-int checkOP(string str){
-	if (str == "Plane" || str == "plane") return 1;
-	else if (str == "Box" || str == "box") return 2;
-	else if (str == "Sphere" || str == "sphere") return 3;
-	else if (str == "Cone" || str == "cone") return 4;
-	else return -1;
-}
-
-//function that splits a string into its substrings accordingly to its delimiter that must be provided
-vector<string> split(string str, char delimiter) {
-	vector<string> internal;
-	stringstream ss(str); // Turn the string into a stream.
-	string tok;
-
-	while (getline(ss, tok, delimiter)) {
-		internal.push_back(tok);
-	}
-
-	return internal;
 }
 
 //create filename.3d in Desktop and in .exe folder
