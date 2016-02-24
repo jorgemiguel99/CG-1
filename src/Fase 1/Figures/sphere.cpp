@@ -43,10 +43,10 @@ void renderScene(void) {
 	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
 
 	// put drawing instructions here
-    glutWireSphere (radius,slices,stacks);
+    glutWireSphere (baseRadius,slices,stacks);
     //enable growing effect
-    if (radius < 1.5 | slices < 15 | stacks < 30) {
-        radius+=0.01;
+    if (baseRadius < 1.5 | slices < 15 | stacks < 30) {
+        baseRadius+=0.01;
         slices+=1;
         stacks+=1;
     }

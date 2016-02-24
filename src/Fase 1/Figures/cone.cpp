@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-float baseRadius = 0.1, float height = 0.5;
+float baseRadius = 0.1, height = 0.5;
 int slices = 5 , stacks = 3;
 
 void changeSize(int w, int h) {
@@ -40,7 +40,7 @@ void renderScene(void) {
 
 	// set the camera
 	glLoadIdentity();
-	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
+	gluLookAt(2.5, 0.0, 2.5, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
 
 	// put drawing instructions here
     glutWireCone (baseRadius,height,slices,stacks);
