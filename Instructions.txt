@@ -1,7 +1,28 @@
-Esfera:	
-	"generator sphere <baseRadius> <slices> <stacks> sphere"
-	"generator sphere 0.1 5 3 sphere"
+1) Comandos possíveis no terminal:
 
-Cone:
-	"generator cone <baseRadius> <height> <slices> <stacks> cone"
-	"generator cone 0.1 0.5 5 3 cone"
+	Plano: "generator plane <comprimento> <largura> plane"
+	Caixa: "generator box <comprimento> <largura> <altura> box"
+
+	Os restantes estarão ainda sujeitos a alterações
+
+	Esfera:	"generator sphere <baseRadius> <slices> <stacks> sphere"
+	Cone: "generator cone <baseRadius> <height> <slices> <stacks> cone"
+
+
+2) Efetuar movimentos e rotações:
+
+	NOTA: Clicar primeiro no ecrã se não funcionar
+
+	SETA DIREITA -> move para a direita
+	SETA ESQUERDA -> move para a esquerda
+	SETA CIMA -> move para cima
+	SETA BAIXO -> move para baixo
+	+ -> zoom in
+	- -> zoom out
+	w -> rotação em x para a frente
+	s -> rotação em x para trás
+	d -> rotação em z para a direita
+	a -> rotação em z para a esquerda
+	e -> rotação em y para a direita
+	q -> rotação em y para a esquerda 
+	

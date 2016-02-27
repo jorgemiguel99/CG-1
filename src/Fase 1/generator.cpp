@@ -19,11 +19,14 @@ string filename, fileExtension = ".3d";
 //Global Variables Glut functions
 float dimension; //Box
 float radius; //Sphere
-float baseRadius, height; //Cone
+float baseRadius; //Cone
 int slices, stacks; //Sphere & Cone
 
-//Plane needs 4 points(X,Y), points A,B,C & D ????
-float coordenateXA,coordenateYA,coordenateXB,coordenateYB,coordenateXC,coordenateYC,coordenateXD,coordenateYD; //Plane
+// Dimensões do plano e da caixa
+float comprimento, largura, altura;
+
+// Variáveis usadas para mover a cãmara
+float moveX = 0.0f, moveY = 0.0f, moveZ = 0.0f, rotateX = 0.0f, rotateY = 0.0f, rotateZ = 0.0f, angle = 0;
 
 //Global Variable Process Input
 vector<string> splitted;
@@ -49,7 +52,6 @@ vector<string> split(string str, char delimiter) {
     while (getline(ss, tok, delimiter)) {
         internal.push_back(tok);
     }
-    
     return internal;
 }
 
@@ -78,27 +80,107 @@ void changeSize(int w, int h) {
 }
 
 void renderScene(void) {
-    // clear buffers
+    // Clear Buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    // set the camera
+    // Set the Camera
     glLoadIdentity();
-    gluLookAt(2.0, 0.0, 5.0, 0.0, 0.0, -1.0, 0.0f, 1.0f, 0.0f);
+    gluLookAt(0.0, 0.0, 5.0, 0.0, 1.0, 0.0, 0.0f, 1.0f, 0.0f);
+
+	// Geometric Transformations
+	glTranslatef(moveX, moveY, moveZ);
+	glRotatef(angle, rotateX, rotateY, rotateZ);
     
-    // put drawing instructions here
-    //use values of global variable splitted
-    
-    if(checkOP(splitted[1])==1) { //Plane
-        //Glut functions missing!!!!
-        cout << "Plane Operation is not finished!!!" << endl;
-        //enable growing effect
+    // Plano
+    if(checkOP(splitted[1])==1) {
+		glBegin(GL_TRIANGLES);
+
+		glColor3f(0, 1, 0);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(comprimento, 0.0f, 0.0f);
+		glVertex3f(0.0f, largura, 0.0f);
+
+		glColor3f(0, 1, 0);
+		glVertex3f(comprimento, 0.0f, 0.0f);
+		glVertex3f(comprimento, largura, 0.0f);
+		glVertex3f(0.0f, largura, 0.0f);
+
+		glEnd();
     }
-    else if(checkOP(splitted[1])==2) { //Box
-        glutWireCube (dimension);
-        //enable growing effect
-        if(dimension < 1.5) dimension+=0.001;
+	// Caixa
+    else if(checkOP(splitted[1])==2) {
+		glBegin(GL_TRIANGLES);
+
+		// Face Inferior
+		glColor3f(1, 0, 0);
+		glVertex3f(0.0f, largura, 0.0f);
+		glVertex3f(comprimento, 0.0f, 0.0f);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+
+		glColor3f(1, 0, 0);
+		glVertex3f(0.0f, largura, 0.0f);
+		glVertex3f(comprimento, largura, 0.0f);
+		glVertex3f(comprimento, 0.0f, 0.0f);
+
+		// Face Superior
+		glColor3f(1, 0, 0);
+		glVertex3f(0.0f, 0.0f, altura);
+		glVertex3f(comprimento, 0.0f, altura);
+		glVertex3f(0.0f, largura, altura);
+
+		glColor3f(1, 0, 0);
+		glVertex3f(comprimento, 0.0f, altura);
+		glVertex3f(comprimento, largura, altura);
+		glVertex3f(0.0f, largura, altura);
+
+		// Face Direita
+		glColor3f(0, 1, 0);
+		glVertex3f(comprimento, 0.0f, 0.0f);
+		glVertex3f(comprimento, largura, 0.0f);
+		glVertex3f(comprimento, 0.0f, altura);
+
+		glColor3f(0, 1, 0);
+		glVertex3f(comprimento, largura, 0.0f);
+		glVertex3f(comprimento, largura, altura);
+		glVertex3f(comprimento, 0.0f, altura);
+
+		// Face Esquerda
+		glColor3f(0, 1, 0);
+		glVertex3f(0.0f, largura, 0.0f);
+		glVertex3f(0.0f, 0.0f, altura);
+		glVertex3f(0.0f, largura, altura);
+
+		glColor3f(0, 1, 0);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(0.0f, 0.0f, altura);
+		glVertex3f(0.0f, largura, 0.0f);
+
+		// Face da Frente
+		glColor3f(0, 0, 1);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(comprimento, 0.0f, 0.0f);
+		glVertex3f(0.0f, 0.0f, altura);
+
+		glColor3f(0, 0, 1);
+		glVertex3f(comprimento, 0.0f, 0.0f);
+		glVertex3f(comprimento, 0.0f, altura);
+		glVertex3f(0.0f, 0.0f, altura);
+
+		// Face de Trás
+		glColor3f(0, 0, 1);
+		glVertex3f(0.0f, largura, 0.0f);
+		glVertex3f(0.0f, largura, altura);
+		glVertex3f(comprimento, largura, 0.0f);
+
+		glColor3f(0, 0, 1);
+		glVertex3f(comprimento, largura, 0.0f);
+		glVertex3f(0.0f, largura, altura);
+		glVertex3f(comprimento, largura, altura);
+		
+		glEnd();
     }
-    else if(checkOP(splitted[1])==3) { //Sphere
+	// Sphere
+    else if(checkOP(splitted[1])==3) {
         glutWireSphere(radius, slices, stacks);
         //enable growing effect
         if (radius < 1.5 | slices < 15 | stacks < 30) {
@@ -108,11 +190,11 @@ void renderScene(void) {
         }
     }
     else if(checkOP(splitted[1])==4) { //Cone
-		glutWireCone(baseRadius, height, slices, stacks);
+		glutWireCone(baseRadius, altura, slices, stacks);
          //enable growing effect
-		if (baseRadius < 1.5 | height < 1.5 | slices < 15 | stacks < 30) {
+		if (baseRadius < 1.5 | altura < 1.5 | slices < 15 | stacks < 30) {
 			baseRadius += 0.01;
-			height += 0.01;
+			altura += 0.01;
 			slices += 1;
 			stacks += 1;
 		}
@@ -122,13 +204,38 @@ void renderScene(void) {
     glutSwapBuffers();
 }
 
-//create filename.3d in Desktop and in .exe folder
+// Processing Keyboard Events
+void translation(int key_code, int x, int y) {
+	switch (key_code) {
+		case GLUT_KEY_UP: moveY++; break;
+		case GLUT_KEY_DOWN: moveY--; break;
+		case GLUT_KEY_LEFT: moveX--; break;
+		case GLUT_KEY_RIGHT: moveX++; break;
+	}
+	glutPostRedisplay();
+}
+
+void rotation(unsigned char key, int x, int y) {
+	switch (key) {
+		case '+': moveZ++; break;
+		case '-': moveZ--; break;
+		case 'd': angle -= 2; rotateZ = 1; rotateX = 0; rotateY = 0; break;
+		case 'a': angle += 2; rotateZ = 1; rotateX = 0; rotateY = 0; break;
+		case 'w': angle -= 2; rotateX = 1; rotateZ = 0; rotateY = 0; break;
+		case 's': angle += 2; rotateX = 1; rotateZ = 0; rotateY = 0; break;
+		case 'e': angle += 2; rotateY = 1; rotateZ = 0; rotateX = 0; break;
+		case 'q': angle -= 2; rotateY = 1; rotateZ = 0; rotateX = 0; break;
+	}
+	glutPostRedisplay();
+}
+
+// Create filename.3d in Desktop and in .exe folder
 void create3dFile(string fileNm) {
 	ofstream File(filename);
 	ofstream desktopFile(desktop + filename);
 }
 
-//write xml into .xml file create before
+// Write xml into a .xml file created before
 void writeXMLFile(string fileNm) {
 	string aux = "generator.xml";
 	ofstream fileXML;
@@ -145,30 +252,25 @@ int main(int argc, char **argv) {
 
 	cout << "Insert your operation:" << endl;
 	getline(cin, operationLine);
-	splitted = split(operationLine, ' ');	//guarda a string no vector com as substrings separadas por um espaco
+	splitted = split(operationLine, ' '); // Guarda a string num vetor com as substrings separadas por um espaço
 
-	//stof is a function that transforms the content of string into float
+	// A função "stoff" transforma o conteúdo de uma string num float
+
 	if (splitted[0] == "Generator" || splitted[0] == "generator") {
 		switch (checkOP(splitted[1])) {
-			case 1:		  
-				if (splitted.size() == 11) { //Plane
-					filename = splitted[10] + fileExtension;
-                    //update Glut Functions args used in renderScene
-                    coordenateXA=stof(splitted[2]);
-                    coordenateYA=stof(splitted[3]);
-                    coordenateXB=stof(splitted[4]);
-                    coordenateYB=stof(splitted[5]);
-                    coordenateXC=stof(splitted[6]);
-                    coordenateYC=stof(splitted[7]);
-                    coordenateXD=stof(splitted[8]);
-                    coordenateYD=stof(splitted[9]);
+			case 1:	// Plano -> recebe o comprimento e a largura, sendo os vértices deduzidos a partir do ponto (0, 0)
+				if (splitted.size() == 5) { 
+					filename = splitted[4] + fileExtension;
+					comprimento = stof(splitted[2]);
+					largura = stof(splitted[3]);
 				}
 				break;
-			case 2:
-				if (splitted.size() == 4) { //Box
-			        filename = splitted[3] + fileExtension;
-                    //update Glut Functions args used in renderScene
-					dimension=stof(splitted[2]);
+			case 2: // Caixa -> recebe o comprimento, a largura e a altura, sendo os vértices deduzidos a partir do ponto (0, 0)
+				if (splitted.size() == 6) { 
+			        filename = splitted[5] + fileExtension;
+					comprimento = stof(splitted[2]);
+					largura = stof(splitted[3]);
+					altura = stof(splitted[4]);
 				}
 				break;
 			case 3:       
@@ -186,7 +288,7 @@ int main(int argc, char **argv) {
                     filename = splitted[5] + fileExtension;
                     //update Glut Functions args used in renderScene
 					baseRadius = stof(splitted[2]);
-					height = stof(splitted[3]);
+					altura = stof(splitted[3]);
 					slices = stof(splitted[4]);
 					stacks = stof(splitted[5]);
 				}
@@ -199,27 +301,31 @@ int main(int argc, char **argv) {
 	}
 	else cout << "Try again with this usage: generator operationName inputs filename" << endl;
     
-	// put init here
+	// Init
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100, 100);
     glutInitWindowSize(800, 800);
     glutCreateWindow("Solar System - Stage 1");
     
-    // put callback registration here
+    // Callback registration
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
-    glutIdleFunc(renderScene);
+
+	// Registration of the keyboard
+	glutSpecialFunc(translation);
+	glutKeyboardFunc(rotation);
     
     // OpenGL settings
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     
-    // enter GLUT's main loop
+    // Enter GLUT's main loop
     glutMainLoop();
     
+	// Create a XML file and write on it
 	create3dFile(filename);
 	writeXMLFile(filename);
+
 	return 1;
 }
