@@ -15,7 +15,7 @@
 using namespace std;
 
 //Global Variables Handling Files
-string desktop = "C:\\Users\\zecar\\Desktop\\";
+string desktop = "C:\\Users\\Tiago\\Desktop\\Universidade\\3º Ano\\CG\\Projeto\\Fase 1\\Ficheiros 3d";
 //string desktop = "/Users/zecarlos/Desktop/";// -- MAC
 string filename, fileExtension = ".3d";
 
@@ -58,6 +58,86 @@ vector<string> split(string str, char delimiter) {
     return internal;
 }
 
+// Print the figures on the .3d files
+void print3d(string figure) {
+	if (figure == "plane") {
+		ofstream plane;
+		plane.open(filename.c_str());
+		plane << "6" << endl; // total number of vertex
+
+		plane << "0.0f, 0.0f, 0.0f" << endl;
+		plane << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+		plane << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+
+		plane << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+		plane << comprimento << ".0f" << ", " << largura << ".0f" << ", 0.0f" << endl;
+		plane << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+
+		plane.close();
+	}
+	else if (figure == "box") {
+		ofstream box;
+		box.open(filename.c_str());
+		box << "36" << endl; // total number of vertex
+
+		// Face Inferior
+		box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+		box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+		box << "0.0f, 0.0f, 0.0f" << endl;
+
+		box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+		box << comprimento << ".0f" << ", " << largura << ".0f" << ", 0.0f" << endl;
+		box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+
+		// Face Superior
+		box << "0.0f, 0.0f, " << altura << ".0f" << endl;
+		box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
+		box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
+
+		box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
+		box << comprimento << ".0f, " << largura << ".0f, " << altura << ".0f" << endl;
+		box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
+
+		// Face Direita
+		box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+		box << comprimento << ".0f" << ", " << largura << ".0f" << ", 0.0f" << endl;
+		box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
+
+		box << comprimento << ".0f, " << largura << ".0f, 0.0f" << endl;
+		box << comprimento << ".0f, " << largura << ".0f, " << altura << ".0f" << endl;
+		box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
+
+		// Face Esquerda
+		box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+		box << "0.0f, 0.0f, " << altura << ".0f" << endl;
+		box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
+
+		box << "0.0f, 0.0f, 0.0f" << endl;
+		box << "0.0f, 0.0f, " << altura << ".0f" << endl;
+		box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+
+		// Face da Frente
+		box << "0.0f, 0.0f, 0.0f" << endl;
+		box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+		box << "0.0f, 0.0f, " << altura << ".0f" << endl;
+
+		box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+		box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
+		box << "0.0f, 0.0f, " << altura << ".0f" << endl;
+
+		// Face de Tras
+		box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+		box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
+		box << comprimento << ".0f, " << largura << ".0f, 0.0f" << endl;
+
+		box << comprimento << ".0f, " << largura << ".0f, 0.0f" << endl;
+		box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
+		box << comprimento << ".0f, " << largura << ".0f, " << altura << ".0f" << endl;
+
+		box.close();
+	}
+}
+
 void changeSize(int w, int h) {
     // Prevent a divide by zero, when window is too short
     // (you cant make a window with zero width).
@@ -94,7 +174,7 @@ void renderScene(void) {
 	glTranslatef(moveX, moveY, moveZ);
 	glRotatef(angle, rotateX, rotateY, rotateZ);
 
-    // Plano
+    // Plane
     if(checkOP(splitted[1])==1) {
 		glBegin(GL_TRIANGLES);
 
@@ -110,18 +190,9 @@ void renderScene(void) {
 
 		glEnd();
 
-    ofstream plane;
-  	plane.open(filename.c_str());
-  	plane << "6" << endl; // total number of vertex
-    plane << "0.0f, 0.0f, 0.0f" << endl;
-    plane << comprimento << ".0f" <<", 0.0f, 0.0f" << endl;
-    plane << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
-    plane << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
-    plane << comprimento << ".0f" << ", " << largura << ".0f" << ", 0.0f" << endl;
-    plane << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
-  	plane.close();
+		print3d("plane");
     }
-	// Caixa
+	// Box
     else if(checkOP(splitted[1])==2) {
 		glBegin(GL_TRIANGLES);
 
@@ -193,66 +264,7 @@ void renderScene(void) {
 
 		glEnd();
 
-    ofstream box;
-    box.open(filename.c_str());
-    box << "36" << endl; // total number of vertex
-
-    // Face Inferior
-    box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
-    box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
-    box << "0.0f, 0.0f, 0.0f" << endl;
-
-    box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
-    box << comprimento << ".0f" << ", " << largura << ".0f" << ", 0.0f" << endl;
-    box << comprimento << ".0f" <<", 0.0f, 0.0f" << endl;
-
-    // Face Superior
-    box << "0.0f, 0.0f, " << altura << ".0f" << endl;
-    box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
-    box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
-
-    box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
-    box << comprimento << ".0f, " << largura << ".0f, " << altura << ".0f" << endl;
-    box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
-
-    // Face Direita
-    box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
-    box << comprimento << ".0f" << ", " << largura << ".0f" << ", 0.0f" << endl;
-    box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
-
-    box << comprimento << ".0f, " << largura << ".0f, 0.0f" << endl;
-    box << comprimento << ".0f, " << largura << ".0f, " << altura << ".0f" << endl;
-    box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
-
-    // Face Esquerda
-    box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
-    box << "0.0f, 0.0f, " << altura << ".0f" << endl;
-    box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
-
-    box << "0.0f, 0.0f, 0.0f" << endl;
-    box << "0.0f, 0.0f, " << altura << ".0f" << endl;
-    box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
-
-    // Face da Frente
-    box << "0.0f, 0.0f, 0.0f" << endl;
-    box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
-    box << "0.0f, 0.0f, " << altura << ".0f" << endl;
-
-    box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
-    box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
-    box << "0.0f, 0.0f, " << altura << ".0f" << endl;
-
-    // Face de Tras
-    box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
-    box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
-    box << comprimento << ".0f, " << largura << ".0f, 0.0f" << endl;
-
-    box << comprimento << ".0f, " << largura << ".0f, 0.0f" << endl;
-    box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
-    box << comprimento << ".0f, " << largura << ".0f, " << altura << ".0f" << endl;
-
-    box.close();
-
+		print3d("box");
     }
 	// Sphere
     else if(checkOP(splitted[1])==3) {
@@ -300,7 +312,7 @@ void rotation(unsigned char key, int x, int y) {
 		case 's': angle += 2; rotateX = 1; rotateZ = 0; rotateY = 0; break;
 		case 'e': angle += 2; rotateY = 1; rotateZ = 0; rotateX = 0; break;
 		case 'q': angle -= 2; rotateY = 1; rotateZ = 0; rotateX = 0; break;
-    case 27 : exit(-1); //ESC -> leaves
+		case 27 : exit(-1); //ESC -> leaves
 	}
 	glutPostRedisplay();
 }
