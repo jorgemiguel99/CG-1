@@ -9,9 +9,9 @@
 	Cone: "generator cone <baseRadius> <height> <slices> <stacks> cone"
 
 
-2) Efetuar movimentos e rotações:
+2) Efetuar movimentos e rotacoes:
 
-	NOTA: Clicar primeiro no ecrã se não funcionar
+	NOTA: Clicar primeiro no ecra se nao funcionar
 
 	SETA DIREITA -> move para a direita
 	SETA ESQUERDA -> move para a esquerda
@@ -25,4 +25,10 @@
 	a -> rotação em z para a esquerda
 	e -> rotação em y para a direita
 	q -> rotação em y para a esquerda 
+
+3) Ficheiros .3d gerados com:
+	
+	plane.3d -> generator plane 5 3 plane
+	box.3d   -> generator box 5 3 10 box
+
 	

@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <GL/glut.h>
-//#include <GLUT/glut.h> -- MAC
+//#include <GLUT/glut.h> //-- MAC
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -16,7 +16,7 @@ using namespace std;
 
 //Global Variables Handling Files
 string desktop = "C:\\Users\\zecar\\Desktop\\";
-//string desktop = "/Users/zecarlos/Desktop/"; -- MAC
+//string desktop = "/Users/zecarlos/Desktop/";// -- MAC
 string filename, fileExtension = ".3d";
 
 //Global Variables Glut functions
@@ -192,6 +192,67 @@ void renderScene(void) {
 		glVertex3f(comprimento, largura, altura);
 
 		glEnd();
+
+    ofstream box;
+    box.open(filename.c_str());
+    box << "36" << endl; // total number of vertex
+
+    // Face Inferior
+    box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+    box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+    box << "0.0f, 0.0f, 0.0f" << endl;
+
+    box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+    box << comprimento << ".0f" << ", " << largura << ".0f" << ", 0.0f" << endl;
+    box << comprimento << ".0f" <<", 0.0f, 0.0f" << endl;
+
+    // Face Superior
+    box << "0.0f, 0.0f, " << altura << ".0f" << endl;
+    box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
+    box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
+
+    box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
+    box << comprimento << ".0f, " << largura << ".0f, " << altura << ".0f" << endl;
+    box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
+
+    // Face Direita
+    box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+    box << comprimento << ".0f" << ", " << largura << ".0f" << ", 0.0f" << endl;
+    box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
+
+    box << comprimento << ".0f, " << largura << ".0f, 0.0f" << endl;
+    box << comprimento << ".0f, " << largura << ".0f, " << altura << ".0f" << endl;
+    box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
+
+    // Face Esquerda
+    box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+    box << "0.0f, 0.0f, " << altura << ".0f" << endl;
+    box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
+
+    box << "0.0f, 0.0f, 0.0f" << endl;
+    box << "0.0f, 0.0f, " << altura << ".0f" << endl;
+    box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+
+    // Face da Frente
+    box << "0.0f, 0.0f, 0.0f" << endl;
+    box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+    box << "0.0f, 0.0f, " << altura << ".0f" << endl;
+
+    box << comprimento << ".0f" << ", 0.0f, 0.0f" << endl;
+    box << comprimento << ".0f" << ", 0.0f, " << altura << ".0f" << endl;
+    box << "0.0f, 0.0f, " << altura << ".0f" << endl;
+
+    // Face de Tras
+    box << "0.0f, " << largura << ".0f" << ", 0.0f" << endl;
+    box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
+    box << comprimento << ".0f, " << largura << ".0f, 0.0f" << endl;
+
+    box << comprimento << ".0f, " << largura << ".0f, 0.0f" << endl;
+    box << "0.0f, " << largura << ".0f, " << altura << ".0f" << endl;
+    box << comprimento << ".0f, " << largura << ".0f, " << altura << ".0f" << endl;
+
+    box.close();
+
     }
 	// Sphere
     else if(checkOP(splitted[1])==3) {
