@@ -52,6 +52,24 @@ vector<string> split(string str, char delimiter) {
     return internal;
 }
 
+//Read the vertex of figure.3d files into a vector
+vector<string> read3d(string figure) {
+	vector<string> vecx;
+	ifstream fileTXT(figure);
+	string line;
+	while (getline(fileTXT, line)) {
+		//adding at the end of vector the line 
+		vecx.push_back(line);
+	}
+	int size = stoi(vecx[0]); // number of total vertex-- first line in .3d file
+	// Testing the contents
+	//for (int i=0; i <= size; i++) cout << vecx[i] << endl;
+	//Returns vector with coordinates in each position
+	//vecx[1..size]
+	return vecx;
+}
+
+
 // Print the figures on the .3d files
 void print3d(string figure) {
 	if (figure == "plane") {
