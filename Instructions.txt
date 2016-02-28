@@ -1,4 +1,4 @@
-1) Comandos possíveis no terminal:
+1) Comandos possï¿½veis no terminal:
 
 	Plano: "generator plane <length> <width> plane.3d"
 	Caixa: "generator box <length> <width> <height> box.3d"
@@ -16,16 +16,16 @@
 	SETA BAIXO -> move para baixo
 	+ -> zoom in
 	- -> zoom out
-	w -> rotação em x para a frente
-	s -> rotação em x para trás
-	d -> rotação em z para a direita
-	a -> rotação em z para a esquerda
-	e -> rotação em y para a direita
-	q -> rotação em y para a esquerda 
+	w -> rotaï¿½ï¿½o em x para a frente
+	s -> rotaï¿½ï¿½o em x para trï¿½s
+	d -> rotaï¿½ï¿½o em z para a direita
+	a -> rotaï¿½ï¿½o em z para a esquerda
+	e -> rotaï¿½ï¿½o em y para a direita
+	q -> rotaï¿½ï¿½o em y para a esquerda
 
 3) Ficheiros .3d gerados com:
-	
+
 	plane.3d -> generator plane 5 3 plane
 	box.3d   -> generator box 5 3 10 box
 
-	
+4) read <filename.3d>
