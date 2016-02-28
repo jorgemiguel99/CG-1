@@ -1,12 +1,9 @@
 1) Comandos possíveis no terminal:
 
-	Plano: "generator plane <comprimento> <largura> plane"
-	Caixa: "generator box <comprimento> <largura> <altura> box"
-
-	Os restantes estarão ainda sujeitos a alterações
-
-	Esfera:	"generator sphere <baseRadius> <slices> <stacks> sphere"
-	Cone: "generator cone <baseRadius> <height> <slices> <stacks> cone"
+	Plano: "generator plane <length> <width> plane.3d"
+	Caixa: "generator box <length> <width> <height> box.3d"
+	Esfera:	"generator sphere <radius> <slices> <stacks> sphere.3d"
+	Cone: "generator cone <radius> <height> <slices> <stacks> cone.3d"
 
 
 2) Efetuar movimentos e rotacoes:
