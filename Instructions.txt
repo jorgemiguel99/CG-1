@@ -29,3 +29,5 @@
 	box.3d   -> generator box 5 3 10 box
 
 4) read <filename.3d>
+	
+

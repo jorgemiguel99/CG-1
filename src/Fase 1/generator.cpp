@@ -18,7 +18,6 @@ using namespace std;
 
 // Global variables handling files
 string desktop = "C:\\Users\\Tiago\\Desktop\\Universidade\\3º Ano\\CG\\Projeto\\Fase 1\\generatorXML.xml";
-//string desktop = "/Users/zecarlos/Desktop/";// -- MAC
 string filename;
 
 // Dimensions of the figures
@@ -73,162 +72,163 @@ vector<string> read3d(string figure) {
 }
 
 // Gets the list of vertices from read3d and splits the vector file3dRead from read3d into vertices
-void drawRenderSceneFile3d(void) {
-	int i;
-	// Gets the list of vertices from read3d
-	// Splits the vector file3dRead from read3d into vertices
-	int size = stoi(file3dRead[0]); // Number of vertices
-	vector<string> vrtx; // Stores all vertex read from file3dRead vector<string> stof conversion later!!
-	string line; // String processed of all file3dRead strings concatenated into one
-	int conta = 0;
-	for (int i = 1; i <= size; i++) {
-		if (conta != 0) { // Adding ',' at the end of each line except the first
-			line = line + ", " + file3dRead[i];
-		}
-		else {
-			line += file3dRead[i];
-			conta++;
-		}
-	}
-	vrtx = split(line, ',');
-
-	// Drawing process will now take place with vrtx contents starting in vrtx[1..size*3] because vrtx[0] has the number of lines
-
-	// Clear buffers
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Set the Camera
-	glLoadIdentity();
-	gluLookAt(0.0, 0.0, 5.0, 0.0, 1.0, 0.0, 0.0f, 1.0f, 0.0f);
-
-	// Geometric transformations
-	glTranslatef(moveX, moveY, moveZ);
-	glRotatef(angle, rotateX, rotateY, rotateZ);
-
-	// Plane needs 6 vertices -- vrtx[1..18]
-	if (size == 6) {
-		glBegin(GL_TRIANGLES);
-
-		for (i = 0; i <= 15; i += 3) {
-			glColor3f(0, 1, 0);
-			glVertex3f(stof(vrtx[i]), stof(vrtx[i + 1]), stof(vrtx[i + 2]));
-		}
-
-		glEnd();
-	}
-	// Box needs 36 vertices  -- vrtx[1..108]
-	else if (size == 36) {
-		glBegin(GL_TRIANGLES);
-
-		// Lower face && Upper face
-		for (i = 0; i <= 33; i += 3) {
-			glColor3f(1, 0, 0);
-			glVertex3f(stof(vrtx[i]), stof(vrtx[i + 1]), stof(vrtx[i + 2]));
-		}
-
-		// Right face && Left face
-		for (i = 36; i <= 69; i += 3) {
-			glColor3f(0, 1, 0);
-			glVertex3f(stof(vrtx[i]), stof(vrtx[i + 1]), stof(vrtx[i + 2]));
-		}
-
-		// Front face && Back face
-		for (i = 72; i <= 105; i += 3) {
-			glColor3f(0, 0, 1);
-			glVertex3f(stof(vrtx[i]), stof(vrtx[i + 1]), stof(vrtx[i + 2]));
-		}
-
-		glEnd();
-	}
-	// Sphere needs 60 vertices -- CHANGE TO REAL NUMBER
-	else if (size == 60) {
-		// Under construction...
-	}
-	//Cone needs 80 vertices -- CHANGE TO REAL NUMBER
-	else if (size == 80) {
-		// Under construction...
-	}
+void drawRenderSceneFile3d(void){
+    //Show file.3d content in file3dRead vector
+    //for(int j=0;j<file3dRead.size();j++) cout << file3dRead[j] << endl;
+    vector<float> vrtx;
+    int size = stoi(file3dRead[0]); // number of vertex
+    string line; // string processed of all file3dRead strings concatenated into one
+    int conta=0;
+    for (int i=1; i <= size; i++){
+        if(conta!=0){ //adding ',' at the end of each line except the first
+            //cout << line << endl;
+            line = line + " "+ file3dRead[i];
+        }
+        else{
+            //cout << line << endl;
+            line += file3dRead[i];
+            conta++;
+        }
+    }
+    //cout << line << "\n\n" << endl;
+    
+    // Build an istream that holds the input string
+    istringstream iss(line);
+    
+    // Iterate over the istream, using >> to grab floats
+    // and push_back to store them in the vector
+    copy(istream_iterator<float>(iss),istream_iterator<float>(),back_inserter(vrtx));
+    
+    //cout << "Lista de Vértices" << endl;
+    //Show list of vertex in vrtx vector of floats
+    //for(int j=0;j<vrtx.size();j++) cout << vrtx[j] << endl;
+    
+    // Clear buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    // Set the Camera
+    glLoadIdentity();
+    gluLookAt(0.0, 0.0, 5.0, 0.0, 1.0, 0.0, 0.0f, 1.0f, 0.0f);
+    
+    // Geometric Transformations
+    glTranslatef(moveX, moveY, moveZ);
+    glRotatef(angle, rotateX, rotateY, rotateZ);
+    
+    // Plane needs 6 vertex -- vrtx[0..17]
+    if(size==6) {
+        glBegin(GL_TRIANGLES);
+        for(int j=0;j<vrtx.size();j+=3){
+            glColor3f(0, 1, 0);
+            glVertex3f(vrtx[j], vrtx[j+1], vrtx[j+2]);
+        }
+        glEnd();
+    }
+    // Box needs 36 vertex  -- vrtx[0..107]
+    else if(size==36) {
+        int colour=0;
+        glBegin(GL_TRIANGLES);
+        
+        for(int j=0;j<vrtx.size();j+=3){
+            if(j<=35) glColor3f(1, 0, 0); // Lower face && Upper face
+            else if(j>=36 && j<=72) glColor3f(0, 1, 0); // Left face && Right face
+            else glColor3f(0, 0, 1);  // Front face && Back face
+            glVertex3f(vrtx[j], vrtx[j+1], vrtx[j+2]);
+        }
+        glEnd();
+    }
+    // Sphere needs 60 vertex -- CHANGE TO REAL NUMBER
+    else if(size==60) {
+        // Under construction...
+    }
+    //Cone needs 80 vertex -- CHANGE TO REAL NUMBER
+    else if(size==80) {
+        // Under construction...
+    }
+    
+    // End of frame
+    glutSwapBuffers();
 }
 
-// Prints the figures on the .3d files
+// Print the figures on the .3d files
 void print3d(string figure) {
-	if (figure == "plane") {
-		ofstream plane;
-		plane.open(filename.c_str());
-		plane << "6" << endl; // Total number of vertex
-
-		plane << "0.0f, 0.0f, 0.0f" << endl;
-		plane << length << ".0f" << ", 0.0f, 0.0f" << endl;
-		plane << "0.0f, " << width << ".0f" << ", 0.0f" << endl;
-
-		plane << length << ".0f" << ", 0.0f, 0.0f" << endl;
-		plane << length << ".0f" << ", " << width << ".0f" << ", 0.0f" << endl;
-		plane << "0.0f, " << width << ".0f" << ", 0.0f" << endl;
-
-		plane.close();
-	}
-	else if (figure == "box") {
-		ofstream box;
-		box.open(filename.c_str());
-		box << "36" << endl; // Total number of vertex
-
-		// Lower face
-		box << "0.0f, " << width << ".0f" << ", 0.0f" << endl;
-		box << length << ".0f" << ", 0.0f, 0.0f" << endl;
-		box << "0.0f, 0.0f, 0.0f" << endl;
-
-		box << "0.0f, " << width << ".0f" << ", 0.0f" << endl;
-		box << length << ".0f" << ", " << width << ".0f" << ", 0.0f" << endl;
-		box << length << ".0f" << ", 0.0f, 0.0f" << endl;
-
-		// Upper face
-		box << "0.0f, 0.0f, " << height << ".0f" << endl;
-		box << length << ".0f" << ", 0.0f, " << height << ".0f" << endl;
-		box << "0.0f, " << width << ".0f, " << height << ".0f" << endl;
-
-		box << length << ".0f" << ", 0.0f, " << height << ".0f" << endl;
-		box << length << ".0f, " << width << ".0f, " << height << ".0f" << endl;
-		box << "0.0f, " << width << ".0f, " << height << ".0f" << endl;
-
-		// Right face
-		box << length << ".0f" << ", 0.0f, 0.0f" << endl;
-		box << length << ".0f" << ", " << width << ".0f" << ", 0.0f" << endl;
-		box << length << ".0f" << ", 0.0f, " << height << ".0f" << endl;
-
-		box << length << ".0f, " << width << ".0f, 0.0f" << endl;
-		box << length << ".0f, " << width << ".0f, " << height << ".0f" << endl;
-		box << length << ".0f" << ", 0.0f, " << height << ".0f" << endl;
-
-		// Left Face
-		box << "0.0f, " << width << ".0f" << ", 0.0f" << endl;
-		box << "0.0f, 0.0f, " << height << ".0f" << endl;
-		box << "0.0f, " << width << ".0f, " << height << ".0f" << endl;
-
-		box << "0.0f, 0.0f, 0.0f" << endl;
-		box << "0.0f, 0.0f, " << height << ".0f" << endl;
-		box << "0.0f, " << width << ".0f" << ", 0.0f" << endl;
-
-		// Front face
-		box << "0.0f, 0.0f, 0.0f" << endl;
-		box << length << ".0f" << ", 0.0f, 0.0f" << endl;
-		box << "0.0f, 0.0f, " << height << ".0f" << endl;
-
-		box << length << ".0f" << ", 0.0f, 0.0f" << endl;
-		box << length << ".0f" << ", 0.0f, " << height << ".0f" << endl;
-		box << "0.0f, 0.0f, " << height << ".0f" << endl;
-
-		// Back face
-		box << "0.0f, " << width << ".0f" << ", 0.0f" << endl;
-		box << "0.0f, " << width << ".0f, " << height << ".0f" << endl;
-		box << length << ".0f, " << width << ".0f, 0.0f" << endl;
-
-		box << length << ".0f, " << width << ".0f, 0.0f" << endl;
-		box << "0.0f, " << width << ".0f, " << height << ".0f" << endl;
-		box << length << ".0f, " << width << ".0f, " << height << ".0f" << endl;
-
-		box.close();
-	}
+    if (figure == "plane") {
+        ofstream plane;
+        plane.open(filename.c_str());
+        plane << "6" << endl; // Total number of vertex
+        
+        plane << "0.0 0.0 0.0" << endl;
+        plane << length << ".0" << " 0.0 0.0" << endl;
+        plane << "0.0 " << width << ".0" << " 0.0" << endl;
+        
+        plane << length << ".0" << " 0.0 0.0" << endl;
+        plane << length << ".0 " << width << ".0" << " 0.0" << endl;
+        plane << "0.0 " << width << ".0" << " 0.0" << endl;
+        
+        plane.close();
+    }
+    else if (figure == "box") {
+        ofstream box;
+        box.open(filename.c_str());
+        box << "36" << endl; // Total number of vertex
+        
+        // Lower face
+        box << "0.0 " << width << ".0" << " 0.0" << endl;
+        box << length << ".0" << " 0.0 0.0" << endl;
+        box << "0.0 0.0 0.0" << endl;
+        
+        box << "0.0 " << width << ".0" << " 0.0" << endl;
+        box << length << ".0 " << width << ".0" << " 0.0" << endl;
+        box << length << ".0" << " 0.0 0.0" << endl;
+        
+        // Upper face
+        box << "0.0 0.0 " << height << ".0" << endl;
+        box << length << ".0" << " 0.0 " << height << ".0" << endl;
+        box << "0.0 " << width << ".0 " << height << ".0" << endl;
+        
+        box << length << ".0" << " 0.0 " << height << ".0" << endl;
+        box << length << ".0 " << width << ".0 " << height << ".0" << endl;
+        box << "0.0 " << width << ".0 " << height << ".0" << endl;
+        
+        // Right face
+        box << length << ".0" << " 0.0 0.0" << endl;
+        box << length << ".0 " << width << ".0" << " 0.0" << endl;
+        box << length << ".0" << " 0.0 " << height << ".0" << endl;
+        
+        box << length << ".0 " << width << ".0 0.0" << endl;
+        box << length << ".0 " << width << ".0 " << height << ".0" << endl;
+        box << length << ".0" << " 0.0 " << height << ".0" << endl;
+        
+        // Left Face
+        box << "0.0 " << width << ".0" << " 0.0" << endl;
+        box << "0.0 0.0 " << height << ".0" << endl;
+        box << "0.0 " << width << ".0 " << height << ".0" << endl;
+        
+        box << "0.0 0.0 0.0" << endl;
+        box << "0.0 0.0 " << height << ".0" << endl;
+        box << "0.0 " << width << ".0" << " 0.0" << endl;
+        
+        // Front face
+        box << "0.0 0.0 0.0" << endl;
+        box << length << ".0" << " 0.0 0.0" << endl;
+        box << "0.0 0.0 " << height << ".0" << endl;
+        
+        box << length << ".0" << " 0.0 0.0" << endl;
+        box << length << ".0" << " 0.0 " << height << ".0" << endl;
+        box << "0.0 0.0 " << height << ".0" << endl;
+        
+        // Back face
+        box << "0.0 " << width << ".0" << " 0.0" << endl;
+        box << "0.0 " << width << ".0 " << height << ".0" << endl;
+        box << length << ".0 " << width << ".0 0.0" << endl;
+        
+        box << length << ".0 " << width << ".0 0.0" << endl;
+        box << "0.0 " << width << ".0 " << height << ".0" << endl;
+        box << length << ".0 " << width << ".0 " << height << ".0" << endl;
+        
+        box.close();
+    }
 }
+
 
 void changeSize(int w, int h) {
     // Prevent a divide by zero, when window is too short
@@ -395,12 +395,6 @@ void rotation(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 
-// Create filename.3d in desktop and in .exe folder
-void create3dFile(string fileNm) {
-	ofstream File(filename);
-	ofstream desktopFile(desktop + filename);
-}
-
 void searchXMLData(TiXmlElement* pElem, string name3d) {
 	TiXmlHandle hRoot(0);
 	TiXmlElement* pSubElem = pElem;
@@ -493,15 +487,27 @@ int main(int argc, char **argv) {
 				}
 				break;
 			default:
-				cout << "Not an operation!\n" << endl;
-				filename = "invalid.3d";
-				break;
+                cout << "Not an operation of generator!\n" << endl;
+                filename = "invalid.3d";
+                //create invalid.3d
+                ofstream invalid3d(filename);
+                invalid3d << "Not an operation of generator!" << endl;
+                break;
 		}
 	}
 	else if (splitted[0] == "Read" || splitted[0] == "read") {	// Read -> receives the name of the .3d file
+        //file to be read is splitted[1] = "filename.3d";
+        file3dRead = read3d(splitted[1]);
+        //file3dRead has file contents as strings and is used in drawRenderSceneFile3d() to draw that content
 		if (splitted.size() == 2) readXML("generatorXML.xml", splitted[1]);
 	}
-	else cout << "Try again with this usage: generator operationName inputs filename" << endl;
+    else{
+        cout << "Try again! " << endl;
+        filename = "invalid.3d";
+        //create invalid.3d
+        ofstream invalid3D(filename);
+        invalid3D << "Not an operation through all program!" << endl;
+    }
 
 	// Init
     glutInit(&argc, argv);
