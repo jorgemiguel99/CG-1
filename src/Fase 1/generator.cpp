@@ -17,7 +17,7 @@ using namespace std;
 // Global variables handling files
 //string desktop = "C:\\Users\\Tiago\\Desktop\\Universidade\\3º Ano\\CG\\Projeto\\Fase 1\\Ficheiros 3d";
 //string desktop = "/Users/zecarlos/Desktop/";// -- MAC
-string filename,XMLfilename;
+string filename;
 
 // Dimensions of the figures
 float length, width, height, radius, slices, stacks;
@@ -73,6 +73,7 @@ vector<string> read3d(string figure) {
 }
 
 void drawRenderSceneFile3d(void){
+  int i;
   //Getting list of vertex from read3d
   //Split vector file3dRead from read3d into vertex
   int size = stoi(file3dRead[0]); // number of vertex
@@ -114,100 +115,45 @@ void drawRenderSceneFile3d(void){
   if(size==6) {
     glBegin(GL_TRIANGLES);
 
-    glColor3f(0, 1, 0);
-    glVertex3f(stof(vrtx[1]), stof(vrtx[2]), stof(vrtx[3]));
-    glVertex3f(stof(vrtx[4]), stof(vrtx[5]), stof(vrtx[6]));
-    glVertex3f(stof(vrtx[7]), stof(vrtx[8]), stof(vrtx[9]));
+    for(i=0;i<=15;i+=3){
+        glColor3f(0, 1, 0);
+        glVertex3f(stof(vrtx[i]), stof(vrtx[i+1]), stof(vrtx[i+2]));
+    }
 
-    glColor3f(0, 1, 0);
-    glVertex3f(stof(vrtx[10]), stof(vrtx[11]), stof(vrtx[12]));
-    glVertex3f(stof(vrtx[13]), stof(vrtx[14]), stof(vrtx[15]));
-    glVertex3f(stof(vrtx[16]), stof(vrtx[17]), stof(vrtx[18]));
-
-  glEnd();
+    glEnd();
   }
   // Box needs 36 vertex  -- vrtx[1..108]
   else if(size==36) {
     glBegin(GL_TRIANGLES);
 
-    // Lower face
-    glColor3f(1, 0, 0);
-    glVertex3f(stof(vrtx[1]), stof(vrtx[2]), stof(vrtx[3]));
-    glVertex3f(stof(vrtx[4]), stof(vrtx[5]), stof(vrtx[6]));
-    glVertex3f(stof(vrtx[7]), stof(vrtx[8]), stof(vrtx[9]));
+    // Lower face && Upper face
+    for(i=0;i<=33;i+=3){
+        glColor3f(1, 0, 0);
+        glVertex3f(stof(vrtx[i]), stof(vrtx[i+1]), stof(vrtx[i+2]));
+    }
 
-    glColor3f(1, 0, 0);
-    glVertex3f(stof(vrtx[10]), stof(vrtx[11]), stof(vrtx[12]));
-    glVertex3f(stof(vrtx[13]), stof(vrtx[14]), stof(vrtx[15]));
-    glVertex3f(stof(vrtx[16]), stof(vrtx[17]), stof(vrtx[18]));
+    // Right face && Left face
+    for(i=36;i<=69;i+=3){
+        glColor3f(0, 1, 0);
+        glVertex3f(stof(vrtx[i]), stof(vrtx[i+1]), stof(vrtx[i+2]));
+    }
 
-    // Upper face
-    glColor3f(1, 0, 0);
-    glVertex3f(stof(vrtx[19]), stof(vrtx[20]), stof(vrtx[21]));
-    glVertex3f(stof(vrtx[22]), stof(vrtx[23]), stof(vrtx[24]));
-    glVertex3f(stof(vrtx[25]), stof(vrtx[26]), stof(vrtx[27]));
+    // Front face && Back face
+    for(i=72;i<=105;i+=3){
+        glColor3f(0, 0, 1);
+        glVertex3f(stof(vrtx[i]), stof(vrtx[i+1]), stof(vrtx[i+2]));
+    }
 
-    glColor3f(1, 0, 0);
-    glVertex3f(stof(vrtx[28]), stof(vrtx[29]), stof(vrtx[30]));
-    glVertex3f(stof(vrtx[31]), stof(vrtx[32]), stof(vrtx[33]));
-    glVertex3f(stof(vrtx[34]), stof(vrtx[35]), stof(vrtx[36]));
-
-    // Right face
-    glColor3f(0, 1, 0);
-    glVertex3f(stof(vrtx[37]), stof(vrtx[38]), stof(vrtx[39]));
-    glVertex3f(stof(vrtx[40]), stof(vrtx[41]), stof(vrtx[42]));
-    glVertex3f(stof(vrtx[43]), stof(vrtx[44]), stof(vrtx[45]));
-
-    glColor3f(0, 1, 0);
-    glVertex3f(stof(vrtx[46]), stof(vrtx[47]), stof(vrtx[48]));
-    glVertex3f(stof(vrtx[49]), stof(vrtx[50]), stof(vrtx[51]));
-    glVertex3f(stof(vrtx[52]), stof(vrtx[53]), stof(vrtx[54]));
-
-    // Left face
-    glColor3f(0, 1, 0);
-    glVertex3f(stof(vrtx[55]), stof(vrtx[56]), stof(vrtx[57]));
-    glVertex3f(stof(vrtx[58]), stof(vrtx[59]), stof(vrtx[60]));
-    glVertex3f(stof(vrtx[61]), stof(vrtx[62]), stof(vrtx[63]));
-
-    glColor3f(0, 1, 0);
-    glVertex3f(stof(vrtx[64]), stof(vrtx[65]), stof(vrtx[66]));
-    glVertex3f(stof(vrtx[67]), stof(vrtx[68]), stof(vrtx[69]));
-    glVertex3f(stof(vrtx[70]), stof(vrtx[71]), stof(vrtx[72]));
-
-    // Front face
-    glColor3f(0, 0, 1);
-    glVertex3f(stof(vrtx[73]), stof(vrtx[74]), stof(vrtx[75]));
-    glVertex3f(stof(vrtx[76]), stof(vrtx[77]), stof(vrtx[78]));
-    glVertex3f(stof(vrtx[79]), stof(vrtx[80]), stof(vrtx[81]));
-
-    glColor3f(0, 0, 1);
-    glVertex3f(stof(vrtx[82]), stof(vrtx[83]), stof(vrtx[84]));
-    glVertex3f(stof(vrtx[85]), stof(vrtx[86]), stof(vrtx[87]));
-    glVertex3f(stof(vrtx[88]), stof(vrtx[89]), stof(vrtx[90]));
-
-    // Back face
-    glColor3f(0, 0, 1);
-    glVertex3f(stof(vrtx[91]), stof(vrtx[92]), stof(vrtx[93]));
-    glVertex3f(stof(vrtx[94]), stof(vrtx[95]), stof(vrtx[96]));
-    glVertex3f(stof(vrtx[97]), stof(vrtx[98]), stof(vrtx[99]));
-
-    glColor3f(0, 0, 1);
-    glVertex3f(stof(vrtx[100]), stof(vrtx[101]), stof(vrtx[102]));
-    glVertex3f(stof(vrtx[103]), stof(vrtx[104]), stof(vrtx[105]));
-    glVertex3f(stof(vrtx[106]), stof(vrtx[107]), stof(vrtx[108]));
-
-  glEnd();
-
+    glEnd();
   }
-// Sphere needs 60 vertex -- CHANGE TO REAL NUMBER
+  // Sphere needs 60 vertex -- CHANGE TO REAL NUMBER
   else if(size==60) {
       // Under construction...
   }
   //Cone needs 80 vertex -- CHANGE TO REAL NUMBER
   else if(size==80) {
   // Under construction...
-
-}
+  }
 }
 
 // Print the figures on the .3d files
@@ -473,9 +419,6 @@ int main(int argc, char **argv) {
 					filename = splitted[4];
 					length = stof(splitted[2]);
 					width = stof(splitted[3]);
-          //create plane.xml
-          ofstream planeXML("plane.xml");
-          planeXML << "<scene>\n\t<model file = î" << filename << "î />\n</scene>" << endl;
 				}
 				break;
 			case 2: // Box -> receives the length, the width and the height
@@ -484,9 +427,6 @@ int main(int argc, char **argv) {
 					length = stof(splitted[2]);
 					width = stof(splitted[3]);
 					height = stof(splitted[4]);
-          //create box.xml
-          ofstream boxXML("box.xml");
-          boxXML << "<scene>\n\t<model file = î" << filename << "î />\n</scene>" << endl;
 				}
 				break;
 			case 3: // Sphere -> receives the radius, the slices and the stacks
@@ -495,9 +435,6 @@ int main(int argc, char **argv) {
 					radius = stof(splitted[2]);
 					slices = stof(splitted[3]);
 					stacks = stof(splitted[4]);
-          //create sphere.xml
-          ofstream sphereXML("sphere.xml");
-          sphereXML << "<scene>\n\t<model file = î" << filename << "î />\n</scene>" << endl;
 				}
 				break;
 			case 4: // Cone -> receives the base radius, the height, the slices and the stacks
@@ -507,9 +444,6 @@ int main(int argc, char **argv) {
 					height = stof(splitted[3]);
 					slices = stof(splitted[4]);
 					stacks = stof(splitted[5]);
-          //create cone.xml
-          ofstream coneXML("cone.xml");
-          coneXML << "<scene>\n\t<model file = î" << filename << "î />\n</scene>" << endl;
 				}
 				break;
 			default:
@@ -518,9 +452,6 @@ int main(int argc, char **argv) {
         //create invalid.3d
         ofstream invalid3d(filename);
         invalid3d << "Not an operation of generator!" << endl;
-        //create invalid.xml
-        ofstream invalidXML("invalid.xml");
-        invalidXML << "<scene>\n\t<model file = î" << filename << "î />\n</scene>" << endl;
 				break;
 		}
 	}
@@ -529,9 +460,6 @@ int main(int argc, char **argv) {
     file3dRead = read3d(splitted[1]);
     //file3dRead has file contents as strings and is used in drawRenderSceneFile3d() to draw that content
     read=1;
-    //create read.xml
-    ofstream readXML("read.xml");
-    readXML << "<scene>\n\t<model file = î" << splitted[1] << "î />\n</scene>" << endl;
   }
 	else {
     cout << "Try again! " << endl;
@@ -539,9 +467,6 @@ int main(int argc, char **argv) {
     //create invalid.3d
     ofstream invalid3D(filename);
     invalid3D << "Not an operation through all program!" << endl;
-    //create invalid.xml
-    ofstream invalidxml("invalid.xml");
-    invalidxml << "<scene>\n\t<model file = î" << filename << "î />\n</scene>" << endl;
   }
 
 	// Init
