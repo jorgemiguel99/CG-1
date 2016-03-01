@@ -351,7 +351,8 @@ void renderScene(void) {
     }
 	// Sphere
     else if(checkOP(splitted[1])==3) {
-        // Under construction...
+		drawSphere(radius,slices,stacks);
+		print3d("sphere");
     }
 	// Cone
     else if(checkOP(splitted[1])==4) {
@@ -385,6 +386,74 @@ void renderScene(void) {
 
     // End of frame
     glutSwapBuffers();
+}
+
+void drawSphere(float r, float slices, float stacks) {
+
+	const double pi = 3.1415926535897;
+
+	int i, j;
+
+	float longitude, polar;
+	// 0 < longitude < 2 * PI , 0 < polar < PI 
+	
+	float slices_step = 2 * pi / slices;
+	float stacks_step = pi / stacks;
+
+	for (i = 0; i < stacks - 1; i++) {
+
+		float polar2 = polar + stacks_step;
+
+		for (j = 0; j < slices - 1; j++) {
+
+			float longitude2 = longitude + slices_step;
+
+
+			/*
+			Points
+
+		   4 ___2
+			|	|
+			|___|
+			3	1
+
+			*/
+
+			float x1 = r * sin(polar) * cos(longitude);
+			float y1 = r * sin(polar) * sin(longitude);
+			float z1 = r * cos(polar);
+
+			float x2 = r * sin(polar2) * cos(longitude);
+			float y2 = r * sin(polar2) * sin(longitude);
+			float z2 = r * cos(polar2);
+
+			float x3 = r * sin(polar) * cos(longitude2);
+			float y3 = r * sin(polar) * sin(longitude2);
+			float z3 = r * cos(polar);
+
+			float x4 = r * sin(polar2) * cos(longitude2);
+			float y4 = r * sin(polar2) * sin(longitude2);
+			float z4 = r * cos(polar2);
+
+			glBegin(GL_TRIANGLES);
+			// TRIANGLE 2-3-1
+			glVertex3f(x2, y2, z2);
+			glVertex3f(x3, y3, z3);
+			glVertex3f(x1, y1, z1);
+
+			// TRIANGLE 2-4-3
+			glVertex3f(x2, y2, z2);
+			glVertex3f(x4, y4, z4);
+			glVertex3f(x3, y3, z3);
+
+			glEnd();
+
+			longitude += slices_step;
+			polar += stacks_step;
+		}
+
+		polar += stacks_step;
+	}
 }
 
 // Processing Keyboard Events
