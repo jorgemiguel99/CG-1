@@ -431,12 +431,11 @@ void renderScene(void) {
 		// Sides
 		glBegin(GL_TRIANGLES);
 		float k = 0;
-		//for (int k = 0; k <= 360; k += 1) {
 		while (k <= 360) {
 			glColor3f(1, 0, 0);
 			glVertex3f(0.0f, 0.0f, height);
-			glVertex3f(Cos(k), Sin(k), 0);
-			glVertex3f(Cos(k + 5), Sin(k + 5), 0.0f);
+			glVertex3f(radius*Cos(k), radius*Sin(k), 0);
+			glVertex3f(radius*Cos(k + stacks), radius*Sin(k + stacks), 0.0f);
 			k += slices;
 		}
 		glEnd();
@@ -444,13 +443,12 @@ void renderScene(void) {
 		// Bottom circle
 		glRotated(90, 1, 0, 0);	// Rotate back
 		glBegin(GL_TRIANGLES);
-		//for (int k = 0; k <= 360; k += 1) {
 		k = 0;
 		while(k <= 360) {
 			glColor3f(0, 1, 0);
 			glVertex3f(0.0f, 0.0f, 0.0f);
-			glVertex3f(Cos(k), 0.0f, Sin(k));
-			glVertex3f(Cos(k + 5), 0.0f, Sin(k + 5));
+			glVertex3f(radius*Cos(k), 0.0f, radius*Sin(k));
+			glVertex3f(radius*Cos(k + stacks), 0.0f, radius*Sin(k + stacks));
 			k += slices;
 		}
 		glEnd();
