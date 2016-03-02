@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <GL/glut.h>
-#include "CG-Fase1\tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
 #include <math.h>
 //#include <GLUT/glut.h> //-- MAC
 
@@ -29,9 +28,6 @@ float length, width, height, radius, slices, stacks;
 
 // Variables used to move the camera 
 float moveX = 0.0f, moveY = 0.0f, moveZ = 0.0f, rotateX = 0.0f, rotateY = 0.0f, rotateZ = 0.0f, angle = 0;
-
-// Tells if the renderScene function will read from the stdin or from a .3d file
-bool read = false;
 
 // Global variable store 3d file read
 vector<string> file3dRead;
@@ -61,85 +57,6 @@ vector<string> split(string str, char delimiter) {
         internal.push_back(tok);
     }
     return internal;
-}
-
-// Reads the vertices of figure.3d files into a vector
-vector<string> read3d(string figure) {
-	vector<string> vecx;
-	ifstream fileTXT(figure);
-	string line;
-	while (getline(fileTXT, line)) {
-		vecx.push_back(line); // Adding the line at the end of vector 
-	}
-	int size = stoi(vecx[0]); // Number of total vertices. It's the first line in the .3d file
-	return vecx;
-}
-
-// Show file.3d content in file3dRead vector
-void drawRenderSceneFile3d(void) {
-	vector<float> vrtx;
-	int size = stoi(file3dRead[0]); // number of vertex
-	string line; // String processed of all file3dRead strings concatenated into one
-	int conta = 0;
-	for (int i = 1; i <= size; i++) {
-		if (conta != 0) { // Adding ',' at the end of each line except the first
-			line = line + " " + file3dRead[i];
-		}
-		else {
-			line += file3dRead[i];
-			conta++;
-		}
-	}
-	// Build an istream that holds the input string
-	istringstream iss(line);
-
-	// Iterates over the istream, using >> to grab floats and push_back to store them in the vector
-	copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(vrtx));
-
-	// Clear buffers
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Set the Camera
-	glLoadIdentity();
-	gluLookAt(0.0, 0.0, 5.0, 0.0, 1.0, 0.0, 0.0f, 1.0f, 0.0f);
-
-	// Geometric Transformations
-	glTranslatef(moveX, moveY, moveZ);
-	glRotatef(angle, rotateX, rotateY, rotateZ);
-
-	// Plane needs 6 vertices -- vrtx[0..17]
-	if (size == 6) {
-		glBegin(GL_TRIANGLES);
-		for (int j = 0; j<vrtx.size(); j += 3) {
-			glColor3f(0, 1, 0);
-			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
-		}
-		glEnd();
-	}
-	// Box needs 36 vertices  -- vrtx[0..107]
-	else if (size == 36) {
-		int colour = 0;
-		glBegin(GL_TRIANGLES);
-
-		for (int j = 0; j<vrtx.size(); j += 3) {
-			if (j <= 35) glColor3f(1, 0, 0); // Lower face && Upper face
-			else if (j >= 36 && j <= 72) glColor3f(0, 1, 0); // Left face && Right face
-			else glColor3f(0, 0, 1);  // Front face && Back face
-			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
-		}
-		glEnd();
-	}
-	// Sphere needs 60 vertices -- CHANGE TO REAL NUMBER
-	else if (size == 60) {
-		// Under construction...
-	}
-	//Cone needs 80 vertices -- CHANGE TO REAL NUMBER
-	else if (size == 80) {
-		// Under construction...
-	}
-
-	// End of frame
-	glutSwapBuffers();
 }
 
 // Prints the figures on the .3d files
@@ -486,59 +403,6 @@ void rotation(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 
-// Create filename.3d in desktop and in .exe folder
-void create3dFile(string fileNm) {
-	ofstream File(filename);
-	ofstream desktopFile(desktop + filename);
-}
-
-void searchXMLData(TiXmlElement* pElem, string name3d) {
-	TiXmlHandle hRoot(0);
-	TiXmlElement* pSubElem = pElem;
-	TiXmlAttribute* pAttrib = NULL;
-
-	// Set current node to root node and determine if child node exists or not  
-	hRoot = TiXmlHandle(pSubElem);
-	pSubElem = hRoot.FirstChildElement().Element();
-	if (!pSubElem) return;
-
-	char* pszText = NULL;
-
-	while (pSubElem) {
-		// Find attribute  
-		pAttrib = pSubElem->FirstAttribute();
-		while (pAttrib) {
-			char* pszText = (char*)pAttrib->Value();
-			if (pszText == name3d) {
-				printf("Found %s!\n", pszText);
-				read = true;
-				file3dRead = read3d((string) pszText); // Save the content of the .3d file in a vector
-				return;
-			}
-			pAttrib = pAttrib->Next();
-		}
-
-		// Recursive call for searching child node based on the current node  
-		searchXMLData(pSubElem, name3d);
-		pSubElem = pSubElem->NextSiblingElement();
-	}
-	printf("File not found!\n");
-}
-
-// Load the named file and dump its structure to stdout
-void readXML(const char* file, string name3d) {
-	TiXmlDocument doc;
-	doc.LoadFile(file);
-	TiXmlHandle hDoc(&doc);
-
-	// Access root node  
-	TiXmlElement* pRoot = hDoc.FirstChildElement().Element();
-	if (!pRoot) return;
-
-	// Search child node step by step from the starting root node  
-	searchXMLData(pRoot, name3d);
-}
-
 // Main function
 int main(int argc, char **argv) {
 	string operationLine, operation;
@@ -589,9 +453,6 @@ int main(int argc, char **argv) {
 				break;
 		}
 	}
-	else if (splitted[0] == "Read" || splitted[0] == "read") {	// Read -> receives the name of the .3d file
-		if (splitted.size() == 2) readXML("generatorXML.xml", splitted[1]);
-	}
 	else cout << "Try again with this usage: generator operationName inputs filename" << endl;
 
 	// Init
@@ -602,8 +463,7 @@ int main(int argc, char **argv) {
     glutCreateWindow("Solar System - Stage 1");
 
     // Callback registration
-    if(read == false) glutDisplayFunc(renderScene);
-	else glutDisplayFunc(drawRenderSceneFile3d);
+    glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
 
 	// Registration of the keyboard
