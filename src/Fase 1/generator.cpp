@@ -23,6 +23,9 @@ string desktop = "C:\\Users\\Tiago\\Desktop\\Universidade\\3º Ano\\CG\\Projeto\
 //string desktop = "/Users/zecarlos/Desktop/";// -- MAC
 string filename;
 
+// Number of cone vertices
+int coneVertex = 0;
+
 // Dimensions of the figures
 float length, width, height, radius, slices, stacks;
 
@@ -64,7 +67,7 @@ void print3d(string figure) {
 	if (figure == "plane") {
 		ofstream plane;
 		plane.open(filename.c_str());
-		plane << "6" << endl; // Total number of vertex
+		plane << "6" << endl; // Total number of vertices
 
 		plane << "0.0 0.0 0.0" << endl;
 		plane << length << ".0" << " 0.0 0.0" << endl;
@@ -81,7 +84,7 @@ void print3d(string figure) {
 		box.open(filename.c_str());
 		box << "36" << endl; // Total number of vertex
 
-							 // Lower face
+		// Lower face
 		box << "0.0 " << width << ".0" << " 0.0" << endl;
 		box << length << ".0" << " 0.0 0.0" << endl;
 		box << "0.0 0.0 0.0" << endl;
@@ -136,6 +139,29 @@ void print3d(string figure) {
 		box << length << ".0 " << width << ".0 " << height << ".0" << endl;
 
 		box.close();
+	}
+	else if (figure == "cone") {
+		ofstream cone;
+		cone.open(filename.c_str());
+		cone << coneVertex << endl; // Total number of vertices
+
+		// Sides
+		float k = 0;
+		while (k <= 360) {
+			cone << "0.0 0.0 " << height << endl;
+			cone << radius*Cos(k) << " " << radius*Sin(k) << " 0.0" << endl;
+			cone << radius*Cos(k + stacks) << " " << radius*Sin(k + stacks) << " 0.0" << endl;
+			k += slices;
+		}
+
+		// Bottom circle
+		k = 0;
+		while (k <= 360) {
+			cone << "0.0 0.0 0.0" << endl;
+			cone << radius*Cos(k) << " 0.0 " << radius*Sin(k) << endl;
+			cone << radius*Cos(k + stacks) << " 0.0 " << radius*Sin(k + stacks) << endl;
+			k += slices;
+		}
 	}
 }
 
@@ -354,6 +380,7 @@ void renderScene(void) {
 			glVertex3f(radius*Cos(k), radius*Sin(k), 0);
 			glVertex3f(radius*Cos(k + stacks), radius*Sin(k + stacks), 0.0f);
 			k += slices;
+			coneVertex += 3;
 		}
 		glEnd();
 
@@ -367,8 +394,11 @@ void renderScene(void) {
 			glVertex3f(radius*Cos(k), 0.0f, radius*Sin(k));
 			glVertex3f(radius*Cos(k + stacks), 0.0f, radius*Sin(k + stacks));
 			k += slices;
+			coneVertex += 3;
 		}
 		glEnd();
+
+		print3d("cone");
 	}
 
     // End of frame
