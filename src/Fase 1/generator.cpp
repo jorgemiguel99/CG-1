@@ -18,9 +18,7 @@
 
 using namespace std;
 
-// Global variables handling files
-string desktop = "C:\\Users\\Tiago\\Desktop\\Universidade\\3º Ano\\CG\\Projeto\\Fase 1\\generatorXML.xml";
-//string desktop = "/Users/zecarlos/Desktop/";// -- MAC
+// Global variable for handling files
 string filename;
 
 // Number of cone vertices
@@ -62,236 +60,296 @@ vector<string> split(string str, char delimiter) {
     return internal;
 }
 
-// Prints the figures on the .3d files
-void print3d(string figure) {
-	if (figure == "plane") {
-		ofstream plane;
-		plane.open(filename.c_str());
-		plane << "6" << endl; // Total number of vertices
+// Prints the plane on the .3d file
+void printPlane3d() {
+	ofstream plane;
+	plane.open(filename.c_str());
+	plane << "6" << endl; // Total number of vertices
 
-		plane << "0.0 0.0 0.0" << endl;
-		plane << length << ".0" << " 0.0 0.0" << endl;
-		plane << "0.0 " << width << ".0" << " 0.0" << endl;
+	plane << "0.0 0.0 0.0" << endl;
+	plane << length << ".0" << " 0.0 0.0" << endl;
+	plane << "0.0 " << width << ".0" << " 0.0" << endl;
 
-		plane << length << ".0" << " 0.0 0.0" << endl;
-		plane << length << ".0 " << width << ".0" << " 0.0" << endl;
-		plane << "0.0 " << width << ".0" << " 0.0" << endl;
+	plane << length << ".0" << " 0.0 0.0" << endl;
+	plane << length << ".0 " << width << ".0" << " 0.0" << endl;
+	plane << "0.0 " << width << ".0" << " 0.0" << endl;
 
-		plane.close();
+	plane.close();
+}
+
+// Prints the box on the .3d file
+void printBox3d() {
+	ofstream box;
+	box.open(filename.c_str());
+	box << "36" << endl; // Total number of vertex
+
+	// Lower face
+	box << "0.0 " << width << ".0" << " 0.0" << endl;
+	box << length << ".0" << " 0.0 0.0" << endl;
+	box << "0.0 0.0 0.0" << endl;
+
+	box << "0.0 " << width << ".0" << " 0.0" << endl;
+	box << length << ".0 " << width << ".0" << " 0.0" << endl;
+	box << length << ".0" << " 0.0 0.0" << endl;
+
+	// Upper face
+	box << "0.0 0.0 " << height << ".0" << endl;
+	box << length << ".0" << " 0.0 " << height << ".0" << endl;
+	box << "0.0 " << width << ".0 " << height << ".0" << endl;
+
+	box << length << ".0" << " 0.0 " << height << ".0" << endl;
+	box << length << ".0 " << width << ".0 " << height << ".0" << endl;
+	box << "0.0 " << width << ".0 " << height << ".0" << endl;
+
+	// Right face
+	box << length << ".0" << " 0.0 0.0" << endl;
+	box << length << ".0 " << width << ".0" << " 0.0" << endl;
+	box << length << ".0" << " 0.0 " << height << ".0" << endl;
+
+	box << length << ".0 " << width << ".0 0.0" << endl;
+	box << length << ".0 " << width << ".0 " << height << ".0" << endl;
+	box << length << ".0" << " 0.0 " << height << ".0" << endl;
+
+	// Left Face
+	box << "0.0 " << width << ".0" << " 0.0" << endl;
+	box << "0.0 0.0 " << height << ".0" << endl;
+	box << "0.0 " << width << ".0 " << height << ".0" << endl;
+
+	box << "0.0 0.0 0.0" << endl;
+	box << "0.0 0.0 " << height << ".0" << endl;
+	box << "0.0 " << width << ".0" << " 0.0" << endl;
+
+	// Front face
+	box << "0.0 0.0 0.0" << endl;
+	box << length << ".0" << " 0.0 0.0" << endl;
+	box << "0.0 0.0 " << height << ".0" << endl;
+
+	box << length << ".0" << " 0.0 0.0" << endl;
+	box << length << ".0" << " 0.0 " << height << ".0" << endl;
+	box << "0.0 0.0 " << height << ".0" << endl;
+
+	// Back face
+	box << "0.0 " << width << ".0" << " 0.0" << endl;
+	box << "0.0 " << width << ".0 " << height << ".0" << endl;
+	box << length << ".0 " << width << ".0 0.0" << endl;
+
+	box << length << ".0 " << width << ".0 0.0" << endl;
+	box << "0.0 " << width << ".0 " << height << ".0" << endl;
+	box << length << ".0 " << width << ".0 " << height << ".0" << endl;
+
+	box.close();
+}
+
+// Prints the sphere on the .3d file
+void printSphere3d() {
+	// Under construction
+}
+
+// Prints the cone on the .3d file
+void printCone3d() {
+	ofstream cone;
+	cone.open(filename.c_str());
+	coneVertex += 2; // Add "rotate" & "90 1 0 0" lines to the total vertex number
+	cone << coneVertex << endl; // Total number of vertices
+
+	// Sides
+	float k = 0;
+	while (k <= 360) {
+		cone << "0.0 0.0 " << height << endl;
+		cone << radius*Cos(k) << " " << radius*Sin(k) << " 0.0" << endl;
+		cone << radius*Cos(k + stacks) << " " << radius*Sin(k + stacks) << " 0.0" << endl;
+		k += slices;
 	}
-	else if (figure == "box") {
-		ofstream box;
-		box.open(filename.c_str());
-		box << "36" << endl; // Total number of vertex
 
-		// Lower face
-		box << "0.0 " << width << ".0" << " 0.0" << endl;
-		box << length << ".0" << " 0.0 0.0" << endl;
-		box << "0.0 0.0 0.0" << endl;
+	// To distinguish the rotation
+	cone << "rotate" << endl;
+	cone << "90 1 0 0" << endl;
 
-		box << "0.0 " << width << ".0" << " 0.0" << endl;
-		box << length << ".0 " << width << ".0" << " 0.0" << endl;
-		box << length << ".0" << " 0.0 0.0" << endl;
-
-		// Upper face
-		box << "0.0 0.0 " << height << ".0" << endl;
-		box << length << ".0" << " 0.0 " << height << ".0" << endl;
-		box << "0.0 " << width << ".0 " << height << ".0" << endl;
-
-		box << length << ".0" << " 0.0 " << height << ".0" << endl;
-		box << length << ".0 " << width << ".0 " << height << ".0" << endl;
-		box << "0.0 " << width << ".0 " << height << ".0" << endl;
-
-		// Right face
-		box << length << ".0" << " 0.0 0.0" << endl;
-		box << length << ".0 " << width << ".0" << " 0.0" << endl;
-		box << length << ".0" << " 0.0 " << height << ".0" << endl;
-
-		box << length << ".0 " << width << ".0 0.0" << endl;
-		box << length << ".0 " << width << ".0 " << height << ".0" << endl;
-		box << length << ".0" << " 0.0 " << height << ".0" << endl;
-
-		// Left Face
-		box << "0.0 " << width << ".0" << " 0.0" << endl;
-		box << "0.0 0.0 " << height << ".0" << endl;
-		box << "0.0 " << width << ".0 " << height << ".0" << endl;
-
-		box << "0.0 0.0 0.0" << endl;
-		box << "0.0 0.0 " << height << ".0" << endl;
-		box << "0.0 " << width << ".0" << " 0.0" << endl;
-
-		// Front face
-		box << "0.0 0.0 0.0" << endl;
-		box << length << ".0" << " 0.0 0.0" << endl;
-		box << "0.0 0.0 " << height << ".0" << endl;
-
-		box << length << ".0" << " 0.0 0.0" << endl;
-		box << length << ".0" << " 0.0 " << height << ".0" << endl;
-		box << "0.0 0.0 " << height << ".0" << endl;
-
-		// Back face
-		box << "0.0 " << width << ".0" << " 0.0" << endl;
-		box << "0.0 " << width << ".0 " << height << ".0" << endl;
-		box << length << ".0 " << width << ".0 0.0" << endl;
-
-		box << length << ".0 " << width << ".0 0.0" << endl;
-		box << "0.0 " << width << ".0 " << height << ".0" << endl;
-		box << length << ".0 " << width << ".0 " << height << ".0" << endl;
-
-		box.close();
-	}
-	else if (figure == "cone") {
-		ofstream cone;
-		cone.open(filename.c_str());
-        coneVertex+=2;//Add "rotate" & "90 1 0 0" lines to the total vertex number
-		cone << coneVertex << endl; // Total number of vertices
-
-		// Sides
-		float k = 0;
-		while (k <= 360) {
-			cone << "0.0 0.0 " << height << endl;
-			cone << radius*Cos(k) << " " << radius*Sin(k) << " 0.0" << endl;
-			cone << radius*Cos(k + stacks) << " " << radius*Sin(k + stacks) << " 0.0" << endl;
-			k += slices;
-		}
-        
-        //Para distingir a rotação
-        cone << "rotate" << endl;
-        cone << "90 1 0 0" << endl;
-        
-		// Bottom circle
-		k = 0;
-		while (k <= 360) {
-			cone << "0.0 0.0 0.0" << endl;
-			cone << radius*Cos(k) << " 0.0 " << radius*Sin(k) << endl;
-			cone << radius*Cos(k + stacks) << " 0.0 " << radius*Sin(k + stacks) << endl;
-			k += slices;
-		}
+	// Bottom circle
+	k = 0;
+	while (k <= 360) {
+		cone << "0.0 0.0 0.0" << endl;
+		cone << radius*Cos(k) << " 0.0 " << radius*Sin(k) << endl;
+		cone << radius*Cos(k + stacks) << " 0.0 " << radius*Sin(k + stacks) << endl;
+		k += slices;
 	}
 }
 
-void drawEsferaAndre(){
-    float v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z, v4x, v4y, v4z;
-    
-    float thetaAmt = 360/slices/2, phiAmt = 180/stacks/2, radius = raio;
-    float RADIANS = 3.14159f / 180.0f;
-    
-    for (float phi = 0; phi <= (180 - phiAmt); phi += 2*(int)phiAmt)
-    {
-        for (float theta = 0; theta <= (360 - thetaAmt); theta += 2 * thetaAmt)
-        {
-            v1x = radius*sin(phi*RADIANS)*cos(theta*RADIANS);
-            v1y = radius*sin(phi*RADIANS)*sin(theta*RADIANS);
-            v1z = radius*cos(phi*RADIANS);
-            
-            
-            v2x = radius*sin((phi + phiAmt)*RADIANS)*cos(theta*RADIANS);
-            v2y = radius*sin((phi + phiAmt)*RADIANS)*sin(theta*RADIANS);
-            v2z = radius*cos((phi + phiAmt)*RADIANS);
-            
-            
-            v3x = radius*sin(RADIANS*phi)*cos(RADIANS*(theta + thetaAmt));
-            v3y = radius*sin(RADIANS*phi)*sin(RADIANS*(theta + thetaAmt));
-            v3z = radius*cosf(RADIANS*phi);
-            
-            v4x = radius*sin(RADIANS*(phi + phiAmt))*cos(RADIANS*(theta + thetaAmt));
-            v4y = radius*sin(RADIANS*(phi + phiAmt))*sin(RADIANS*(theta + thetaAmt));
-            v4z = radius*cosf(RADIANS*(phi + phiAmt));
-            
-            
-            glBegin(GL_TRIANGLES);
-            glColor3f(1.0f, 0.0f, 0.0f);
-            glVertex3f(v1x, v1y, v1z);
-            glColor3f(0.0f, 1.0f, 0.0f);
-            glVertex3f(v2x, v2y, v2z);
-            glColor3f(0.0f, 0.0f, 1.0f);
-            glVertex3f(v3x, v3y, v3z);
-            
-            glColor3f(0.0f, 0.0f, 1.0f);
-            glVertex3f(v3x, v3y, v3z);
-            glColor3f(1.0f, 0.0f, 0.0f);
-            glVertex3f(v2x, v2y, v2z);
-            glColor3f(0.0f, 1.0f, 0.0f);
-            glVertex3f(v4x, v4y, v4z);
-            
-            glEnd();
-        }
-        
-        
-    }
-
-}
-
-void drawSphere(float r, float slices, float stacks) {
-
-	int i, j;
-
-	const double pi = 3.1415926535897;
-
-	float longitude = 0, polar = 0;
-	// 0 < longitude < 2 * PI , 0 < polar < PI 
-	float slices_step = (2 * pi) / slices;
-	float stacks_step = pi / stacks;
-
-
+// Draws the plane
+void drawPlane() {
 	glBegin(GL_TRIANGLES);
 
-	for (i = 0; i < stacks; i++) {
+	glColor3f(0, 1, 0);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(length, 0.0f, 0.0f);
+	glVertex3f(0.0f, width, 0.0f);
 
-		float polar2 = polar + stacks_step;
-
-		for (j = 0; j < slices; j++) {
-
-			float longitude2 = longitude + slices_step;
-
-
-			/*
-			Points
-
-			4 ___2
-			|	|
-			|___|
-			3	1
-
-			*/
-
-			float x1 = r * cos(polar) * cos(longitude);
-			float y1 = r * cos(polar) * sin(longitude);
-			float z1 = r * sin(polar);
-
-			float x2 = r * cos(polar2) * cos(longitude);
-			float y2 = r * cos(polar2) * sin(longitude);
-			float z2 = r * sin(polar2);
-
-			float x3 = r * cos(polar) * cos(longitude2);
-			float y3 = r * cos(polar) * sin(longitude2);
-			float z3 = r * sin(polar);
-
-			float x4 = r * cos(polar2) * cos(longitude2);
-			float y4 = r * cos(polar2) * sin(longitude2);
-			float z4 = r * sin(polar2);
-
-
-			// TRIANGLE 2-3-1
-			glVertex3f(x2, y2, z2);
-			glVertex3f(x3, y3, z3);
-			glVertex3f(x1, y1, z1);
-
-			// TRIANGLE 2-4-3
-			glVertex3f(x2, y2, z2);
-			glVertex3f(x4, y4, z4);
-			glVertex3f(x3, y3, z3);
-
-
-
-			longitude += slices_step;
-
-		}
-
-		polar += stacks_step;
-	}
+	glColor3f(0, 1, 0);
+	glVertex3f(length, 0.0f, 0.0f);
+	glVertex3f(length, width, 0.0f);
+	glVertex3f(0.0f, width, 0.0f);
 
 	glEnd();
+
+	// Saves the vertices of the plane on the .3d file
+	printPlane3d();
+}
+
+// Draws the box
+void drawBox() {
+	glBegin(GL_TRIANGLES);
+
+	// Lower face
+	glColor3f(1, 0, 0);
+	glVertex3f(0.0f, width, 0.0f);
+	glVertex3f(length, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+
+	glColor3f(1, 0, 0);
+	glVertex3f(0.0f, width, 0.0f);
+	glVertex3f(length, width, 0.0f);
+	glVertex3f(length, 0.0f, 0.0f);
+
+	// Upper face
+	glColor3f(1, 0, 0);
+	glVertex3f(0.0f, 0.0f, height);
+	glVertex3f(length, 0.0f, height);
+	glVertex3f(0.0f, width, height);
+
+	glColor3f(1, 0, 0);
+	glVertex3f(length, 0.0f, height);
+	glVertex3f(length, width, height);
+	glVertex3f(0.0f, width, height);
+
+	// Right face
+	glColor3f(0, 1, 0);
+	glVertex3f(length, 0.0f, 0.0f);
+	glVertex3f(length, width, 0.0f);
+	glVertex3f(length, 0.0f, height);
+
+	glColor3f(0, 1, 0);
+	glVertex3f(length, width, 0.0f);
+	glVertex3f(length, width, height);
+	glVertex3f(length, 0.0f, height);
+
+	// Left face
+	glColor3f(0, 1, 0);
+	glVertex3f(0.0f, width, 0.0f);
+	glVertex3f(0.0f, 0.0f, height);
+	glVertex3f(0.0f, width, height);
+
+	glColor3f(0, 1, 0);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, height);
+	glVertex3f(0.0f, width, 0.0f);
+
+	// Front face
+	glColor3f(0, 0, 1);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(length, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, height);
+
+	glColor3f(0, 0, 1);
+	glVertex3f(length, 0.0f, 0.0f);
+	glVertex3f(length, 0.0f, height);
+	glVertex3f(0.0f, 0.0f, height);
+
+	// Back face
+	glColor3f(0, 0, 1);
+	glVertex3f(0.0f, width, 0.0f);
+	glVertex3f(0.0f, width, height);
+	glVertex3f(length, width, 0.0f);
+
+	glColor3f(0, 0, 1);
+	glVertex3f(length, width, 0.0f);
+	glVertex3f(0.0f, width, height);
+	glVertex3f(length, width, height);
+
+	glEnd();
+
+	// Saves the vertices of the box on the .3d file
+	printBox3d();
+}
+
+// Draws the sphere
+void drawSphere() {
+	float v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z, v4x, v4y, v4z;
+
+	float thetaAux = 360 / slices / 2, phiAux = 180 / stacks / 2;
+	float rad = 3.14159f / 180.0f;
+
+	for (float phi = 0; phi <= (180 - phiAux); phi += 2 * (int)phiAux) {
+		for (float theta = 0; theta <= (360 - thetaAux); theta += 2 * thetaAux) {
+			v1x = radius*sin(phi*rad)*cos(theta*rad);
+			v1y = radius*sin(phi*rad)*sin(theta*rad);
+			v1z = radius*cos(phi*rad);
+
+			v2x = radius*sin((phi + phiAux)*rad)*cos(theta*rad);
+			v2y = radius*sin((phi + phiAux)*rad)*sin(theta*rad);
+			v2z = radius*cos((phi + phiAux)*rad);
+
+			v3x = radius*sin(rad*phi)*cos(rad*(theta + thetaAux));
+			v3y = radius*sin(rad*phi)*sin(rad*(theta + thetaAux));
+			v3z = radius*cosf(rad*phi);
+
+			v4x = radius*sin(rad*(phi + phiAux))*cos(rad*(theta + thetaAux));
+			v4y = radius*sin(rad*(phi + phiAux))*sin(rad*(theta + thetaAux));
+			v4z = radius*cosf(rad*(phi + phiAux));
+
+			glBegin(GL_TRIANGLES);
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(v1x, v1y, v1z);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(v2x, v2y, v2z);
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(v3x, v3y, v3z);
+
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(v3x, v3y, v3z);
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(v2x, v2y, v2z);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(v4x, v4y, v4z);
+
+			glEnd();
+		}
+	}
+
+	// Saves the vertices of the sphere on the .3d file
+	printSphere3d();
+}
+
+// Draws the cone
+void drawCone() {
+	// Sides
+	glBegin(GL_TRIANGLES);
+	float k = 0;
+	while (k <= 360) {
+		glColor3f(1, 0, 0);
+		glVertex3f(0.0f, 0.0f, height);
+		glVertex3f(radius*Cos(k), radius*Sin(k), 0);
+		glVertex3f(radius*Cos(k + stacks), radius*Sin(k + stacks), 0.0f);
+		k += slices;
+		coneVertex += 3;
+	}
+	glEnd();
+
+	// Bottom circle
+	glRotated(90, 1, 0, 0);	// Rotate back
+	glBegin(GL_TRIANGLES);
+	k = 0;
+	while (k <= 360) {
+		glColor3f(0, 1, 0);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(radius*Cos(k), 0.0f, radius*Sin(k));
+		glVertex3f(radius*Cos(k + stacks), 0.0f, radius*Sin(k + stacks));
+		k += slices;
+		coneVertex += 3;
+	}
+	glEnd();
+
+	// Saves the vertices of the cone on the .3d file
+	printCone3d();
 }
 
 void changeSize(int w, int h) {
@@ -329,140 +387,17 @@ void renderScene(void) {
 	glTranslatef(moveX, moveY, moveZ);
 	glRotatef(angle, rotateX, rotateY, rotateZ);
 
-    // Plane
-    if(checkOP(splitted[1])==1) {
-		glBegin(GL_TRIANGLES);
-
-		glColor3f(0, 1, 0);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(length, 0.0f, 0.0f);
-		glVertex3f(0.0f, width, 0.0f);
-
-		glColor3f(0, 1, 0);
-		glVertex3f(length, 0.0f, 0.0f);
-		glVertex3f(length, width, 0.0f);
-		glVertex3f(0.0f, width, 0.0f);
-
-		glEnd();
-
-		print3d("plane");
-    }
-	// Box
-    else if(checkOP(splitted[1])==2) {
-		glBegin(GL_TRIANGLES);
-
-		// Lower face
-		glColor3f(1, 0, 0);
-		glVertex3f(0.0f, width, 0.0f);
-		glVertex3f(length, 0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-
-		glColor3f(1, 0, 0);
-		glVertex3f(0.0f, width, 0.0f);
-		glVertex3f(length, width, 0.0f);
-		glVertex3f(length, 0.0f, 0.0f);
-
-		// Upper face
-		glColor3f(1, 0, 0);
-		glVertex3f(0.0f, 0.0f, height);
-		glVertex3f(length, 0.0f, height);
-		glVertex3f(0.0f, width, height);
-
-		glColor3f(1, 0, 0);
-		glVertex3f(length, 0.0f, height);
-		glVertex3f(length, width, height);
-		glVertex3f(0.0f, width, height);
-
-		// Right face
-		glColor3f(0, 1, 0);
-		glVertex3f(length, 0.0f, 0.0f);
-		glVertex3f(length, width, 0.0f);
-		glVertex3f(length, 0.0f, height);
-
-		glColor3f(0, 1, 0);
-		glVertex3f(length, width, 0.0f);
-		glVertex3f(length, width, height);
-		glVertex3f(length, 0.0f, height);
-
-		// Left face
-		glColor3f(0, 1, 0);
-		glVertex3f(0.0f, width, 0.0f);
-		glVertex3f(0.0f, 0.0f, height);
-		glVertex3f(0.0f, width, height);
-
-		glColor3f(0, 1, 0);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, height);
-		glVertex3f(0.0f, width, 0.0f);
-
-		// Front face
-		glColor3f(0, 0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(length, 0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, height);
-
-		glColor3f(0, 0, 1);
-		glVertex3f(length, 0.0f, 0.0f);
-		glVertex3f(length, 0.0f, height);
-		glVertex3f(0.0f, 0.0f, height);
-
-		// Back face
-		glColor3f(0, 0, 1);
-		glVertex3f(0.0f, width, 0.0f);
-		glVertex3f(0.0f, width, height);
-		glVertex3f(length, width, 0.0f);
-
-		glColor3f(0, 0, 1);
-		glVertex3f(length, width, 0.0f);
-		glVertex3f(0.0f, width, height);
-		glVertex3f(length, width, height);
-
-		glEnd();
-
-		print3d("box");
-    }
-	// Sphere
-    else if(checkOP(splitted[1])==3) {
-		drawSphere(radius,slices,stacks);
-		print3d("sphere");
-    }
-	// Cone
-    else if(checkOP(splitted[1])==4) {
-		// Sides
-		glBegin(GL_TRIANGLES);
-		float k = 0;
-		while (k <= 360) {
-			glColor3f(1, 0, 0);
-			glVertex3f(0.0f, 0.0f, height);
-			glVertex3f(radius*Cos(k), radius*Sin(k), 0);
-			glVertex3f(radius*Cos(k + stacks), radius*Sin(k + stacks), 0.0f);
-			k += slices;
-			coneVertex += 3;
-		}
-		glEnd();
-
-		// Bottom circle
-		glRotated(90, 1, 0, 0);	// Rotate back
-		glBegin(GL_TRIANGLES);
-		k = 0;
-		while(k <= 360) {
-			glColor3f(0, 1, 0);
-			glVertex3f(0.0f, 0.0f, 0.0f);
-			glVertex3f(radius*Cos(k), 0.0f, radius*Sin(k));
-			glVertex3f(radius*Cos(k + stacks), 0.0f, radius*Sin(k + stacks));
-			k += slices;
-			coneVertex += 3;
-		}
-		glEnd();
-
-		print3d("cone");
+    // Draws the figures
+	switch (checkOP(splitted[1])) {
+		case 1: drawPlane(); break;
+		case 2: drawBox(); break;
+		case 3: drawSphere(); break;
+		case 4: drawCone(); break;
 	}
 
     // End of frame
     glutSwapBuffers();
 }
-
-
 
 // Processing Keyboard Events
 void translation(int key_code, int x, int y) {
