@@ -79,24 +79,77 @@ vector<string> read3d(string figure) {
 
 // Show file.3d content in file3dRead vector
 void drawRenderSceneFile3d(void) {
-	vector<float> vrtx;
+	vector<float> side_vrtx, circle_vrtx, rotate_vrtx;
 	int size = stoi(file3dRead[0]); // number of vertex
-	string line; // String processed of all file3dRead strings concatenated into one
 	int conta = 0;
-	for (int i = 1; i <= size; i++) {
-		if (conta != 0) { // Adding ',' at the end of each line except the first
-			line = line + " " + file3dRead[i];
-		}
-		else {
-			line += file3dRead[i];
-			conta++;
-		}
-	}
-	// Build an istream that holds the input string
-	istringstream iss(line);
-
-	// Iterates over the istream, using >> to grab floats and push_back to store them in the vector
-	copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(vrtx));
+    if(splitted[1] == "plane.3d" || splitted[1] == "box.3d" ){
+        string line; // String processed of all file3dRead strings concatenated into one of plane.3d or box.3d
+        
+        for (int i = 1; i <= size; i++) {
+            if (conta != 0) { // Adding ',' at the end of each line except the first
+                line = line + " " + file3dRead[i];
+            }
+            else {
+                line += file3dRead[i];
+                conta++;
+            }
+        }
+        
+        // Build an istream that holds the input string
+        istringstream iss(line);
+        
+        // Iterates over the istream, using >> to grab floats and push_back to store them in the vector
+        copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(vrtx));
+        
+    }
+    else if(splitted[1] == "cone.3d"){
+        string coneSide,coneCircle,coneRotate;
+        
+        //save only side vertex of file cone.3d
+        for (int i = 1; i <= size && file3dRead[i]!="rotate"; i++) {
+            if (conta != 0) { // Adding ',' at the end of each line except the first
+                coneSide = coneSide + " " + file3dRead[i];
+            }
+            else {
+                coneSide += file3dRead[i];
+                conta++;
+            }
+        }
+        
+        //save only rotate values of file cone.3d
+        coneRotate =  file3dRead[i+1];
+        i+=2;
+        
+        //save only circle vertex of file cone.3d
+        for (;i <= size; i++) {
+            if (conta != 0) { // Adding ',' at the end of each line except the first
+                coneCircle = coneCircle + " " + file3dRead[i];
+            }
+            else {
+                coneCircle += file3dRead[i];
+                conta++;
+            }
+        }
+        
+        // Build an istream that holds the input string
+        istringstream iss(coneSide);
+        
+        // Iterates over the istream, using >> to grab floats and push_back to store them in the vector
+        copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(side_vrtx));
+        
+        // Build an istream that holds the input string
+        istringstream iss(coneRotate);
+        
+        // Iterates over the istream, using >> to grab floats and push_back to store them in the vector
+        copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(rotate_vrtx));
+        
+        // Build an istream that holds the input string
+        istringstream iss(coneCircle);
+        
+        // Iterates over the istream, using >> to grab floats and push_back to store them in the vector
+        copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(circle_vrtx));
+        
+    }
 
 	// Clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

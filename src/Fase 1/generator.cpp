@@ -143,6 +143,7 @@ void print3d(string figure) {
 	else if (figure == "cone") {
 		ofstream cone;
 		cone.open(filename.c_str());
+        coneVertex+=2;//Add "rotate" & "90 1 0 0" lines to the total vertex number
 		cone << coneVertex << endl; // Total number of vertices
 
 		// Sides
@@ -153,7 +154,11 @@ void print3d(string figure) {
 			cone << radius*Cos(k + stacks) << " " << radius*Sin(k + stacks) << " 0.0" << endl;
 			k += slices;
 		}
-
+        
+        //Para distingir a rotação
+        cone << "rotate" << endl;
+        cone << "90 1 0 0" << endl;
+        
 		// Bottom circle
 		k = 0;
 		while (k <= 360) {
