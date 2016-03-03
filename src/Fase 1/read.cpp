@@ -12,6 +12,8 @@
 #include "Read\tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
 #include <math.h>
 //#include <GLUT/glut.h> //-- MAC
+//#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
+
 
 #define _USE_MATH_DEFINES
 #define Cos(th) cos(3.1415/180*(th))
@@ -261,12 +263,6 @@ void rotation(unsigned char key, int x, int y) {
 	case 27: exit(-1); // Esc -> leaves
 	}
 	glutPostRedisplay();
-}
-
-// Create filename.3d in desktop and in .exe folder
-void create3dFile(string fileNm) {
-	ofstream File(filename);
-	ofstream desktopFile(desktop + filename);
 }
 
 void searchXMLData(TiXmlElement* pElem, string name3d) {
