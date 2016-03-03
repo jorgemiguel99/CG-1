@@ -165,6 +165,58 @@ void print3d(string figure) {
 	}
 }
 
+void drawEsferaAndre(){
+    float v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z, v4x, v4y, v4z;
+    
+    float thetaAmt = 360/slices/2, phiAmt = 180/stacks/2, radius = raio;
+    float RADIANS = 3.14159f / 180.0f;
+    
+    for (float phi = 0; phi <= (180 - phiAmt); phi += 2*(int)phiAmt)
+    {
+        for (float theta = 0; theta <= (360 - thetaAmt); theta += 2 * thetaAmt)
+        {
+            v1x = radius*sin(phi*RADIANS)*cos(theta*RADIANS);
+            v1y = radius*sin(phi*RADIANS)*sin(theta*RADIANS);
+            v1z = radius*cos(phi*RADIANS);
+            
+            
+            v2x = radius*sin((phi + phiAmt)*RADIANS)*cos(theta*RADIANS);
+            v2y = radius*sin((phi + phiAmt)*RADIANS)*sin(theta*RADIANS);
+            v2z = radius*cos((phi + phiAmt)*RADIANS);
+            
+            
+            v3x = radius*sin(RADIANS*phi)*cos(RADIANS*(theta + thetaAmt));
+            v3y = radius*sin(RADIANS*phi)*sin(RADIANS*(theta + thetaAmt));
+            v3z = radius*cosf(RADIANS*phi);
+            
+            v4x = radius*sin(RADIANS*(phi + phiAmt))*cos(RADIANS*(theta + thetaAmt));
+            v4y = radius*sin(RADIANS*(phi + phiAmt))*sin(RADIANS*(theta + thetaAmt));
+            v4z = radius*cosf(RADIANS*(phi + phiAmt));
+            
+            
+            glBegin(GL_TRIANGLES);
+            glColor3f(1.0f, 0.0f, 0.0f);
+            glVertex3f(v1x, v1y, v1z);
+            glColor3f(0.0f, 1.0f, 0.0f);
+            glVertex3f(v2x, v2y, v2z);
+            glColor3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(v3x, v3y, v3z);
+            
+            glColor3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(v3x, v3y, v3z);
+            glColor3f(1.0f, 0.0f, 0.0f);
+            glVertex3f(v2x, v2y, v2z);
+            glColor3f(0.0f, 1.0f, 0.0f);
+            glVertex3f(v4x, v4y, v4z);
+            
+            glEnd();
+        }
+        
+        
+    }
+
+}
+
 void drawSphere(float r, float slices, float stacks) {
 
 	int i, j;
