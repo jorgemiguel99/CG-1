@@ -24,7 +24,7 @@ using namespace std;
 // Global variables handling files
 string desktop = "C:\\Users\\Tiago\\Desktop\\Universidade\\3º Ano\\CG\\Projeto\\Fase 1\\generatorXML.xml";
 //string desktop = "/Users/zecarlos/Desktop/";// -- MAC
-string filename;
+
 
 // Dimensions of the figures
 float length, width, height, radius, slices, stacks;
@@ -110,7 +110,7 @@ void drawRenderSceneFile3d(void) {
 	glRotatef(angle, rotateX, rotateY, rotateZ);
 
 	// Plane needs 6 vertices -- vrtx[0..17]
-	if (size == 6) {
+	if (splitted[1] == "plane.3d") {
 		glBegin(GL_TRIANGLES);
 		for (int j = 0; j<vrtx.size(); j += 3) {
 			glColor3f(0, 1, 0);
@@ -119,7 +119,7 @@ void drawRenderSceneFile3d(void) {
 		glEnd();
 	}
 	// Box needs 36 vertices  -- vrtx[0..107]
-	else if (size == 36) {
+	else if (splitted[1] == "box.3d") {
 		int colour = 0;
 		glBegin(GL_TRIANGLES);
 
@@ -132,17 +132,71 @@ void drawRenderSceneFile3d(void) {
 		glEnd();
 	}
 	// Sphere needs 60 vertices -- CHANGE TO REAL NUMBER
-	else if (size == 60) {
+	else if (splitted[1] == "sphere.3d") {
 		// Under construction...
+        drawEsferaAndre();
 	}
 	//Cone needs 80 vertices -- CHANGE TO REAL NUMBER
-	else if (size == 80) {
+	else if (splitted[1] == "cone.3d") {
 		// Under construction...
 	}
 
 	// End of frame
 	glutSwapBuffers();
 }
+
+void drawEsferaAndre(){
+    float v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z, v4x, v4y, v4z;
+    
+    float thetaAmt = 360/slices/2, phiAmt = 180/stacks/2, radius = raio;
+    float RADIANS = 3.14159f / 180.0f;
+    
+    for (float phi = 0; phi <= (180 - phiAmt); phi += 2*(int)phiAmt)
+    {
+        for (float theta = 0; theta <= (360 - thetaAmt); theta += 2 * thetaAmt)
+        {
+            v1x = radius*sin(phi*RADIANS)*cos(theta*RADIANS);
+            v1y = radius*sin(phi*RADIANS)*sin(theta*RADIANS);
+            v1z = radius*cos(phi*RADIANS);
+            
+            
+            v2x = radius*sin((phi + phiAmt)*RADIANS)*cos(theta*RADIANS);
+            v2y = radius*sin((phi + phiAmt)*RADIANS)*sin(theta*RADIANS);
+            v2z = radius*cos((phi + phiAmt)*RADIANS);
+            
+            
+            v3x = radius*sin(RADIANS*phi)*cos(RADIANS*(theta + thetaAmt));
+            v3y = radius*sin(RADIANS*phi)*sin(RADIANS*(theta + thetaAmt));
+            v3z = radius*cosf(RADIANS*phi);
+            
+            v4x = radius*sin(RADIANS*(phi + phiAmt))*cos(RADIANS*(theta + thetaAmt));
+            v4y = radius*sin(RADIANS*(phi + phiAmt))*sin(RADIANS*(theta + thetaAmt));
+            v4z = radius*cosf(RADIANS*(phi + phiAmt));
+            
+            
+            glBegin(GL_TRIANGLES);
+            glColor3f(1.0f, 0.0f, 0.0f);
+            glVertex3f(v1x, v1y, v1z);
+            glColor3f(0.0f, 1.0f, 0.0f);
+            glVertex3f(v2x, v2y, v2z);
+            glColor3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(v3x, v3y, v3z);
+            
+            glColor3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(v3x, v3y, v3z);
+            glColor3f(1.0f, 0.0f, 0.0f);
+            glVertex3f(v2x, v2y, v2z);
+            glColor3f(0.0f, 1.0f, 0.0f);
+            glVertex3f(v4x, v4y, v4z);
+            
+            glEnd();
+        }
+        
+        
+    }
+    
+}
+
 
 void drawSphere(float r, float slices, float stacks) {
 
