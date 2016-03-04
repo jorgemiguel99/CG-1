@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
@@ -11,10 +13,6 @@
 #include <GL/glut.h>
 #include <math.h>
 //#include <GLUT/glut.h> //-- MAC
-
-#define _USE_MATH_DEFINES
-#define Cos(th) cos(3.1415/180*(th))
-#define Sin(th) sin(3.1415/180*(th))
 
 using namespace std;
 
@@ -31,15 +29,15 @@ int sphereVertex = 0;
 float length, width, height, radius, slices, stacks;
 
 //Global Variables to Transformations
-float px=0,py=0,pz=5;
+float px = 0, py = 0, pz = 5;
 
-float rotate_y=0;
-float rotate_x=0;
-float rotate_z=0;
+float rotate_y = 0;
+float rotate_x = 0;
+float rotate_z = 0;
 
-float translate_y=0;
-float translate_x=0;
-float translate_z=0;
+float translate_y = 0;
+float translate_x = 0;
+float translate_z = 0;
 
 // Global variable store 3d file read
 vector<string> file3dRead;
@@ -199,22 +197,19 @@ void printCone3d() {
 	cone.open(filename.c_str());
 	cone << coneVertex << endl; // Total number of vertices
 
-	// Sides
-	float k = 0;
-	while (k <= 360) {
-		cone << "0.0 0.0 " << height << endl;
-		cone << radius*Cos(k) << " " << radius*Sin(k) << " 0.0" << endl;
-		cone << radius*Cos(k + stacks) << " " << radius*Sin(k + stacks) << " 0.0" << endl;
-		k += slices;
-	}
+	for (int i = 0; i < slices; i++) {
+		float alpha = i * (2 * M_PI) / slices;
+		float beta = (2 * M_PI) / slices;
 
-    // Bottom circle
-	k = 0;
-	while (k <= 360) {
+		// Base
 		cone << "0.0 0.0 0.0" << endl;
-		cone << radius*Cos(k) << " 0.0 " << radius*Sin(k) << endl;
-		cone << radius*Cos(k + stacks) << " 0.0 " << radius*Sin(k + stacks) << endl;
-		k += slices;
+		cone << radius*sin(alpha + beta) << " 0.0 " << radius*cos(alpha + beta) << endl;
+		cone << radius*sin(alpha) << " 0.0 " << radius*cos(alpha) << endl;
+
+		// Sides
+		cone << "0.0 " << height << " 0.0" << endl;
+		cone << radius*sin(alpha) << " 0.0 " << radius*cos(alpha) << endl;
+		cone << radius*sin(alpha + beta) << " 0.0 " << radius*cos(alpha + beta) << endl;
 	}
 }
 
@@ -382,29 +377,26 @@ void drawSphere() {
 void drawCone() {
 	// Sides
 	glBegin(GL_TRIANGLES);
-	float k = 0;
-	while (k <= 360) {
-		glColor3f(1, 0, 0);
-		glVertex3f(0.0f, 0.0f, height);
-		glVertex3f(radius*Cos(k), radius*Sin(k), 0);
-		glVertex3f(radius*Cos(k + stacks), radius*Sin(k + stacks), 0.0f);
-		k += slices;
-		coneVertex += 3;
-	}
-	glEnd();
 
-	// Bottom circle
-	glRotated(90, 1, 0, 0);	// Rotate back
-	glBegin(GL_TRIANGLES);
-	k = 0;
-	while (k <= 360) {
+	for (int i = 0; i < slices; i++) {
+		float alpha = i * (2 * M_PI) / slices;
+		float beta = (2 * M_PI) / slices;
+
+		// Base
 		glColor3f(0, 1, 0);
 		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(radius*Cos(k), 0.0f, radius*Sin(k));
-		glVertex3f(radius*Cos(k + stacks), 0.0f, radius*Sin(k + stacks));
-		k += slices;
-		coneVertex += 3;
+		glVertex3f(radius*sin(alpha + beta), 0.0f, radius*cos(alpha + beta));
+		glVertex3f(radius*sin(alpha), 0.0f, radius*cos(alpha));
+
+		// Sides
+		glColor3f(1, 0, 0);
+		glVertex3f(0.0f, height, 0.0f);
+		glVertex3f(radius*sin(alpha), 0.0f, radius*cos(alpha));
+		glVertex3f(radius*sin(alpha + beta), 0.0f, radius*cos(alpha + beta));
+
+		coneVertex += 6;
 	}
+
 	glEnd();
 
 	// Saves the vertices of the cone on the .3d file
