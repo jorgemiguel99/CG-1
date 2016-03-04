@@ -168,23 +168,32 @@ void changeSize(int w, int h) {
 
 // Processing Keyboard Events
 void keyboardNormal (unsigned char key, int x, int y){
-
-	    if (key == 's' || key == 'S') length-=1;
-	    else if (key == 'w' || key == 'W') length+=1;
-			else if (key == 's' || key == 'S') height-=1;
-			else if (key == 'a' || key == 'A') height+=1;
-	    else if (key == 'q' || key == 'Q') width-=1;
-	    else if (key == 'x' || key == 'X') width+=1;
-			else if (key == 'd' || key == 'D') translate_x+=1;
-			else if (key == 'f' || key == 'F') translate_y+=1;
-			else if (key == 'g' || key == 'G') translate_z+=1;
-			else if (key == 'h' || key == 'H') translate_x-=1;
-			else if (key == 'i' || key == 'I') translate_y-=1;
-			else if (key == 'j' || key == 'J') translate_z-=1;
-			else if (key==27) exit(-1);
-
-			//when camera moves
-			glutPostRedisplay();
+    
+    if (key == 'a' || key == 'A') {length-=1;stacks--;}
+    else if (key == 's' || key == 'S') {length+=1;stacks++;}
+    else if (key == 'd' || key == 'D') {height-=1;stacks--;}
+    else if (key == 'f' || key == 'F') {height+=1;stacks++;}
+    else if (key == 'g' || key == 'G') width-=1;
+    else if (key == 'h' || key == 'H') width+=1;
+    else if (key == 'j' || key == 'J') translate_x+=1;
+    else if (key == 'k' || key == 'K') translate_y+=1;
+    else if (key == 'l' || key == 'L') translate_z+=1;
+    else if (key == 'q' || key == 'Q') translate_x-=1;
+    else if (key == 'w' || key == 'W') translate_y-=1;
+    else if (key == 'e' || key == 'E') translate_z-=1;
+    else if (key == 'z' || key == 'Z') glPolygonMode(GL_FRONT,GL_LINE); //GL_FRONT & GL_LINE
+    else if (key == 'x' || key == 'X') glPolygonMode(GL_FRONT,GL_POINT); //GL_FRONT & GL_POINT
+    else if (key == 'c' || key == 'C') glPolygonMode(GL_FRONT,GL_FILL); //GL_FRONT & GL_FILL
+    else if (key == 'v' || key == 'V') glPolygonMode(GL_BACK,GL_LINE); //GL_BACK & GL_LINE
+    else if (key == 'b' || key == 'B') glPolygonMode(GL_BACK,GL_POINT); //GL_BACK & GL_POINT
+    else if (key == 'n' || key == 'N') glPolygonMode(GL_BACK,GL_FILL); //GL_BACK & GL_FILL
+    else if (key == 'm' || key == 'M') glPolygonMode(GL_FRONT_AND_BACK,GL_LINE); //GL_FRONT_AND_BACK & GL_LINE
+    else if (key == 'o' || key == 'O') glPolygonMode(GL_FRONT_AND_BACK,GL_POINT); //GL_FRONT_AND_BACK & GL_POINT
+    else if (key == 'p' || key == 'P') glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); //GL_FRONT_AND_BACK & GL_FILL*/
+    else if (key==27) exit(-1);
+    
+    //when camera moves
+    glutPostRedisplay();
 }
 
 //Examples of key_code: GLUT_KEY_F1 ; GLUT_KEY_UP.
@@ -280,10 +289,40 @@ int main(int argc, char **argv) {
 			// Registration of the keyboard
 			glutKeyboardFunc(keyboardNormal);
 			glutSpecialFunc(keyboardExtra);
-
+            
+            
+            //menu
+            glutCreateMenu(newMenu);
+            glutAddMenuEntry("Decrease Length or Stacks",'a');
+            glutAddMenuEntry("Increase Length or Stacks",'s');
+            glutAddMenuEntry("Decrease Hight or Stacks",'d');
+            glutAddMenuEntry("Increase Hight or Stacks",'f');
+            glutAddMenuEntry("Decrease Width",'g');
+            glutAddMenuEntry("Increase Width",'h');
+            glutAddMenuEntry("Increase Translate x value",'j');
+            glutAddMenuEntry("Increase Translate y value",'k');
+            glutAddMenuEntry("Increase Translate z value",'l');
+            glutAddMenuEntry("Decrease Translate x value",'q');
+            glutAddMenuEntry("Decrease Translate y value",'w');
+            glutAddMenuEntry("Decrease Translate z value",'e');
+            glutAddMenuEntry("GL_FRONT & GL_LINE",'z');
+            glutAddMenuEntry("GL_FRONT & GL_POINT",'x');
+            glutAddMenuEntry("GL_FRONT & GL_FILL",'c');
+            glutAddMenuEntry("GL_BACK & GL_LINE",'v');
+            glutAddMenuEntry("GL_BACK & GL_POINT",'b');
+            glutAddMenuEntry("GL_BACK & GL_FILL",'n');
+            glutAddMenuEntry("GL_FRONT_AND_BACK & GL_LINE",'m');
+            glutAddMenuEntry("GL_FRONT_AND_BACK & GL_POINT",'o');
+            glutAddMenuEntry("GL_FRONT_AND_BACK & GL_FILL",'p');
+            //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
+            glutAttachMenu(GLUT_RIGHT_BUTTON);
+            
 			// OpenGL settings
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
+            
+            //default
+            glPolygonMode(GL_FRONT,GL_FILL);
 
 			// Enter GLUT's main loop
 			glutMainLoop();
