@@ -14,26 +14,21 @@
 //#include <GLUT/glut.h> //-- MAC
 //#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
 
-
-#define _USE_MATH_DEFINES
-#define Cos(th) cos(M_PI/180*(th))
-#define Sin(th) sin(M_PI/180*(th))
-
 using namespace std;
 
 // Dimensions of the figures
 float length, width, height, radius, slices, stacks;
 
 //Global Variables to Transformations
-float px=0,py=0,pz=5;
+float px = 0, py = 0, pz = 5;
 
-float rotate_y=0;
-float rotate_x=0;
-float rotate_z=0;
+float rotate_y = 0;
+float rotate_x = 0;
+float rotate_z = 0;
 
-float translate_y=0;
-float translate_x=0;
-float translate_z=0;
+float translate_y = 0;
+float translate_x = 0;
+float translate_z = 0;
 
 // Global variable store 3d file read
 vector<string> file3dRead;
@@ -71,58 +66,27 @@ vector<string> read3d(string figure) {
 	return vecx;
 }
 
-// Draws cone.3d
-void drawCone3d() {
-	// Sides
-	glBegin(GL_TRIANGLES);
-	float k = 0;
-	int j = 0;
-	while (k <= 360 && j<vrtx.size()) {
-		glColor3f(1, 0, 0);
-		glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
-		glVertex3f(vrtx[j + 3], vrtx[j + 4], vrtx[j + 5]);
-		glVertex3f(vrtx[j + 6], vrtx[j + 7], vrtx[j + 8]);
-		k += slices;
-		j+=9;
-	}
-	glEnd();
-
-	// Bottom circle
-	glRotated(90, 1, 0, 0);	// Rotate back
-	glBegin(GL_TRIANGLES);
-	k = 0;
-	while (k <= 360 && j<vrtx.size()) {
-		glColor3f(0, 1, 0);
-		glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
-		glVertex3f(vrtx[j + 3], vrtx[j + 4], vrtx[j + 5]);
-		glVertex3f(vrtx[j + 6], vrtx[j + 7], vrtx[j + 8]);
-		k += slices;
-		j+=9;
-	}
-	glEnd();
-}
-
 // Show file.3d content in file3dRead vector
 void drawRenderSceneFile3d(void) {
 	int size = stoi(file3dRead[0]); // number of vertex
 	int conta = 0;
-  string line; // String processed of all file3dRead strings concatenated into one of plane.3d or box.3d
+	string line; // String processed of all file3dRead strings concatenated into one of plane.3d or box.3d
 
-  for (int i = 1; i <= size; i++) {
-    if (conta != 0) { // Adding ',' at the end of each line except the first
-          line = line + " " + file3dRead[i];
-    }
-    else {
-          line += file3dRead[i];
-          conta++;
-    }
-  }
+	for (int i = 1; i <= size; i++) {
+		if (conta != 0) { // Adding ',' at the end of each line except the first
+			line = line + " " + file3dRead[i];
+		}
+		else {
+			line += file3dRead[i];
+			conta++;
+		}
+	}
 
-  // Build an istream that holds the input string
-  istringstream iss(line);
+	// Build an istream that holds the input string
+	istringstream iss(line);
 
-  // Iterates over the istream, using >> to grab floats and push_back to store them in the vector
-  copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(vrtx));
+	// Iterates over the istream, using >> to grab floats and push_back to store them in the vector
+	copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(vrtx));
 
 	// Clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -130,42 +94,50 @@ void drawRenderSceneFile3d(void) {
 	// Set the Camera
 	glLoadIdentity();
 	gluLookAt(px,py,pz,0,0,0,0.0f,1.0f,0.0f);
+
 	// Geometric Transformations
 	glRotatef( rotate_x, 1.0, 0.0, 0.0 );
 	glRotatef( rotate_y, 0.0, 1.0, 0.0 );
 	glRotatef( rotate_z, 0.0, 0.0, 1.0 );
 	glTranslatef(translate_x,translate_y,translate_z);
 
+	glBegin(GL_TRIANGLES);
+
 	if (splitted[1] == "plane.3d") {
-		glBegin(GL_TRIANGLES);
-		for (int j = 0; j<vrtx.size(); j += 3) {
+		for (int j = 0; j < vrtx.size(); j += 3) {
 			glColor3f(0, 1, 0);
 			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
 		}
-		glEnd();
 	}
 	else if (splitted[1] == "box.3d") {
-		int colour = 0;
-		glBegin(GL_TRIANGLES);
-
-		for (int j = 0; j<vrtx.size(); j += 3) {
+		for (int j = 0; j < vrtx.size(); j += 3) {
 			if (j <= 35) glColor3f(1, 0, 0); // Lower face && Upper face
 			else if (j >= 36 && j <= 72) glColor3f(0, 1, 0); // Left face && Right face
 			else glColor3f(0, 0, 1);  // Front face && Back face
 			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
 		}
-		glEnd();
 	}
 	else if (splitted[1] == "sphere.3d") {
 		//drawSphere3d();
 
 	}
 	else if (splitted[1] == "cone.3d") {
-		//drawCone3d();
-		for (int j = 0; j<vrtx.size(); j++) {
-			cout << vrtx[j] << endl;
+		for (int j = 0; j < vrtx.size(); j += 18) {
+			// Base
+			glColor3f(0, 1, 0);
+			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
+			glVertex3f(vrtx[j + 3], vrtx[j + 4], vrtx[j + 5]);
+			glVertex3f(vrtx[j + 6], vrtx[j + 7], vrtx[j + 8]);
+
+			// Sides
+			glColor3f(1, 0, 0);
+			glVertex3f(vrtx[j + 9], vrtx[j + 10], vrtx[j + 11]);
+			glVertex3f(vrtx[j + 12], vrtx[j + 13], vrtx[j + 14]);
+			glVertex3f(vrtx[j + 15], vrtx[j + 16], vrtx[j + 17]);
 		}
 	}
+
+	glEnd();
 
 	// End of frame
 	glutSwapBuffers();

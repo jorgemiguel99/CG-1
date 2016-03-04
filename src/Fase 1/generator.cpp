@@ -47,6 +47,8 @@ vector<string> splitted;
 
 // Global variable to draw sphere
 float v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z, v4x, v4y, v4z;
+float thetaAux = 360 / slices / 2, phiAux = 180 / stacks / 2;
+float rad = 3.14159f / 180.0f;
 
 // Operation name has 100 char at max
 #define MAX 100
@@ -154,25 +156,23 @@ void printBox3d() {
 
 // Prints the sphere on the .3d file
 void printSphere3d() {
-    ofstream sphere;
-    sphere.open(filename.c_str());
-    sphere << sphereVertex << endl; // Total number of vertices
+	ofstream sphere;
+	sphere.open(filename.c_str());
+	sphere << sphereVertex << endl; // Total number of vertices
 
 	int i, j;
-	const double pi = 3.1415926535897;
 	float r = radius;
-	float inicialPolar = -pi / 2;
-	// 0 < longitude < 2 * PI , -PI/2 < polar < PI
+	float inicialPolar = - M_PI / 2;
 
 	for (i = 0; i < stacks; i++) {
-		float polar = inicialPolar + i * (pi / stacks);
-		float polar2 = inicialPolar + (i + 1) * (pi / stacks);
+		float polar = inicialPolar + i * (M_PI / stacks);
+		float polar2 = inicialPolar + (i + 1) * (M_PI / stacks);
 
 		for (j = 0; j < slices; j++) {
 
-			float longitude = j * (2 * pi / slices);
-			float longitude2 = (j + 1) * (2 * pi / slices);
-	
+			float longitude = j * (2 * M_PI / slices);
+			float longitude2 = (j + 1) * (2 * M_PI / slices);
+
 			float z1 = r * cos(polar) * cos(longitude);
 			float x1 = r * cos(polar) * sin(longitude);
 			float y1 = r * sin(polar);
@@ -207,10 +207,10 @@ void printSphere3d() {
 				sphere << x3 << " " << y3 << " " << z3 << endl;
 				sphere << x4 << " " << y4 << " " << z4 << endl;
 				sphere << x2 << " " << y2 << " " << z2 << endl;
-			}      
-
-        }
-    }
+			}
+		}
+	}
+	sphere.close();
 }
 
 // Prints the cone on the .3d file
@@ -233,6 +233,8 @@ void printCone3d() {
 		cone << radius*sin(alpha) << " 0.0 " << radius*cos(alpha) << endl;
 		cone << radius*sin(alpha + beta) << " 0.0 " << radius*cos(alpha + beta) << endl;
 	}
+
+	cone.close();
 }
 
 // Draws the plane
@@ -334,31 +336,22 @@ void drawBox() {
 // Draws the sphere
 void drawSphere() {
 	int i, j;
-	const double pi = 3.1415926535897;
 	float r = radius;
 
-	int paridade = 0; // variable to change colors at top and bottom sphere cap	
+	int paridade = 0; // Variable used to change colors at the top and the bottom of the sphere cap	
 
-	float inicialPolar = -pi / 2;
-	// 0 < longitude < 2 * PI , -PI/2 < polar < PI
+	float inicialPolar = - M_PI / 2;
+
 	glBegin(GL_TRIANGLES);
 
 	for (i = 0; i < stacks; i++) {
-		float polar = inicialPolar + i * (pi / stacks);
-		float polar2 = inicialPolar + (i + 1) * (pi / stacks);
+		float polar = inicialPolar + i * (M_PI / stacks);
+		float polar2 = inicialPolar + (i + 1) * (M_PI / stacks);
 
 		for (j = 0; j < slices; j++) {
-
-			float longitude = j * (2 * pi / slices);
-			float longitude2 = (j + 1) * (2 * pi / slices);
-			/*
-			Points		v = 1 3 2 , b = 3 4 2
-			2 ___ 4
-			|   |
-			|__ |
-			1   3
-
-			*/
+			float longitude = j * (2 * M_PI / slices);
+			float longitude2 = (j + 1) * (2 * M_PI / slices);
+			
 			float z1 = r * cos(polar) * cos(longitude);
 			float x1 = r * cos(polar) * sin(longitude);
 			float y1 = r * sin(polar);
@@ -376,30 +369,26 @@ void drawSphere() {
 			float y4 = r * sin(polar2);
 
 			if (i == 0) {
-				if (paridade % 2 == 0)
-					glColor3f(1.0f, 0.0f, 0.0f);
+				if (paridade % 2 == 0) glColor3f(1.0f, 0.0f, 0.0f);
 				else glColor3f(1.0f, 1.0f, 1.0f);
 				paridade++;
-
 				glVertex3f(x3, y3, z3);
 				glVertex3f(x4, y4, z4);
 				glVertex3f(x2, y2, z2);
-				sphereVertex += 3;
 
+				sphereVertex += 3;
 			}
 			else if (i == stacks - 1) {
-				if (paridade % 2 == 0)
-					glColor3f(1.0f, 0.0f, 0.0f);
+				if (paridade % 2 == 0) glColor3f(1.0f, 0.0f, 0.0f);
 				else glColor3f(1.0f, 1.0f, 1.0f);
 				paridade++;
 				glVertex3f(x1, y1, z1);
 				glVertex3f(x3, y3, z3);
 				glVertex3f(x2, y2, z2);
-				sphereVertex += 3;
 
+				sphereVertex += 3;
 			}
 			else {
-
 				glColor3f(1.0f, 0.0f, 0.0f);
 				glVertex3f(x3, y3, z3);
 				glVertex3f(x2, y2, z2);
@@ -412,9 +401,7 @@ void drawSphere() {
 
 				sphereVertex += 6;
 			}
-
 		}
-
 	}
 	glEnd();
 
