@@ -154,8 +154,27 @@ void printSphere3d() {
     sphere.open(filename.c_str());
     sphere << sphereVertex << endl; // Total number of vertices
     
-    for (float phi = 0; phi <= (180 - phiAux); phi += 2 * (int)phiAux) {
-        for (float theta = 0; theta <= (360 - thetaAux); theta += 2 * thetaAux) {
+    int sliceVar,stackVar;
+    
+    if(slices<=1) sliceVar=1;
+    else sliceVar=2;
+    
+    if(stacks<=1) stackVar=1;
+    else stackVar=2;
+    
+    if (slices<=1) {
+        thetaAux=1;
+    }
+    else thetaAux=360/slices/2;
+    
+    
+    if (stacks<=1) {
+        phiAux=1;
+    }
+    else phiAux=360/slices/2;
+    
+    for (float phi = 0; phi <= (180 - phiAux); phi += stackVar * phiAux) {
+        for (float theta = 0; theta <= (360 - thetaAux); theta += sliceVar * thetaAux) {
             sphere << v1x << " " << v1y << " " << v1z << endl;
             sphere << v2x << " " << v2y << " " << v2z << endl;
             sphere << v3x << " " << v3y << " " << v3z << endl;
@@ -294,8 +313,27 @@ void drawBox() {
 
 // Draws the sphere
 void drawSphere() {
-	for (float phi = 0; phi <= (180 - phiAux); phi += 2 * (int)phiAux) {
-		for (float theta = 0; theta <= (360 - thetaAux); theta += 2 * thetaAux) {
+    int sliceVar,stackVar;
+    
+    if(slices<=1) sliceVar=1;
+    else sliceVar=2;
+    
+    if(stacks<=1) stackVar=1;
+    else stackVar=2;
+    
+    if (slices<=1) {
+        thetaAux=1;
+    }
+    else thetaAux=360/slices/2;
+    
+    
+    if (stacks<=1) {
+        phiAux=1;
+    }
+    else phiAux=360/slices/2;
+    
+	for (float phi = 0; phi <= (180 - phiAux); phi += stackVar * (int)phiAux) {
+		for (float theta = 0; theta <= (360 - thetaAux); theta += sliceVar * thetaAux) {
 			v1x = radius*sin(phi*rad)*cos(theta*rad);
 			v1y = radius*sin(phi*rad)*sin(theta*rad);
 			v1z = radius*cos(phi*rad);
