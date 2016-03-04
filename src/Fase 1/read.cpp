@@ -118,7 +118,13 @@ void drawRenderSceneFile3d(void) {
 		}
 	}
 	else if (splitted[1] == "sphere.3d") {
-		//drawSphere3d();
+        int par = 0;
+        for (int j = 0; j < vrtx.size();) {
+            if (par % 2 == 0) glColor3f(1, 0, 0); else glColor3f(1, 1, 1); par++;
+            glVertex3f(vrtx[j++], vrtx[j++], vrtx[j++]);
+            glVertex3f(vrtx[j++], vrtx[j++], vrtx[j++]);
+            glVertex3f(vrtx[j++], vrtx[j++], vrtx[j++]);
+        }
 
 	}
 	else if (splitted[1] == "cone.3d") {
