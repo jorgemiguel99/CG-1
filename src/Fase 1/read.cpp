@@ -21,11 +21,6 @@
 
 using namespace std;
 
-// Global variables handling files
-string desktop = "C:\\Users\\Tiago\\Desktop\\Universidade\\3º Ano\\CG\\Projeto\\Fase 1\\generatorXML.xml";
-//string desktop = "/Users/zecarlos/Desktop/";// -- MAC
-
-
 // Dimensions of the figures
 float length, width, height, radius, slices, stacks;
 
@@ -76,7 +71,7 @@ vector<string> read3d(string figure) {
 
 // Show file.3d content in file3dRead vector
 void drawRenderSceneFile3d(void) {
-	vector<float> side_vrtx, circle_vrtx, rotate_vrtx;
+	vector<float> side_vrtx, circle_vrtx, rotate_vrtx,vrtx;
 	int size = stoi(file3dRead[0]); // number of vertex
 	int conta = 0;
     if(splitted[1] == "plane.3d" || splitted[1] == "box.3d" ){
@@ -101,9 +96,9 @@ void drawRenderSceneFile3d(void) {
     }
     else if(splitted[1] == "cone.3d"){
         string coneSide,coneCircle,coneRotate;
-        
+        int i;
         //save only side vertex of file cone.3d
-        for (int i = 1; i <= size && file3dRead[i]!="rotate"; i++) {
+        for (i = 1; i <= size && file3dRead[i]!="rotate"; i++) {
             if (conta != 0) { // Adding ',' at the end of each line except the first
                 coneSide = coneSide + " " + file3dRead[i];
             }
@@ -129,22 +124,22 @@ void drawRenderSceneFile3d(void) {
         }
         
         // Build an istream that holds the input string
-        istringstream iss(coneSide);
+        istringstream iss1(coneSide);
         
         // Iterates over the istream, using >> to grab floats and push_back to store them in the vector
-        copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(side_vrtx));
+        copy(istream_iterator<float>(iss1), istream_iterator<float>(), back_inserter(side_vrtx));
         
         // Build an istream that holds the input string
-        istringstream iss(coneRotate);
+        istringstream iss2(coneRotate);
         
         // Iterates over the istream, using >> to grab floats and push_back to store them in the vector
-        copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(rotate_vrtx));
+        copy(istream_iterator<float>(iss2), istream_iterator<float>(), back_inserter(rotate_vrtx));
         
         // Build an istream that holds the input string
-        istringstream iss(coneCircle);
+        istringstream iss3(coneCircle);
         
         // Iterates over the istream, using >> to grab floats and push_back to store them in the vector
-        copy(istream_iterator<float>(iss), istream_iterator<float>(), back_inserter(circle_vrtx));
+        copy(istream_iterator<float>(iss3), istream_iterator<float>(), back_inserter(circle_vrtx));
         
     }
 
@@ -184,7 +179,6 @@ void drawRenderSceneFile3d(void) {
 	// Sphere needs 60 vertices -- CHANGE TO REAL NUMBER
 	else if (splitted[1] == "sphere.3d") {
 		// Under construction...
-        drawEsferaAndre();
 	}
 	//Cone needs 80 vertices -- CHANGE TO REAL NUMBER
 	else if (splitted[1] == "cone.3d") {
@@ -195,6 +189,7 @@ void drawRenderSceneFile3d(void) {
 	glutSwapBuffers();
 }
 
+/*
 void drawEsferaAndre(){
     float v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z, v4x, v4y, v4z;
     
@@ -271,7 +266,7 @@ void drawSphere(float r, float slices, float stacks) {
 			float longitude2 = longitude + slices_step;
 
 
-			/*
+			/
 			Points
 
 			4 ___2
@@ -279,7 +274,7 @@ void drawSphere(float r, float slices, float stacks) {
 			|___|
 			3	1
 
-			*/
+			/
 
 			float x1 = r * cos(polar) * cos(longitude);
 			float y1 = r * cos(polar) * sin(longitude);
@@ -319,7 +314,7 @@ void drawSphere(float r, float slices, float stacks) {
 
 	glEnd();
 }
-
+*/
 void changeSize(int w, int h) {
 	// Prevent a divide by zero, when window is too short
 	if (h == 0) h = 1;
@@ -388,7 +383,6 @@ void searchXMLData(TiXmlElement* pElem, string name3d) {
 			char* pszText = (char*)pAttrib->Value();
 			if (pszText == name3d) {
 				printf("Found %s!\n", pszText);
-				read = true;
 				file3dRead = read3d((string)pszText); // Save the content of the .3d file in a vector
 				return;
 			}
