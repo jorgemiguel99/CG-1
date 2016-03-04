@@ -267,6 +267,11 @@ void readXML(const char* file, string name3d) {
 	searchXMLData(pRoot, name3d);
 }
 
+// write function to process menu events
+void newMenu (int id_op){
+    keyboardNormal((unsigned char)id_op, 0, 0);
+}
+
 // Main function
 int main(int argc, char **argv) {
 	string operationLine, operation;
