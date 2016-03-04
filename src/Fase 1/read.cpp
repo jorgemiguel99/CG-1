@@ -105,22 +105,22 @@ void drawRenderSceneFile3d(void) {
 
 	if (splitted[1] == "plane.3d") {
 		for (int j = 0; j < vrtx.size(); j += 3) {
-			glColor3f(0, 1, 0);
+			//glColor3f(0, 1, 0);
 			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
 		}
 	}
 	else if (splitted[1] == "box.3d") {
 		for (int j = 0; j < vrtx.size(); j += 3) {
-			if (j <= 35) glColor3f(1, 0, 0); // Lower face && Upper face
-			else if (j >= 36 && j <= 72) glColor3f(0, 1, 0); // Left face && Right face
-			else glColor3f(0, 0, 1);  // Front face && Back face
+			//if (j <= 35) glColor3f(1, 0, 0); // Lower face && Upper face
+			//else if (j >= 36 && j <= 72) glColor3f(0, 1, 0); // Left face && Right face
+			//else glColor3f(0, 0, 1);  // Front face && Back face
 			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
 		}
 	}
 	else if (splitted[1] == "sphere.3d") {
         int par = 0;
         for (int j = 0; j < vrtx.size();) {
-            if (par % 2 == 0) glColor3f(1, 0, 0); else glColor3f(1, 1, 1); par++;
+			//if (par % 2 == 0) glColor3f(1, 0, 0); else glColor3f(1, 1, 1); par++;
             glVertex3f(vrtx[j++], vrtx[j++], vrtx[j++]);
             glVertex3f(vrtx[j++], vrtx[j++], vrtx[j++]);
             glVertex3f(vrtx[j++], vrtx[j++], vrtx[j++]);
@@ -130,13 +130,13 @@ void drawRenderSceneFile3d(void) {
 	else if (splitted[1] == "cone.3d") {
 		for (int j = 0; j < vrtx.size(); j += 18) {
 			// Base
-			glColor3f(0, 1, 0);
+			//glColor3f(0, 1, 0);
 			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
 			glVertex3f(vrtx[j + 3], vrtx[j + 4], vrtx[j + 5]);
 			glVertex3f(vrtx[j + 6], vrtx[j + 7], vrtx[j + 8]);
 
 			// Sides
-			glColor3f(1, 0, 0);
+			//glColor3f(1, 0, 0);
 			glVertex3f(vrtx[j + 9], vrtx[j + 10], vrtx[j + 11]);
 			glVertex3f(vrtx[j + 12], vrtx[j + 13], vrtx[j + 14]);
 			glVertex3f(vrtx[j + 15], vrtx[j + 16], vrtx[j + 17]);

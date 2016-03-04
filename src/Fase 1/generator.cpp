@@ -241,12 +241,12 @@ void printCone3d() {
 void drawPlane() {
 	glBegin(GL_TRIANGLES);
 
-	glColor3f(0, 1, 0);
+	//glColor3f(0, 1, 0);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(length, 0.0f, 0.0f);
 	glVertex3f(0.0f, width, 0.0f);
 
-	glColor3f(0, 1, 0);
+	//glColor3f(0, 1, 0);
 	glVertex3f(length, 0.0f, 0.0f);
 	glVertex3f(length, width, 0.0f);
 	glVertex3f(0.0f, width, 0.0f);
@@ -262,67 +262,67 @@ void drawBox() {
 	glBegin(GL_TRIANGLES);
 
 	// Lower face
-	glColor3f(1, 0, 0);
+	//glColor3f(1, 0, 0);
 	glVertex3f(0.0f, width, 0.0f);
 	glVertex3f(length, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 
-	glColor3f(1, 0, 0);
+	//glColor3f(1, 0, 0);
 	glVertex3f(0.0f, width, 0.0f);
 	glVertex3f(length, width, 0.0f);
 	glVertex3f(length, 0.0f, 0.0f);
 
 	// Upper face
-	glColor3f(1, 0, 0);
+	//glColor3f(1, 0, 0);
 	glVertex3f(0.0f, 0.0f, height);
 	glVertex3f(length, 0.0f, height);
 	glVertex3f(0.0f, width, height);
 
-	glColor3f(1, 0, 0);
+	//glColor3f(1, 0, 0);
 	glVertex3f(length, 0.0f, height);
 	glVertex3f(length, width, height);
 	glVertex3f(0.0f, width, height);
 
 	// Right face
-	glColor3f(0, 1, 0);
+	//glColor3f(0, 1, 0);
 	glVertex3f(length, 0.0f, 0.0f);
 	glVertex3f(length, width, 0.0f);
 	glVertex3f(length, 0.0f, height);
 
-	glColor3f(0, 1, 0);
+	//glColor3f(0, 1, 0);
 	glVertex3f(length, width, 0.0f);
 	glVertex3f(length, width, height);
 	glVertex3f(length, 0.0f, height);
 
 	// Left face
-	glColor3f(0, 1, 0);
+	//glColor3f(0, 1, 0);
 	glVertex3f(0.0f, width, 0.0f);
 	glVertex3f(0.0f, 0.0f, height);
 	glVertex3f(0.0f, width, height);
 
-	glColor3f(0, 1, 0);
+	//glColor3f(0, 1, 0);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, height);
 	glVertex3f(0.0f, width, 0.0f);
 
 	// Front face
-	glColor3f(0, 0, 1);
+	//glColor3f(0, 0, 1);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(length, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, height);
 
-	glColor3f(0, 0, 1);
+	//glColor3f(0, 0, 1);
 	glVertex3f(length, 0.0f, 0.0f);
 	glVertex3f(length, 0.0f, height);
 	glVertex3f(0.0f, 0.0f, height);
 
 	// Back face
-	glColor3f(0, 0, 1);
+	//glColor3f(0, 0, 1);
 	glVertex3f(0.0f, width, 0.0f);
 	glVertex3f(0.0f, width, height);
 	glVertex3f(length, width, 0.0f);
 
-	glColor3f(0, 0, 1);
+	//glColor3f(0, 0, 1);
 	glVertex3f(length, width, 0.0f);
 	glVertex3f(0.0f, width, height);
 	glVertex3f(length, width, height);
@@ -369,8 +369,8 @@ void drawSphere() {
 			float y4 = r * sin(polar2);
 
 			if (i == 0) {
-				if (paridade % 2 == 0) glColor3f(1.0f, 0.0f, 0.0f);
-				else glColor3f(1.0f, 1.0f, 1.0f);
+				//if (paridade % 2 == 0) glColor3f(1.0f, 0.0f, 0.0f);
+				//else glColor3f(1.0f, 1.0f, 1.0f);
 				paridade++;
 				glVertex3f(x3, y3, z3);
 				glVertex3f(x4, y4, z4);
@@ -379,8 +379,8 @@ void drawSphere() {
 				sphereVertex += 3;
 			}
 			else if (i == stacks - 1) {
-				if (paridade % 2 == 0) glColor3f(1.0f, 0.0f, 0.0f);
-				else glColor3f(1.0f, 1.0f, 1.0f);
+				//if (paridade % 2 == 0) glColor3f(1.0f, 0.0f, 0.0f);
+				//else glColor3f(1.0f, 1.0f, 1.0f);
 				paridade++;
 				glVertex3f(x1, y1, z1);
 				glVertex3f(x3, y3, z3);
@@ -389,12 +389,12 @@ void drawSphere() {
 				sphereVertex += 3;
 			}
 			else {
-				glColor3f(1.0f, 0.0f, 0.0f);
+				//glColor3f(1.0f, 0.0f, 0.0f);
 				glVertex3f(x3, y3, z3);
 				glVertex3f(x2, y2, z2);
 				glVertex3f(x1, y1, z1);
 
-				glColor3f(1.0f, 1.0f, 1.0f);
+				//glColor3f(1.0f, 1.0f, 1.0f);
 				glVertex3f(x3, y3, z3);
 				glVertex3f(x4, y4, z4);
 				glVertex3f(x2, y2, z2);
@@ -419,13 +419,13 @@ void drawCone() {
 		float beta = (2 * M_PI) / slices;
 
 		// Base
-		glColor3f(0, 1, 0);
+		//glColor3f(0, 1, 0);
 		glVertex3f(0.0f, 0.0f, 0.0f);
 		glVertex3f(radius*sin(alpha + beta), 0.0f, radius*cos(alpha + beta));
 		glVertex3f(radius*sin(alpha), 0.0f, radius*cos(alpha));
 
 		// Sides
-		glColor3f(1, 0, 0);
+		//glColor3f(1, 0, 0);
 		glVertex3f(0.0f, height, 0.0f);
 		glVertex3f(radius*sin(alpha), 0.0f, radius*cos(alpha));
 		glVertex3f(radius*sin(alpha + beta), 0.0f, radius*cos(alpha + beta));
@@ -544,7 +544,7 @@ void newMenu (int id_op){
 // Main function
 int main(int argc, char **argv) {
 	string operationLine, operation;
-
+	int wrong = 0;
 	cout << "Insert your operation:" << endl;
 	getline(cin, operationLine);
 	splitted = split(operationLine, ' '); // Save a string on a vector with the substrings separated by a space
@@ -553,95 +553,101 @@ int main(int argc, char **argv) {
 
 	if (splitted[0] == "Generator" || splitted[0] == "generator") {
 		switch (checkOP(splitted[1])) {
-			case 1:	// Plane -> receives the length and the width
-				if (splitted.size() == 5) {
-					filename = splitted[4];
-					length = stof(splitted[2]);
-					width = stof(splitted[3]);
-				}
-				break;
-			case 2: // Box -> receives the length, the width and the height
-				if (splitted.size() == 6) {
-			        filename = splitted[5];
-					length = stof(splitted[2]);
-					width = stof(splitted[3]);
-					height = stof(splitted[4]);
-				}
-				break;
-			case 3: // Sphere -> receives the radius, the slices and the stacks
-				if (splitted.size() == 6) {
-			        filename = splitted[5];
-					radius = stof(splitted[2]);
-					slices = stof(splitted[3]);
-					stacks = stof(splitted[4]);
-				}
-				break;
-			case 4: // Cone -> receives the base radius, the height, the slices and the stacks
-				if (splitted.size() == 7) {
-			        filename = splitted[6];
-					radius = stof(splitted[2]);
-					height = stof(splitted[3]);
-					slices = stof(splitted[4]);
-					stacks = stof(splitted[5]);
-				}
-				break;
-			default:
-				cout << "Not an operation!\n" << endl;
-				filename = "invalid.3d";
-				break;
+		case 1:	// Plane -> receives the length and the width
+			if (splitted.size() == 5) {
+				filename = splitted[4];
+				length = stof(splitted[2]);
+				width = stof(splitted[3]);
+			}
+			else { cout << "Number of arguments wrong!" << endl; wrong = 1; }
+			break;
+		case 2: // Box -> receives the length, the width and the height
+			if (splitted.size() == 6) {
+				filename = splitted[5];
+				length = stof(splitted[2]);
+				width = stof(splitted[3]);
+				height = stof(splitted[4]);
+			}
+			else { cout << "Number of arguments wrong!" << endl; wrong = 1; }
+			break;
+		case 3: // Sphere -> receives the radius, the slices and the stacks
+			if (splitted.size() == 6) {
+				filename = splitted[5];
+				radius = stof(splitted[2]);
+				slices = stof(splitted[3]);
+				stacks = stof(splitted[4]);
+			}
+			else { cout << "Number of arguments wrong!" << endl; wrong = 1; }
+			break;
+		case 4: // Cone -> receives the base radius, the height, the slices and the stacks
+			if (splitted.size() == 7) {
+				filename = splitted[6];
+				radius = stof(splitted[2]);
+				height = stof(splitted[3]);
+				slices = stof(splitted[4]);
+				stacks = stof(splitted[5]);
+			}
+			else { cout << "Number of arguments wrong!" << endl; wrong = 1; }
+			break;
+		default:
+			cout << "Not an operation!\n" << endl;
+			filename = "invalid.3d";
+			break;
 		}
 
-	// Init
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowPosition(100, 100);
-    glutInitWindowSize(800, 800);
-    glutCreateWindow("Solar System - Stage 1");
+		if (wrong == 0) {
+			// Init
+			glutInit(&argc, argv);
+			glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+			glutInitWindowPosition(100, 100);
+			glutInitWindowSize(800, 800);
+			glutCreateWindow("Solar System - Stage 1");
 
-    // Callback registration
-    glutDisplayFunc(renderScene);
-    glutReshapeFunc(changeSize);
+			// Callback registration
+			glutDisplayFunc(renderScene);
+			glutReshapeFunc(changeSize);
 
-    // Registration of the keyboard
-    glutKeyboardFunc(keyboardNormal);
-    glutSpecialFunc(keyboardExtra);
-        
-    //menu
-    glutCreateMenu(newMenu);
-    glutAddMenuEntry("Decrease Length or Stacks",'a');
-    glutAddMenuEntry("Increase Length or Stacks",'s');
-    glutAddMenuEntry("Decrease Hight or Stacks",'d');
-    glutAddMenuEntry("Increase Hight or Stacks",'f');
-    glutAddMenuEntry("Decrease Width",'g');
-    glutAddMenuEntry("Increase Width",'h');
-    glutAddMenuEntry("Increase Translate x value",'j');
-    glutAddMenuEntry("Increase Translate y value",'k');
-    glutAddMenuEntry("Increase Translate z value",'l');
-    glutAddMenuEntry("Decrease Translate x value",'q');
-    glutAddMenuEntry("Decrease Translate y value",'w');
-    glutAddMenuEntry("Decrease Translate z value",'e');
-    glutAddMenuEntry("GL_FRONT & GL_LINE",'z');
-    glutAddMenuEntry("GL_FRONT & GL_POINT",'x');
-    glutAddMenuEntry("GL_FRONT & GL_FILL",'c');
-    glutAddMenuEntry("GL_BACK & GL_LINE",'v');
-    glutAddMenuEntry("GL_BACK & GL_POINT",'b');
-    glutAddMenuEntry("GL_BACK & GL_FILL",'n');
-    glutAddMenuEntry("GL_FRONT_AND_BACK & GL_LINE",'m');
-    glutAddMenuEntry("GL_FRONT_AND_BACK & GL_POINT",'o');
-    glutAddMenuEntry("GL_FRONT_AND_BACK & GL_FILL",'p');
-    //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
-    glutAttachMenu(GLUT_RIGHT_BUTTON);
+			// Registration of the keyboard
+			glutKeyboardFunc(keyboardNormal);
+			glutSpecialFunc(keyboardExtra);
 
-    // OpenGL settings
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-       
-    //default
-    glPolygonMode(GL_FRONT,GL_FILL);
+			//menu
+			glutCreateMenu(newMenu);
+			glutAddMenuEntry("Decrease Length or Stacks", 'a');
+			glutAddMenuEntry("Increase Length or Stacks", 's');
+			glutAddMenuEntry("Decrease Hight or Stacks", 'd');
+			glutAddMenuEntry("Increase Hight or Stacks", 'f');
+			glutAddMenuEntry("Decrease Width", 'g');
+			glutAddMenuEntry("Increase Width", 'h');
+			glutAddMenuEntry("Increase Translate x value", 'j');
+			glutAddMenuEntry("Increase Translate y value", 'k');
+			glutAddMenuEntry("Increase Translate z value", 'l');
+			glutAddMenuEntry("Decrease Translate x value", 'q');
+			glutAddMenuEntry("Decrease Translate y value", 'w');
+			glutAddMenuEntry("Decrease Translate z value", 'e');
+			glutAddMenuEntry("GL_FRONT & GL_LINE", 'z');
+			glutAddMenuEntry("GL_FRONT & GL_POINT", 'x');
+			glutAddMenuEntry("GL_FRONT & GL_FILL", 'c');
+			glutAddMenuEntry("GL_BACK & GL_LINE", 'v');
+			glutAddMenuEntry("GL_BACK & GL_POINT", 'b');
+			glutAddMenuEntry("GL_BACK & GL_FILL", 'n');
+			glutAddMenuEntry("GL_FRONT_AND_BACK & GL_LINE", 'm');
+			glutAddMenuEntry("GL_FRONT_AND_BACK & GL_POINT", 'o');
+			glutAddMenuEntry("GL_FRONT_AND_BACK & GL_FILL", 'p');
+			//button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
+			glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-    // Enter GLUT's main loop
-    glutMainLoop();
-  }
+			// OpenGL settings
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+
+			//default
+			glPolygonMode(GL_FRONT, GL_FILL);
+
+			// Enter GLUT's main loop
+			glutMainLoop();
+		}
+	}
 	else cout << "Try again with this usage: generator operationName inputs filename" << endl;
 
 	return 1;
