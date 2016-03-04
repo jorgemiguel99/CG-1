@@ -24,6 +24,9 @@ string filename;
 // Number of cone vertices
 int coneVertex = 0;
 
+// Number of sphere vertices
+int sphereVertex = 0;
+
 // Dimensions of the figures
 float length, width, height, radius, slices, stacks;
 
@@ -35,6 +38,11 @@ vector<string> file3dRead;
 
 // Global variable process input
 vector<string> splitted;
+
+// Global variable to draw sphere
+float v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z, v4x, v4y, v4z;
+float thetaAux = 360 / slices / 2, phiAux = 180 / stacks / 2;
+float rad = 3.14159f / 180.0f;
 
 // Operation name has 100 char at max
 #define MAX 100
@@ -142,7 +150,20 @@ void printBox3d() {
 
 // Prints the sphere on the .3d file
 void printSphere3d() {
-	// Under construction
+    ofstream sphere;
+    sphere.open(filename.c_str());
+    sphere << sphereVertex << endl; // Total number of vertices
+    
+    for (float phi = 0; phi <= (180 - phiAux); phi += 2 * (int)phiAux) {
+        for (float theta = 0; theta <= (360 - thetaAux); theta += 2 * thetaAux) {
+            sphere << v1x << " " << v1y << " " << v1z << endl;
+            sphere << v2x << " " << v2y << " " << v2z << endl;
+            sphere << v3x << " " << v3y << " " << v3z << endl;
+            sphere << v3x << " " << v3y << " " << v3z << endl;
+            sphere << v2x << " " << v2y << " " << v2z << endl;
+            sphere << v4x << " " << v4y << " " << v4z << endl;
+        }
+    }
 }
 
 // Prints the cone on the .3d file
@@ -273,11 +294,6 @@ void drawBox() {
 
 // Draws the sphere
 void drawSphere() {
-	float v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z, v4x, v4y, v4z;
-
-	float thetaAux = 360 / slices / 2, phiAux = 180 / stacks / 2;
-	float rad = 3.14159f / 180.0f;
-
 	for (float phi = 0; phi <= (180 - phiAux); phi += 2 * (int)phiAux) {
 		for (float theta = 0; theta <= (360 - thetaAux); theta += 2 * thetaAux) {
 			v1x = radius*sin(phi*rad)*cos(theta*rad);
@@ -310,7 +326,9 @@ void drawSphere() {
 			glVertex3f(v2x, v2y, v2z);
 			glColor3f(0.0f, 1.0f, 0.0f);
 			glVertex3f(v4x, v4y, v4z);
-
+            
+            sphereVertex+=6;
+            
 			glEnd();
 		}
 	}
