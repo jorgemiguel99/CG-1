@@ -30,8 +30,16 @@ int sphereVertex = 0;
 // Dimensions of the figures
 float length, width, height, radius, slices, stacks;
 
-// Variables used to move the camera 
-float moveX = 0.0f, moveY = 0.0f, moveZ = 0.0f, rotateX = 0.0f, rotateY = 0.0f, rotateZ = 0.0f, angle = 0;
+//Global Variables to Transformations
+float px=0,py=0,pz=5;
+
+float rotate_y=0;
+float rotate_x=0;
+float rotate_z=0;
+
+float translate_y=0;
+float translate_x=0;
+float translate_z=0;
 
 // Global variable store 3d file read
 vector<string> file3dRead;
@@ -153,26 +161,26 @@ void printSphere3d() {
     ofstream sphere;
     sphere.open(filename.c_str());
     sphere << sphereVertex << endl; // Total number of vertices
-    
+
     int sliceVar,stackVar;
-    
+
     if(slices<=1) sliceVar=1;
     else sliceVar=2;
-    
+
     if(stacks<=1) stackVar=1;
     else stackVar=2;
-    
+
     if (slices<=1) {
         thetaAux=1;
     }
     else thetaAux=360/slices/2;
-    
-    
+
+
     if (stacks<=1) {
         phiAux=1;
     }
     else phiAux=360/slices/2;
-    
+
     for (float phi = 0; phi <= (180 - phiAux); phi += stackVar * phiAux) {
         for (float theta = 0; theta <= (360 - thetaAux); theta += sliceVar * thetaAux) {
             sphere << v1x << " " << v1y << " " << v1z << endl;
@@ -189,7 +197,6 @@ void printSphere3d() {
 void printCone3d() {
 	ofstream cone;
 	cone.open(filename.c_str());
-	coneVertex += 2; // Add "rotate" & "90 1 0 0" lines to the total vertex number
 	cone << coneVertex << endl; // Total number of vertices
 
 	// Sides
@@ -201,11 +208,7 @@ void printCone3d() {
 		k += slices;
 	}
 
-	// To distinguish the rotation
-	cone << "rotate" << endl;
-	cone << "90 1 0 0" << endl;
-
-	// Bottom circle
+    // Bottom circle
 	k = 0;
 	while (k <= 360) {
 		cone << "0.0 0.0 0.0" << endl;
@@ -314,24 +317,24 @@ void drawBox() {
 // Draws the sphere
 void drawSphere() {
     int sliceVar,stackVar;
-    
+
     if(slices<=1) sliceVar=1;
     else sliceVar=2;
-    
+
     if(stacks<=1) stackVar=1;
     else stackVar=2;
-    
+
     if (slices<=1) {
         thetaAux=1;
     }
     else thetaAux=360/slices/2;
-    
-    
+
+
     if (stacks<=1) {
         phiAux=1;
     }
     else phiAux=360/slices/2;
-    
+
 	for (float phi = 0; phi <= (180 - phiAux); phi += stackVar * (int)phiAux) {
 		for (float theta = 0; theta <= (360 - thetaAux); theta += sliceVar * thetaAux) {
 			v1x = radius*sin(phi*rad)*cos(theta*rad);
@@ -364,9 +367,9 @@ void drawSphere() {
 			glVertex3f(v2x, v2y, v2z);
 			glColor3f(0.0f, 1.0f, 0.0f);
 			glVertex3f(v4x, v4y, v4z);
-            
-            sphereVertex+=6;
-            
+
+      sphereVertex+=6;
+
 			glEnd();
 		}
 	}
@@ -437,11 +440,12 @@ void renderScene(void) {
 
     // Set the Camera
     glLoadIdentity();
-    gluLookAt(0.0, 0.0, 5.0, 0.0, 1.0, 0.0, 0.0f, 1.0f, 0.0f);
-
-	// Geometric Transformations
-	glTranslatef(moveX, moveY, moveZ);
-	glRotatef(angle, rotateX, rotateY, rotateZ);
+    gluLookAt(px,py,pz,0,0,0,0.0f,1.0f,0.0f);
+  	// Geometric Transformations
+  	glRotatef( rotate_x, 1.0, 0.0, 0.0 );
+  	glRotatef( rotate_y, 0.0, 1.0, 0.0 );
+  	glRotatef( rotate_z, 0.0, 0.0, 1.0 );
+  	glTranslatef(translate_x,translate_y,translate_z);
 
     // Draws the figures
 	switch (checkOP(splitted[1])) {
@@ -456,29 +460,43 @@ void renderScene(void) {
 }
 
 // Processing Keyboard Events
-void translation(int key_code, int x, int y) {
-	switch (key_code) {
-		case GLUT_KEY_UP: moveY++; break;
-		case GLUT_KEY_DOWN: moveY--; break;
-		case GLUT_KEY_LEFT: moveX--; break;
-		case GLUT_KEY_RIGHT: moveX++; break;
-	}
-	glutPostRedisplay();
+void keyboardNormal (unsigned char key, int x, int y){
+
+    if (key == 's' || key == 'S') {length-=1;stacks--;}
+    else if (key == 'w' || key == 'W') {length+=1;stacks--;}
+		else if (key == 's' || key == 'S') {height-=1;stacks++;}
+		else if (key == 'a' || key == 'A') {height+=1;stacks++;}
+    else if (key == 'q' || key == 'Q') width-=1;
+    else if (key == 'x' || key == 'X') width+=1;
+		else if (key == 'd' || key == 'D') translate_x+=1;
+		else if (key == 'f' || key == 'F') translate_y+=1;
+		else if (key == 'g' || key == 'G') translate_z+=1;
+		else if (key == 'h' || key == 'H') translate_x-=1;
+		else if (key == 'i' || key == 'I') translate_y-=1;
+		else if (key == 'j' || key == 'J') translate_z-=1;
+		else if (key==27) exit(-1);
+
+		//when camera moves
+		glutPostRedisplay();
 }
 
-void rotation(unsigned char key, int x, int y) {
-	switch (key) {
-		case '+': moveZ++; break;
-		case '-': moveZ--; break;
-		case 'd': angle -= 2; rotateZ = 1; rotateX = 0; rotateY = 0; break;
-		case 'a': angle += 2; rotateZ = 1; rotateX = 0; rotateY = 0; break;
-		case 'w': angle -= 2; rotateX = 1; rotateZ = 0; rotateY = 0; break;
-		case 's': angle += 2; rotateX = 1; rotateZ = 0; rotateY = 0; break;
-		case 'e': angle += 2; rotateY = 1; rotateZ = 0; rotateX = 0; break;
-		case 'q': angle -= 2; rotateY = 1; rotateZ = 0; rotateX = 0; break;
-		case 27 : exit(-1); // Esc -> leaves
-	}
-	glutPostRedisplay();
+//Examples of key_code: GLUT_KEY_F1 ; GLUT_KEY_UP.
+void keyboardExtra(int key_code, int x, int y){
+		/*  Right arrow key - decrease rotate_y by 5 */
+		if (key_code == GLUT_KEY_RIGHT) rotate_y -= 5;
+		/*  Left arrow key - increase rotate_y by 5 */
+		else if (key_code == GLUT_KEY_LEFT) rotate_y += 5;
+		/*  Up arrow key - increase rotate_x by 5 */
+		else if (key_code == GLUT_KEY_UP) rotate_x += 5;
+		/*  Down arrow key - decrease rotate_x by 5 */
+		else if (key_code == GLUT_KEY_DOWN) rotate_x -= 5;
+		/*   arrow key - decrease rotate_z by 5 */
+		else if (key_code == GLUT_KEY_F9) rotate_z += 5;
+		/*   arrow key - decrease rotate_z by 5 */
+		else if (key_code == GLUT_KEY_F7) rotate_z -= 5;
+		//when camera moves
+
+		glutPostRedisplay();
 }
 
 // Main function
@@ -509,7 +527,7 @@ int main(int argc, char **argv) {
 				}
 				break;
 			case 3: // Sphere -> receives the radius, the slices and the stacks
-				if (splitted.size() == 6) { 
+				if (splitted.size() == 6) {
 			        filename = splitted[5];
 					radius = stof(splitted[2]);
 					slices = stof(splitted[3]);
@@ -517,7 +535,7 @@ int main(int argc, char **argv) {
 				}
 				break;
 			case 4: // Cone -> receives the base radius, the height, the slices and the stacks
-				if (splitted.size() == 7) { 
+				if (splitted.size() == 7) {
 			        filename = splitted[6];
 					radius = stof(splitted[2]);
 					height = stof(splitted[3]);
@@ -530,8 +548,6 @@ int main(int argc, char **argv) {
 				filename = "invalid.3d";
 				break;
 		}
-	}
-	else cout << "Try again with this usage: generator operationName inputs filename" << endl;
 
 	// Init
     glutInit(&argc, argv);
@@ -544,9 +560,9 @@ int main(int argc, char **argv) {
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
 
-	// Registration of the keyboard
-	glutSpecialFunc(translation);
-	glutKeyboardFunc(rotation);
+	  // Registration of the keyboard
+    glutKeyboardFunc(keyboardNormal);
+    glutSpecialFunc(keyboardExtra);
 
     // OpenGL settings
     glEnable(GL_DEPTH_TEST);
@@ -554,6 +570,8 @@ int main(int argc, char **argv) {
 
     // Enter GLUT's main loop
     glutMainLoop();
+  }
+	else cout << "Try again with this usage: generator operationName inputs filename" << endl;
 
 	return 1;
 }

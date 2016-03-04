@@ -32,9 +32,6 @@ float length, width, height, radius, slices, stacks;
 // Variables used to move the camera 
 float moveX = 0.0f, moveY = 0.0f, moveZ = 0.0f, rotateX = 0.0f, rotateY = 0.0f, rotateZ = 0.0f, angle = 0;
 
-// Tells if the renderScene function will read from the stdin or from a .3d file
-bool read = false;
-
 // Global variable store 3d file read
 vector<string> file3dRead;
 

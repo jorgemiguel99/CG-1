@@ -1,4 +1,4 @@
-1) Comandos poss�veis no terminal:
+1) generator:
 
 	Plano: "generator plane <length> <width> plane.3d"
 	Caixa: "generator box <length> <width> <height> box.3d"
@@ -6,28 +6,6 @@
 	Cone: "generator cone <radius> <height> <slices> <stacks> cone.3d"
 
 
-2) Efetuar movimentos e rotacoes:
-
-	NOTA: Clicar primeiro no ecra se nao funcionar
-
-	SETA DIREITA -> move para a direita
-	SETA ESQUERDA -> move para a esquerda
-	SETA CIMA -> move para cima
-	SETA BAIXO -> move para baixo
-	+ -> zoom in
-	- -> zoom out
-	w -> rota��o em x para a frente
-	s -> rota��o em x para tr�s
-	d -> rota��o em z para a direita
-	a -> rota��o em z para a esquerda
-	e -> rota��o em y para a direita
-	q -> rota��o em y para a esquerda
-
-3) Ficheiros .3d gerados com:
-
-	plane.3d -> generator plane 5 3 plane
-	box.3d   -> generator box 5 3 10 box
-
-4) read <filename.3d>
+2) read <filename.3d>
 	
 
