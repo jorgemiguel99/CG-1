@@ -196,6 +196,30 @@ void keyboardNormal (unsigned char key, int x, int y){
     else if (key == 'm' || key == 'M') glPolygonMode(GL_FRONT_AND_BACK,GL_LINE); //GL_FRONT_AND_BACK & GL_LINE
     else if (key == 'o' || key == 'O') glPolygonMode(GL_FRONT_AND_BACK,GL_POINT); //GL_FRONT_AND_BACK & GL_POINT
     else if (key == 'p' || key == 'P') glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); //GL_FRONT_AND_BACK & GL_FILL*/
+    else if (key == '0'){ // DEFAULT IS WHITE
+        glColor3f(1.0f,1.0f,1.0f);
+    }
+    else if (key == '1'){ // RED
+        glColor3f(1.0f,0.0f,0.0f);
+    }
+    else if (key == '2'){ // BLUE
+        glColor3f(0.0f,0.0f,1.0f);
+    }
+    else if (key == '3'){ // GREEN
+        glColor3f(0.0f,1.0f,0.0f);
+    }
+    else if (key == '4'){ // ORANGE
+        glColor3f(1.0f,0.5f,0.0f);
+    }
+    else if (key == '5'){ // PINK
+        glColor3f(1.0f,0.5f,0.5f);
+    }
+    else if (key == '6'){ // YELLOW
+        glColor3f(1.0f,1.0f,0.0f);
+    }
+    else if (key == '7'){ // BRIGHT BLUE
+        glColor3f(0.0f,1.0f,1.0f);
+    }
     else if (key==27) exit(-1);
     
     //when camera moves
@@ -325,6 +349,14 @@ int main(int argc, char **argv) {
             glutAddMenuEntry("GL_FRONT_AND_BACK & GL_LINE",'m');
             glutAddMenuEntry("GL_FRONT_AND_BACK & GL_POINT",'o');
             glutAddMenuEntry("GL_FRONT_AND_BACK & GL_FILL",'p');
+            glutAddMenuEntry("Change Colour to Default",'0');
+            glutAddMenuEntry("Change Colour to Red",'1');
+            glutAddMenuEntry("Change Colour to Blue",'2');
+            glutAddMenuEntry("Change Colour to Green",'3');
+            glutAddMenuEntry("Change Colour to Orange",'4');
+            glutAddMenuEntry("Change Colour to Pink",'5');
+            glutAddMenuEntry("Change Colour to Yellow",'6');
+            glutAddMenuEntry("Change Colour to Bright Blue",'7');
             //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
             glutAttachMenu(GLUT_RIGHT_BUTTON);
             
