@@ -9,15 +9,12 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <GL/glut.h>
-#include "Read\tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
+#include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
 #include <math.h>
 //#include <GLUT/glut.h> //-- MAC
 //#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
 
 using namespace std;
-
-// Dimensions of the figures
-float length, width, height, radius, slices, stacks;
 
 //Global Variables to Transformations
 float px = 0, py = 0, pz = 5;
@@ -103,45 +100,8 @@ void drawRenderSceneFile3d(void) {
 
 	glBegin(GL_TRIANGLES);
 
-	if (splitted[1] == "plane.3d") {
-		for (int j = 0; j < vrtx.size(); j += 3) {
-			//glColor3f(0, 1, 0);
-			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
-		}
-	}
-	else if (splitted[1] == "box.3d") {
-		for (int j = 0; j < vrtx.size(); j += 3) {
-			//if (j <= 35) glColor3f(1, 0, 0); // Lower face && Upper face
-			//else if (j >= 36 && j <= 72) glColor3f(0, 1, 0); // Left face && Right face
-			//else glColor3f(0, 0, 1);  // Front face && Back face
-			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
-		}
-	}
-	else if (splitted[1] == "sphere.3d") {
-        int par = 0;
-        for (int j = 0; j < vrtx.size();) {
-			//if (par % 2 == 0) glColor3f(1, 0, 0); else glColor3f(1, 1, 1); par++;
+    for (int j = 0; j < vrtx.size();) 
             glVertex3f(vrtx[j++], vrtx[j++], vrtx[j++]);
-            glVertex3f(vrtx[j++], vrtx[j++], vrtx[j++]);
-            glVertex3f(vrtx[j++], vrtx[j++], vrtx[j++]);
-        }
-
-	}
-	else if (splitted[1] == "cone.3d") {
-		for (int j = 0; j < vrtx.size(); j += 18) {
-			// Base
-			//glColor3f(0, 1, 0);
-			glVertex3f(vrtx[j], vrtx[j + 1], vrtx[j + 2]);
-			glVertex3f(vrtx[j + 3], vrtx[j + 4], vrtx[j + 5]);
-			glVertex3f(vrtx[j + 6], vrtx[j + 7], vrtx[j + 8]);
-
-			// Sides
-			//glColor3f(1, 0, 0);
-			glVertex3f(vrtx[j + 9], vrtx[j + 10], vrtx[j + 11]);
-			glVertex3f(vrtx[j + 12], vrtx[j + 13], vrtx[j + 14]);
-			glVertex3f(vrtx[j + 15], vrtx[j + 16], vrtx[j + 17]);
-		}
-	}
 
 	glEnd();
 
@@ -175,13 +135,7 @@ void changeSize(int w, int h) {
 // Processing Keyboard Events
 void keyboardNormal (unsigned char key, int x, int y){
     
-    if (key == 'a' || key == 'A') {length-=1;stacks--;}
-    else if (key == 's' || key == 'S') {length+=1;stacks++;}
-    else if (key == 'd' || key == 'D') {height-=1;stacks--;}
-    else if (key == 'f' || key == 'F') {height+=1;stacks++;}
-    else if (key == 'g' || key == 'G') width-=1;
-    else if (key == 'h' || key == 'H') width+=1;
-    else if (key == 'j' || key == 'J') translate_x+=1;
+    if (key == 'j' || key == 'J') translate_x+=1;
     else if (key == 'k' || key == 'K') translate_y+=1;
     else if (key == 'l' || key == 'L') translate_z+=1;
     else if (key == 'q' || key == 'Q') translate_x-=1;
@@ -328,12 +282,6 @@ int main(int argc, char **argv) {
             
             //menu
             glutCreateMenu(newMenu);
-            glutAddMenuEntry("Decrease Length or Stacks",'a');
-            glutAddMenuEntry("Increase Length or Stacks",'s');
-            glutAddMenuEntry("Decrease Hight or Stacks",'d');
-            glutAddMenuEntry("Increase Hight or Stacks",'f');
-            glutAddMenuEntry("Decrease Width",'g');
-            glutAddMenuEntry("Increase Width",'h');
             glutAddMenuEntry("Increase Translate x value",'j');
             glutAddMenuEntry("Increase Translate y value",'k');
             glutAddMenuEntry("Increase Translate z value",'l');
