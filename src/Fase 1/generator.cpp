@@ -25,6 +25,9 @@ int coneVertex = 0;
 // Number of sphere vertices
 int sphereVertex = 0;
 
+// Tells the program to not count again the number of vertices
+bool counted = false;
+
 // Dimensions of the figures
 float length, width, height, radius, slices, stacks;
 
@@ -376,7 +379,7 @@ void drawSphere() {
 				glVertex3f(x4, y4, z4);
 				glVertex3f(x2, y2, z2);
 
-				sphereVertex += 3;
+				if(counted == false) sphereVertex += 3;
 			}
 			else if (i == stacks - 1) {
 				//if (paridade % 2 == 0) glColor3f(1.0f, 0.0f, 0.0f);
@@ -386,7 +389,7 @@ void drawSphere() {
 				glVertex3f(x3, y3, z3);
 				glVertex3f(x2, y2, z2);
 
-				sphereVertex += 3;
+				if(counted == false) sphereVertex += 3;
 			}
 			else {
 				//glColor3f(1.0f, 0.0f, 0.0f);
@@ -399,10 +402,13 @@ void drawSphere() {
 				glVertex3f(x4, y4, z4);
 				glVertex3f(x2, y2, z2);
 
-				sphereVertex += 6;
+				if(counted == false) sphereVertex += 6;
 			}
 		}
 	}
+
+	counted = true;
+
 	glEnd();
 
 	// Saves the vertices of the sphere on the .3d file
@@ -430,8 +436,10 @@ void drawCone() {
 		glVertex3f(radius*sin(alpha), 0.0f, radius*cos(alpha));
 		glVertex3f(radius*sin(alpha + beta), 0.0f, radius*cos(alpha + beta));
 
-		coneVertex += 6;
+		if(counted == false) coneVertex += 6;
 	}
+
+	counted = true;
 
 	glEnd();
 
