@@ -161,6 +161,8 @@ void printBox3d() {
 void printSphere3d() {
 	ofstream sphere;
 	sphere.open(filename.c_str());
+
+	sphereVertex = (stacks - 2)*slices * 6 + 2 * slices * 3;
 	sphere << sphereVertex << endl; // Total number of vertices
 
 	int i, j;
@@ -217,9 +219,13 @@ void printSphere3d() {
 }
 
 // Prints the cone on the .3d file
+
+/* old printcone
 void printCone3d() {
 	ofstream cone;
 	cone.open(filename.c_str());
+	coneVertex = slices * 6;
+
 	cone << coneVertex << endl; // Total number of vertices
 
 	for (int i = 0; i < slices; i++) {
@@ -239,6 +245,7 @@ void printCone3d() {
 
 	cone.close();
 }
+*/
 
 // Draws the plane
 void drawPlane() {
@@ -347,6 +354,7 @@ void drawSphere() {
 
 	glBegin(GL_TRIANGLES);
 
+
 	for (i = 0; i < stacks; i++) {
 		float polar = inicialPolar + i * (M_PI / stacks);
 		float polar2 = inicialPolar + (i + 1) * (M_PI / stacks);
@@ -415,37 +423,183 @@ void drawSphere() {
 	printSphere3d();
 }
 
-// Draws the cone
-void drawCone() {
-	// Sides
-	glBegin(GL_TRIANGLES);
+
+void printCone3d() {
+	ofstream cone;
+	cone.open(filename.c_str());
+
+	// pontos base + pontos lados + pontos do topo (slice so com triangulos)
+	coneVertex = slices * 3 + (stacks - 1)*slices * 6 + slices * 3;
+	cone << coneVertex << endl; // Total number of vertices
+
+	float ratio = height / radius;
 
 	for (int i = 0; i < slices; i++) {
+
 		float alpha = i * (2 * M_PI) / slices;
 		float beta = (2 * M_PI) / slices;
 
 		// Base
-		//glColor3f(0, 1, 0);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(radius*sin(alpha + beta), 0.0f, radius*cos(alpha + beta));
-		glVertex3f(radius*sin(alpha), 0.0f, radius*cos(alpha));
+		float x1 = radius*sin(alpha);
+		float y1 = 0;
+		float z1 = radius*cos(alpha);
 
-		// Sides
-		//glColor3f(1, 0, 0);
-		glVertex3f(0.0f, height, 0.0f);
-		glVertex3f(radius*sin(alpha), 0.0f, radius*cos(alpha));
-		glVertex3f(radius*sin(alpha + beta), 0.0f, radius*cos(alpha + beta));
+		float x2 = radius*sin(alpha + beta);
+		float y2 = 0;
+		float z2 = radius*cos(alpha + beta);
 
-		if(counted == false) coneVertex += 6;
+		// Base
+		cone << "0.0 0.0 0.0" << endl;
+		cone << x2 << " " << y2 << " " << z2 << endl;
+		cone << x1 << " " << y1 << " " << z1 << endl;
+
+		float radiusBot = radius;
+		float radiusTop;
+
+		for (int j = 0; j < stacks; j++, radiusBot = radiusTop) {
+			// Sides
+			float y = j * (height / stacks);
+			float yn = (j + 1) * (height / stacks);
+
+			float h = height - yn; // altura do triangulo superior
+			radiusTop = h / ratio; // radius do triangulo superior
+
+								   /* Points
+
+								   3____4
+								   |    |
+								   |____|
+								   1    2
+								   */
+
+			float x1 = radiusBot*sin(alpha);
+			float y1 = y;
+			float z1 = radiusBot*cos(alpha);
+
+			float x2 = radiusBot*sin(alpha + beta);
+			float y2 = y;
+			float z2 = radiusBot*cos(alpha + beta);
+
+
+			float x3 = radiusTop*sin(alpha);
+			float y3 = yn;
+			float z3 = radiusTop*cos(alpha);
+
+			float x4 = radiusTop*sin(alpha + beta);
+			float y4 = yn;
+			float z4 = radiusTop*cos(alpha + beta);
+
+			if (j == stacks - 1) { // top slice
+				cone << x3 << " " << y3 << " " << z3 << endl;
+				cone << x1 << " " << y1 << " " << z1 << endl;
+				cone << x2 << " " << y2 << " " << z2 << endl;
+
+			}
+			else {
+				// T: 3 - 1 - 2
+				cone << x3 << " " << y3 << " " << z3 << endl;
+				cone << x1 << " " << y1 << " " << z1 << endl;
+				cone << x2 << " " << y2 << " " << z2 << endl;
+
+				// T: 3 - 2 - 4
+				cone << x3 << " " << y3 << " " << z3 << endl;
+				cone << x2 << " " << y2 << " " << z2 << endl;
+				cone << x4 << " " << y4 << " " << z4 << endl;
+			}
+		}
+
 	}
-
-	counted = true;
-
-	glEnd();
-
-	// Saves the vertices of the cone on the .3d file
-	printCone3d();
+	cone.close();
 }
+// Draws the cone
+void drawCone() {
+	// Sides
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < slices; i++) {
+		
+		float alpha = i * (2 * M_PI) / slices;
+		float beta = (2 * M_PI) / slices;
+
+		float ratio = height / radius;
+
+		// Base
+		//glColor3f(0, 1, 0);
+
+		float x1 = radius*sin(alpha);
+		float y1 = 0;
+		float z1 = radius*cos(alpha);
+
+		float x2 = radius*sin(alpha + beta);
+		float y2 = 0;
+		float z2 = radius*cos(alpha + beta);
+
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(x2, y2, z2);
+		glVertex3f(x1, y1, z1);
+
+		float radiusBot = radius;
+		float radiusTop;
+		
+		for (int j = 0; j < stacks; j++ , radiusBot = radiusTop) {
+			// Sides
+			//glColor3f(1, 0, 0);
+			float y = j * (height / stacks);
+			float yn = (j+1) * (height / stacks);
+
+			float h = height - yn; // altura do triangulo superior
+			radiusTop = h / ratio; // radius do triangulo superior
+
+			/* Points
+			
+				 3____4
+				 |    |
+				 |____|
+				 1    2
+			*/
+
+			float x1 = radiusBot*sin(alpha);
+			float y1 = y;
+			float z1 = radiusBot*cos(alpha);
+
+			float x2 = radiusBot*sin(alpha + beta);
+			float y2 = y;
+			float z2 = radiusBot*cos(alpha + beta);
+
+
+			float x3 = radiusTop*sin(alpha);
+			float y3 = yn;
+			float z3 = radiusTop*cos(alpha);
+
+			float x4 = radiusTop*sin(alpha + beta);
+			float y4 = yn;
+			float z4 = radiusTop*cos(alpha + beta);
+
+			if (j == stacks - 1) {
+				glVertex3f(x3, y3, z3);
+				glVertex3f(x1, y1, z1);
+				glVertex3f(x2, y2, z2);
+
+			}
+			else {
+				// T: 3 - 1 - 2
+				glVertex3f(x3, y3, z3);
+				glVertex3f(x1, y1, z1);
+				glVertex3f(x2, y2, z2);
+
+				// T: 3 - 2 - 4
+				glVertex3f(x3, y3, z3);
+				glVertex3f(x2, y2, z2);
+				glVertex3f(x4, y4, z4);
+			}
+		}
+		
+	}
+	glEnd();
+	// Saves the vertices of the cone on the .3d file
+
+}
+
+
 
 void changeSize(int w, int h) {
     // Prevent a divide by zero, when window is too short
@@ -487,8 +641,8 @@ void renderScene(void) {
 	switch (checkOP(splitted[1])) {
 		case 1: drawPlane(); break;
 		case 2: drawBox(); break;
-		case 3: drawSphere(); break;
-		case 4: drawCone(); break;
+		case 3: printSphere3d(); break;
+		case 4: printCone3d(); break;
 	}
 
     // End of frame
@@ -682,7 +836,7 @@ int main(int argc, char **argv) {
 			glEnable(GL_CULL_FACE);
 
 			//default
-			glPolygonMode(GL_FRONT, GL_FILL);
+			glPolygonMode(GL_FRONT, GL_LINE);
 
 			// Enter GLUT's main loop
 			glutMainLoop();
