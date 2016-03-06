@@ -4,15 +4,15 @@ An example of usage:
 
 Stage 1
 
-.) Generator is a program that draws planes,boxes,spheres & cones from inputs given by users through terminal interaction.
+.) Generator is a program that calculates all necessary vertex to draw planes,boxes,spheres & cones from inputs given by users through terminal interaction and write all in <figure>.3d
 
-- generator sphere 1 2 3 sphere will create a sphere with radius=1, slices=2 and stacks=3 in sphere.3d (last argument is filename)
+- generator sphere 1 2 3 sphere will calculate all necessary vertex to draw a sphere with radius=1, slices=2 and stacks=3 in sphere.3d (last argument is filename)
 or
-- generator Sphere 1 2 3 sphere will create a sphere with radius=1, slices=2 and stacks=3 in sphere.3d (last argument is filename)
+- generator Sphere 1 2 3 sphere will calculate all necessary vertex to draw a sphere with radius=1, slices=2 and stacks=3 in sphere.3d (last argument is filename)
 or
-- Generator sphere 1 2 3 sphere will create a sphere with radius=1, slices=2 and stacks=3 in sphere.3d (last argument is filename)
+- Generator sphere 1 2 3 sphere will calculate all necessary vertex to draw a sphere with radius=1, slices=2 and stacks=3 in sphere.3d (last argument is filename)
 or
-- Generator Sphere 1 2 3 sphere will create a sphere with radius=1, slices=2 and stacks=3 in sphere.3d (last argument is filename)
+- Generator Sphere 1 2 3 sphere will calculate all necessary vertex to draw a sphere with radius=1, slices=2 and stacks=3 in sphere.3d (last argument is filename)
 
 
 -> creation of .3d files
