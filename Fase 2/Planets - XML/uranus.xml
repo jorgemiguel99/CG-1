@@ -1,0 +1,34 @@
+<scene>
+  <group>
+    <translate X=1 Y=0 Z=1 />
+    <rotate angle=98 axisX=0 axisY=1 axisZ=0 />
+    <models>
+      <model file="uranus.3d" />
+    </models>
+    <group>
+      <models>
+        <model file="TitaniaMoon.3d" />
+      </models>
+    </group>
+    <group>
+      <models>
+        <model file="OberonMoon.3d" />
+      </models>
+    </group>
+    <group>
+      <models>
+        <model file="UmbrielMoon.3d" />
+      </models>
+    </group>
+    <group>
+      <models>
+        <model file="ArielMoon.3d" />
+      </models>
+    </group>
+    <group>
+      <models>
+        <model file="MirandaMoon.3d" />
+      </models>
+    </group>
+  </group>
+</scene>
