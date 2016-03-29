@@ -4,6 +4,7 @@
 
 //#include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
 #include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
+#include "readXML_Fase2.h"
 
 using namespace std;
 
@@ -444,19 +445,4 @@ if (loadOkay)
         cout << "Cannot find 'scene' node" << endl;
     }
 }
-}
-
-int main(int argc, char **argv) {
-			readXML();
-      printf("Translates\n");
-      printTranslates();
-      printf("\n\nRotates\n");
-      printRotates();
-      printf("\n\nPlanets\n");
-      printPlanetsFilenames();
-      printf("\n\nMoons\n");
-      printMoonsFilenames();
-      printf("\n\nOverall\n");
-      printf("Number of planets: %d\n", num_planets);
-      printf("Number of moons: %d\n", num_moons);
 }

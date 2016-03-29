@@ -1,5 +1,0 @@
-all: 1
-
-1:
-		g++ -framework GLUT -framework OpenGL -framework Cocoa /usr/local/Cellar/tinyxml/2.6.2/lib/libtinyxml.dylib readXML_Fase2.cp -o read -Wno-deprecated
-		

@@ -1,18 +1,19 @@
 //windows
-#include <GL/glut.h>
-#include <GL/glu.h>
-#include <GL/gl.h>
+// #include <GL/glut.h>
+// #include <GL/glu.h>
+// #include <GL/gl.h>
 
 // MAC_OS_X
-//#include <GLUT/glut.h>
-//#include <OpenGL/glu.h>
-//#include <OpenGL/gl.h>
+#include <GLUT/glut.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/gl.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "readXML_Fase2.h"
 
 void init();
 void changeSize(int, int);
@@ -56,6 +57,17 @@ float alphaIncN         = (2 * M_PI)/10.0;
 
 
 int main(int argc, char **argv) {
+
+  readXML();
+  printf("Translates\n");
+  printTranslates();
+  printf("\n\nRotates\n");
+  printRotates();
+  printf("\n\nPlanets\n");
+  printPlanetsFilenames();
+  printf("\n\nMoons\n");
+  printMoonsFilenames();
+  
   /*
    * Init GLUT and the window.
    */
