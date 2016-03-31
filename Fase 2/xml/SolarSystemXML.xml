@@ -1,27 +1,27 @@
 <scene>
   <group>
-    <translate X=1 Y=0 Z=1 />
+    <translate X=0 Y=10 Z=0 />
     <rotate angle=7,25 axisX=0 axisY=1 axisZ=0 />
     <models>
       <model file="sun.3d" />
     </models>
   </group>
   <group>
-    <translate X=1 Y=0 Z=1 />
+    <translate X=0 Y=1 Z=0 />
     <rotate angle=0.1 axisX=0 axisY=1 axisZ=0 />
     <models>
       <model file="mercury.3d" />
     </models>
   </group>
   <group>
-    <translate X=1 Y=0 Z=1 />
+    <translate X=0 Y=1 Z=0 />
     <rotate angle=177 axisX=0 axisY=1 axisZ=0 />
     <models>
       <model file="venus.3d" />
     </models>
   </group>
   <group>
-    <translate X=1 Y=0 Z=1 />
+    <translate X=0 Y=1 Z=0 />
     <rotate angle=23 axisX=0 axisY=1 axisZ=0 />
     <models>
       <model file="earth.3d" />
@@ -33,7 +33,7 @@
     </group>
   </group>
   <group>
-    <translate X=1 Y=0 Z=1 />
+    <translate X=0 Y=1 Z=0 />
     <rotate angle=25 axisX=0 axisY=1 axisZ=0 />
     <models>
       <model file="mars.3d" />
@@ -50,7 +50,7 @@
     </group>
   </group>
   <group>
-    <translate X=1 Y=0 Z=1 />
+    <translate X=0 Y=1 Z=0 />
     <rotate angle=3 axisX=0 axisY=1 axisZ=0 />
     <models>
       <model file="jupiter.3d" />
@@ -77,7 +77,7 @@
     </group>
   </group>
   <group>
-    <translate X=1 Y=0 Z=1 />
+    <translate X=0 Y=1 Z=0 />
     <rotate angle=27 axisX=0 axisY=1 axisZ=0 />
     <models>
       <model file="saturn.3d" />
@@ -94,7 +94,7 @@
     </group>
   </group>
   <group>
-    <translate X=1 Y=0 Z=1 />
+    <translate X=0 Y=1 Z=0 />
     <rotate angle=98 axisX=0 axisY=1 axisZ=0 />
     <models>
       <model file="uranus.3d" />
@@ -126,7 +126,7 @@
     </group>
   </group>
   <group>
-    <translate X=1 Y=0 Z=1 />
+    <translate X=0 Y=1 Z=0 />
     <rotate angle=120 axisX=0 axisY=1 axisZ=0 />
     <models>
       <model file="neptune.3d" />

@@ -136,7 +136,7 @@ void printSphere3d() {
 
 // Main function
 int main(int argc, char **argv) {
-	string operationLine, operation;
+	string operationLine, operation, answer, answer2;
 
 	do{
 	cout << "Insert your operation:" << endl;
@@ -326,6 +326,27 @@ int main(int argc, char **argv) {
           stacks=30;
           printSphere3d();
           cout << "ProteusMoon.3d created" << endl;
+
+          do{
+          cout << "Do you wish adding more Planets or Moons? Type yes or no" << endl;
+          getline(cin, answer);
+          if(answer == "yes" || answer == "YES"){
+            cout << "Type filename.3d please" << endl;
+            getline(cin, filename);
+            cout << "Type radius please" << endl;
+            getline(cin, answer2);
+            radius=stof(answer2);
+            cout << "Type slices please" << endl;
+            getline(cin, answer2);
+            slices=stof(answer2);
+            cout << "Type stacks please" << endl;
+            getline(cin, answer2);
+            stacks=stof(answer2);
+            printSphere3d();
+            cout << filename << " created" << endl;
+          }
+        }while(answer == "yes" || answer == "YES");
+        cout << "GoodBye!!" << endl;
 			}
   }
   else {cout << "Number of arguments wrong!" << endl;}
