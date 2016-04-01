@@ -489,9 +489,9 @@ void renderScene(void) {
       }
     glEnd();
     glPopMatrix();
-		if(movingON==1) alphaS[1] -= alphaIncS[1]; // andar em sentido contrario, em circulos
+		if(movingON==1) alphaS[1] += alphaIncS[1]; // andar em sentido contrario, em circulos
   }
-  if(movingON==1) alphaS[1] -= 10.0;
+  if(movingON==1) alphaS[1] += 10.0;
 
   // Venus
 	vector<float> vrtx_Venus;
@@ -510,9 +510,9 @@ void renderScene(void) {
       }
     glEnd();
     glPopMatrix();
-		if(movingON==1) alphaS[2] += alphaIncS[2]; // andar em sentido contrario, em circulos
+		if(movingON==1) alphaS[2] -= alphaIncS[2]; // andar em sentido contrario, em circulos
   }
-  if(movingON==1) alphaS[2] += 10.0;
+  if(movingON==1) alphaS[2] -= 10.0;
 
   // Terra
 	vector<float> vrtx_Earth;
@@ -531,9 +531,9 @@ void renderScene(void) {
       }
     glEnd();
     glPopMatrix();
-		if(movingON==1) alphaS[3] -= alphaIncS[3]; // andar em sentido contrario, em circulos
+		if(movingON==1) alphaS[3] += alphaIncS[3]; // andar em sentido contrario, em circulos
   }
-  if(movingON==1) alphaS[3] -= 10.0;
+  if(movingON==1) alphaS[3] += 10.0;
 
   // Marte
 	vector<float> vrtx_Mars;
@@ -593,10 +593,12 @@ void renderScene(void) {
           glVertex3f(vrtx_Saturn[j++], vrtx_Saturn[j++], vrtx_Saturn[j++]);
       }
     glEnd();
+		if(colourON==1) glColor3f(0.0, 1.0, 0.5);
+		glutWireTorus(1.5,10,20,20);
     glPopMatrix();
-		if(movingON==1) alphaS[6] -= alphaIncS[6]; // andar em sentido contrario, em circulos
+		if(movingON==1) alphaS[6] += alphaIncS[6]; // andar em sentido contrario, em circulos
   }
-  if(movingON==1) alphaS[6] -= 10.0;
+  if(movingON==1) alphaS[6] += 10.0;
 
   // Urano
 	vector<float> vrtx_Uranus;
@@ -614,6 +616,8 @@ void renderScene(void) {
           glVertex3f(vrtx_Uranus[j++], vrtx_Uranus[j++], vrtx_Uranus[j++]);
       }
     glEnd();
+		if(colourON==1) glColor3f(0.0, 0.0, 0.5);
+		glutWireTorus(1.5,10,20,20);
     glPopMatrix();
 		if(movingON==1) alphaS[7] -= alphaIncS[7]; // andar em sentido contrario, em circulos
   }
@@ -635,6 +639,8 @@ void renderScene(void) {
           glVertex3f(vrtx_Neptune[j++], vrtx_Neptune[j++], vrtx_Neptune[j++]);
       }
     glEnd();
+		if(colourON==1) glColor3f(0.5, 1.0, 0.5);
+		glutWireTorus(1.5,15,20,20);
     glPopMatrix();
 		if(movingON==1) alphaS[8] += alphaIncS[8]; // andar em sentido contrario, em circulos
   }
@@ -643,6 +649,7 @@ void renderScene(void) {
 	// End of frame.
 	glutSwapBuffers();
 }
+
 
 // write function to process menu events
 void newMenu (int id_op){
@@ -668,6 +675,11 @@ void keyPressed(unsigned char key, int x, int y) {
 			else if (key == 's' || key == 'S') movingON=0;
 			else if (key == 'r' || key == 'R') movingON=1;
 			else if (key == 't' || key == 'T') movingON=2;
+			// Move only camera
+			else if (key == 'g') py += 50;
+			else if (key == 'h') py -= 50;
+			else if (key == 'i') pz += 50;
+			else if (key == 'u') pz += 50;
 			else if (key == '0'){ // DEFAULT IS WHITE
           glColor3f(1.0f,1.0f,1.0f);
       }
@@ -719,13 +731,6 @@ void keyboardExtra(int key_code, int x, int y){
 		else if (key_code == GLUT_KEY_F9) rotate_z += 5;
 		/*   arrow key - decrease rotate_z by 5*/
 		else if (key_code == GLUT_KEY_F7) rotate_z -= 5;
-
-		/* Move only camera
-		if (key_code == GLUT_KEY_RIGHT) py += 50;
-		else if (key_code == GLUT_KEY_LEFT) py -= 50;
-		else if (key_code == GLUT_KEY_UP) pz += 50;
-		else if (key_code == GLUT_KEY_DOWN) pz += 50;
-		*/
 		//when camera moves
 
 		glutPostRedisplay();

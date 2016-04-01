@@ -43,11 +43,6 @@
         <model file="PhobosMoon.3d" />
       </models>
     </group>
-    <group>
-      <models>
-        <model file="DeimosMoon.3d" />
-      </models>
-    </group>
   </group>
   <group>
     <translate X=0 Y=1 Z=0 />
@@ -57,22 +52,7 @@
     </models>
     <group>
       <models>
-        <model file="GanymedeMoon.3d" />
-      </models>
-    </group>
-    <group>
-      <models>
         <model file="CallistoMoon.3d" />
-      </models>
-    </group>
-    <group>
-      <models>
-        <model file="EuropaMoon.3d" />
-      </models>
-    </group>
-    <group>
-      <models>
-        <model file="IoMoon.3d" />
       </models>
     </group>
   </group>
@@ -87,11 +67,6 @@
         <model file="TitanMoon.3d" />
       </models>
     </group>
-    <group>
-      <models>
-        <model file="EnceladusMoon.3d" />
-      </models>
-    </group>
   </group>
   <group>
     <translate X=0 Y=1 Z=0 />
@@ -101,27 +76,7 @@
     </models>
     <group>
       <models>
-        <model file="TitaniaMoon.3d" />
-      </models>
-    </group>
-    <group>
-      <models>
         <model file="OberonMoon.3d" />
-      </models>
-    </group>
-    <group>
-      <models>
-        <model file="UmbrielMoon.3d" />
-      </models>
-    </group>
-    <group>
-      <models>
-        <model file="ArielMoon.3d" />
-      </models>
-    </group>
-    <group>
-      <models>
-        <model file="MirandaMoon.3d" />
       </models>
     </group>
   </group>
@@ -134,11 +89,6 @@
     <group>
       <models>
         <model file="TritonMoon.3d" />
-      </models>
-    </group>
-    <group>
-      <models>
-        <model file="ProteusMoon.3d" />
       </models>
     </group>
   </group>
