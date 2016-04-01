@@ -40,8 +40,8 @@ void printAlphaS();
 // Declare radii of all 8 planets orbits
 float MercuryRadiusOrbit     = 30.0;
 float VenusRadiusOrbit       = 50.0;
-float TerraRadiusOrbit       = 70.0;
-float MarteRadiusOrbit       = 95.0;
+float TerraRadiusOrbit       = 55.0;
+float MarteRadiusOrbit       = 80.0;
 float JupiterRadiusOrbit     = 110.0;
 float UranoRadiusOrbit       = 150.0;
 float SaturnoRadiusOrbit     = 200.0;
