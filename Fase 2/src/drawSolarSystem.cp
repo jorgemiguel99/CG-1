@@ -12,6 +12,7 @@
 #include <sstream>
 #include <string>
 #include <math.h>
+#include <algorithm>
 // #include <windows.h>
 // #include <GL/glut.h>
 // #include <GL/glu.h>
@@ -38,8 +39,8 @@ void preencheAlphaS();
 void printAlphaS();
 
 // Declare radii of all 8 planets orbits
-float MercuryRadiusOrbit     = 30.0;
-float VenusRadiusOrbit       = 50.0;
+float MercuryRadiusOrbit     = 20.0;
+float VenusRadiusOrbit       = 40.0;
 float TerraRadiusOrbit       = 55.0;
 float MarteRadiusOrbit       = 80.0;
 float JupiterRadiusOrbit     = 110.0;
@@ -66,8 +67,11 @@ float translate_z = 0;
 
 // Global variable process input
 vector<string> splitted;
-vector< vector<float> > vertices;
-vector< vector<string> > files;
+vector< vector<float> > verticesP;
+vector< vector<string> > filesP;
+
+vector< vector<float> > verticesM;
+vector< vector<string> > filesM;
 // Auxiliary global variable process input
 vector<string> file3dRead;
 vector<float> vrtx;
@@ -88,8 +92,11 @@ vector<int> rotatesY; // use adicionaTransformations flag 5
 vector<int> rotatesZ; // use adicionaTransformations flag 6
 
 // Global variables that allows drawing circles
-vector<float> alphaS;
-vector<float> alphaIncS;
+vector<float> alphaSP;
+vector<float> alphaIncSP;
+
+vector<float> alphaSM;
+vector<float> alphaIncSM;
 
 // Splits a string into its substrings accordingly to its delimiter that must be provided
 vector<string> split(string str, char delimiter) {
@@ -115,8 +122,15 @@ vector<string> read3d(string figure) {
 	return vecx;
 }
 
-void adicionaFile(vector<string> aux){
-	files.push_back(aux);
+void adicionaFile(vector<string> aux, int flag){
+	switch (flag) {
+		case 1:
+					 filesP.push_back(aux);
+					 break;
+		case 2:
+					 filesM.push_back(aux);
+					 break;
+	}
 }
 
 void adicionaName(string aux, int flag){
@@ -136,13 +150,14 @@ void limpaFile3dRead(vector<string> aux){
 	}
 }
 
-void adicionaVrtx(vector<float> aux){
-	vertices.push_back(aux);
-}
-
-void limpaVertices(vector<float> aux){
-	for (int j = 0; j < aux.size();j++){
-			aux[j]=0.0;
+void adicionaVrtx(vector<float> aux, int flag){
+	switch (flag) {
+		case 1:
+					 verticesP.push_back(aux);
+					 break;
+		case 2:
+					 verticesM.push_back(aux);
+					 break;
 	}
 }
 
@@ -202,15 +217,27 @@ string reading(vector<string> aux){
 	return line;
 }
 
-void preencheVrtx(){
-	for (int j = 0; j < files.size();j++){
+void preencheVrtx(int flag){
+	if(flag==1){
 		vector<string> aux2;
-		aux2 = files[7];
-		string vrtxFile = reading(aux2);
-		istringstream is_Vrtx(vrtxFile);
-		copy(istream_iterator<float>(is_Vrtx), istream_iterator<float>(), back_inserter(vrtx));
-		adicionaVrtx(vrtx);
-		limpaVertices(vrtx);
+		for (int j = 0; j < filesP.size();j++){
+			aux2 = filesP[j];
+			string vrtxFile = reading(aux2);
+			istringstream is_Vrtx(vrtxFile);
+			vrtx.erase (vrtx.begin(),vrtx.end());
+			copy(istream_iterator<float>(is_Vrtx), istream_iterator<float>(), back_inserter(vrtx));
+			adicionaVrtx(vrtx, 1);
+		}
+	}else if(flag==2){
+		vector<string> aux2;
+		for (int j = 0; j < filesM.size();j++){
+			aux2 = filesM[0];
+			string vrtxFile = reading(aux2);
+			istringstream is_Vrtx(vrtxFile);
+			vrtx.erase (vrtx.begin(),vrtx.end());
+			copy(istream_iterator<float>(is_Vrtx), istream_iterator<float>(), back_inserter(vrtx));
+			adicionaVrtx(vrtx, 2);
+		}
 	}
 }
 
@@ -255,7 +282,7 @@ if (loadOkay)
                 {
 										limpaFile3dRead(file3dRead);
 										file3dRead = read3d((string) pModelFile->Attribute("file"));
-										adicionaFile(file3dRead);
+										adicionaFile(file3dRead, 1);
 										adicionaName((string) pModelFile->Attribute("file"), 1);
                     pModelFile = pModelFile->NextSiblingElement("model");
                 }
@@ -272,7 +299,7 @@ if (loadOkay)
                 {
 										limpaFile3dRead(file3dRead);
 										file3dRead = read3d((string) pModelFileMoons->Attribute("file"));
-										adicionaFile(file3dRead);
+										adicionaFile(file3dRead, 2);
 										adicionaName((string) pModelFileMoons->Attribute("file"), 2);
                     pModelFileMoons = pModelFileMoons->NextSiblingElement("model");
                 }
@@ -302,22 +329,39 @@ int main(int argc, char **argv) {
       readXML("SolarSystemXML.xml");
       if(read!=0){
 				/* Verifying that vector < vector<string> > is OK!!
-				for (int j = 0; j < files.size();j++){
-						printf("Size of each position: %lu\n",files[j].size());
+				for (int j = 0; j < filesP.size();j++){
+						printf("Size of each position: %lu\n",filesP[j].size());
 						vector<string> aux2;
-						aux2 = files[j];
+						aux2 = filesP[j];
+						for (int k = 0; k < aux2.size();k++){
+								cout << aux2[k] << endl;
+						}
+				}
+				for (int j = 0; j < filesM.size();j++){
+						printf("Size of each position: %lu\n",filesM[j].size());
+						vector<string> aux2;
+						aux2 = filesM[j];
 						for (int k = 0; k < aux2.size();k++){
 								cout << aux2[k] << endl;
 						}
 				}*/
 				preencheAlphaS();
 				//printAlphaS();
-        preencheVrtx();
+        preencheVrtx(1);
+				preencheVrtx(2);
 				/* Verifying that vector < vector<string> > is OK!!
-				for (int j = 0; j < vertices.size();j++){
-						printf("Size of each position: %lu\n",files[j].size());
+				for (int j = 0; j < verticesP.size();j++){
+						printf("Size of each position: %lu\n",verticesP[j].size()/3);
 						vector<float> aux3;
-						aux3 = vertices[j];
+						aux3 = verticesP[j];
+						for (int k = 0; k < aux3.size();k++){
+								cout << aux3[k] << endl;
+						}
+				}
+				for (int j = 0; j < verticesM.size();j++){
+						printf("Size of each position: %lu\n",verticesM[j].size());
+						vector<float> aux3;
+						aux3 = verticesM[j];
 						for (int k = 0; k < aux3.size();k++){
 								cout << aux3[k] << endl;
 						}
@@ -452,7 +496,7 @@ void renderScene(void) {
 	vector<float> vrtx_aux;
 	int vrt=0;
 	//Only executes for the exact number of planets read, vrt=0 is the Sun
-	vrtx_aux = vertices[vrt]; // input read from XML
+	vrtx_aux = verticesP[vrt]; // input read from XML
 	glRotatef(angles[vrt],rotatesX[vrt],rotatesY[vrt],rotatesZ[vrt]); // input read from XML
 	glTranslatef(translatesX[vrt],translatesY[vrt],translatesZ[vrt]); // input read from XML
 	glBegin(GL_TRIANGLES);
@@ -462,7 +506,7 @@ void renderScene(void) {
 	glEnd();
 	vrt++;
 	while(vrt<planets.size()){
-		vrtx_aux = vertices[vrt];
+		vrtx_aux = verticesP[vrt];
 		for (int i = 0; i < 1; i++) {
 				glPushMatrix();
 				// Introducing circular momentum around the Sun is not required at this Stage
@@ -470,28 +514,28 @@ void renderScene(void) {
 				// to the first 9 positions that together forms our Solar System (facts)
 				switch (vrt) {
 					case 1:
-									glTranslatef(MercuryRadiusOrbit * cos(alphaS[vrt]), 1.0, MercuryRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									glTranslatef(MercuryRadiusOrbit * cos(alphaSP[vrt]), 1.0, MercuryRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
 									break;
 				  case 2:
-									glTranslatef(VenusRadiusOrbit * cos(alphaS[vrt]), 1.0, VenusRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									glTranslatef(VenusRadiusOrbit * cos(alphaSP[vrt]), 1.0, VenusRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
 									break;
 				  case 3:
-									glTranslatef(TerraRadiusOrbit * cos(alphaS[vrt]), 1.0, TerraRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									glTranslatef(TerraRadiusOrbit * cos(alphaSP[vrt]), 1.0, TerraRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
 									break;
 				  case 4:
-									glTranslatef(MarteRadiusOrbit * cos(alphaS[vrt]), 1.0, MarteRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									glTranslatef(MarteRadiusOrbit * cos(alphaSP[vrt]), 1.0, MarteRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
 									break;
 					case 5:
-									glTranslatef(JupiterRadiusOrbit * cos(alphaS[vrt]), 1.0, JupiterRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									glTranslatef(JupiterRadiusOrbit * cos(alphaSP[vrt]), 1.0, JupiterRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
 								  break;
 				  case 6:
-									glTranslatef(SaturnoRadiusOrbit * cos(alphaS[vrt]), 1.0, SaturnoRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									glTranslatef(SaturnoRadiusOrbit * cos(alphaSP[vrt]), 1.0, SaturnoRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
 									break;
 				  case 7:
-		  						glTranslatef(UranoRadiusOrbit * cos(alphaS[vrt]), 1.0, UranoRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+		  						glTranslatef(UranoRadiusOrbit * cos(alphaSP[vrt]), 1.0, UranoRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
 									break;
 				  case 8:
-		  						glTranslatef(NeptunoRadiusOrbit * cos(alphaS[vrt]), 1.0, NeptunoRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+		  						glTranslatef(NeptunoRadiusOrbit * cos(alphaSP[vrt]), 1.0, NeptunoRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
 	   							break;
 				}
 				glRotatef(angles[vrt],rotatesX[vrt],rotatesY[vrt],rotatesZ[vrt]);
@@ -517,13 +561,13 @@ void renderScene(void) {
 				}
 				glPopMatrix();
 				if(movingON==1) {
-					if(vrt == 2 || vrt == 7){ alphaS[vrt] -= alphaIncS[vrt]; }
-					else{ alphaS[vrt] += alphaIncS[vrt]; }
+					if(vrt == 2 || vrt == 7){ alphaSP[vrt] -= alphaIncSP[vrt]; }
+					else{ alphaSP[vrt] += alphaIncSP[vrt]; }
 				}
 		}
 		if(movingON==1) {
-			if(vrt == 2 || vrt == 7){ alphaS[vrt] -= 10.0; }
-			else{ alphaS[vrt] += 10.0; }
+			if(vrt == 2 || vrt == 7){ alphaSP[vrt] -= 10.0; }
+			else{ alphaSP[vrt] += 10.0; }
 		}
 		 vrt++;
 	}
@@ -655,19 +699,33 @@ void preencheAlphaS(){
  float aux4,aux5;
  for (int j = 0; j < planets.size();j++){
 	 aux4 = 0.0;
-	 alphaS.push_back(aux4);
+	 alphaSP.push_back(aux4);
 	 aux5 = (2 * M_PI)/10.0;
-	 alphaIncS.push_back(aux4);
+	 alphaIncSP.push_back(aux4);
+ }
+ for (int j = 0; j < moons.size();j++){
+	 aux4 = 0.0;
+	 alphaSM.push_back(aux4);
+	 aux5 = (2 * M_PI)/10.0;
+	 alphaIncSM.push_back(aux4);
  }
 }
 
 void printAlphaS(){
- cout << "\nAlphaS" << endl;
- for (int j = 0; j < alphaS.size();j++){
-	 cout << alphaS[j] << endl;
+ cout << "\nAlphaSP" << endl;
+ for (int j = 0; j < alphaSP.size();j++){
+	 cout << alphaSP[j] << endl;
  }
- cout << "\nAlphaIncS" << endl;
- for (int j = 0; j < alphaIncS.size();j++){
-	 cout <<  alphaIncS[j] << endl;
+ cout << "\nAlphaIncSP" << endl;
+ for (int j = 0; j < alphaIncSP.size();j++){
+	 cout <<  alphaIncSP[j] << endl;
+ }
+ cout << "\nAlphaSM" << endl;
+ for (int j = 0; j < alphaSM.size();j++){
+	 cout << alphaSM[j] << endl;
+ }
+ cout << "\nAlphaIncSM" << endl;
+ for (int j = 0; j < alphaIncSM.size();j++){
+	 cout <<  alphaIncSM[j] << endl;
  }
 }
