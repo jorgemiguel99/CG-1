@@ -456,200 +456,85 @@ void renderScene(void) {
     glVertex3f(600, 0, 600);
   glEnd();
 
-  // Sun.
-	vector<float> vrtx_sun;
-	vrtx_sun = vertices[0];
-  if(colourON==1) glColor3f(1.0, 1.0, 0.0);
-    glTranslatef(0.0, 10.0, 0.0);
-	  if(movingON==2) {
-		glRotatef(angles[0],rotatesX[0],rotatesY[0],rotatesZ[0]);
-		glTranslatef(translatesX[0],translatesY[0],translatesZ[0]);
+	vector<float> vrtx_aux;
+	int vrt=0;
+	//Only executes for the exact number of planets read, vrt=0 is the Sun
+	vrtx_aux = vertices[vrt]; // input read from XML
+	glRotatef(angles[vrt],rotatesX[vrt],rotatesY[vrt],rotatesZ[vrt]); // input read from XML
+	glTranslatef(translatesX[vrt],translatesY[vrt],translatesZ[vrt]); // input read from XML
+	glBegin(GL_TRIANGLES);
+		for (int j = 0; j < vrtx_aux.size();){
+			glVertex3f(vrtx_aux[j++], vrtx_aux[j++], vrtx_aux[j++]);
+		}
+	glEnd();
+	vrt++;
+	cout << planets.size() << endl;
+	while(vrt<planets.size()){
+		cout << vrt << endl;
+		vrtx_aux = vertices[vrt];
+		for (int i = 0; i < 1; i++) {
+				glPushMatrix();
+				switch (vrt) {
+					case 1:
+									glTranslatef(MercuryRadiusOrbit * cos(alphaS[vrt]), 1.0, MercuryRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									break;
+				  case 2:
+									glTranslatef(VenusRadiusOrbit * cos(alphaS[vrt]), 1.0, VenusRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									break;
+				  case 3:
+									glTranslatef(TerraRadiusOrbit * cos(alphaS[vrt]), 1.0, TerraRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									break;
+				  case 4:
+									glTranslatef(MarteRadiusOrbit * cos(alphaS[vrt]), 1.0, MarteRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									break;
+					case 5:
+									glTranslatef(JupiterRadiusOrbit * cos(alphaS[vrt]), 1.0, JupiterRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+								  break;
+				  case 6:
+									glTranslatef(SaturnoRadiusOrbit * cos(alphaS[vrt]), 1.0, SaturnoRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									break;
+				  case 7:
+		  						glTranslatef(UranoRadiusOrbit * cos(alphaS[vrt]), 1.0, UranoRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+									break;
+				  case 8:
+		  						glTranslatef(NeptunoRadiusOrbit * cos(alphaS[vrt]), 1.0, NeptunoRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
+	   							break;
+				}
+				glRotatef(angles[vrt],rotatesX[vrt],rotatesY[vrt],rotatesZ[vrt]);
+				glTranslatef(translatesX[vrt],translatesY[vrt],translatesZ[vrt]);
+				glBegin(GL_TRIANGLES);
+					for (int j = 0; j < vrtx_aux.size();){
+							glVertex3f(vrtx_aux[j++], vrtx_aux[j++], vrtx_aux[j++]);
+					}
+				glEnd();
+				// Drawing Rings
+				switch (vrt) {
+					case 6:
+									glutWireTorus(1.5,10,20,20);
+									break;
+				  case 7:
+					        glutWireTorus(1.5,10,20,20);
+									break;
+				  case 8:
+					        glutWireTorus(1.5,15,20,20);
+									break;
+				}
+				glPopMatrix();
+				if(movingON==1) {
+					if(vrt == 2 || vrt == 7){ alphaS[vrt] -= alphaIncS[vrt]; }
+					else{ alphaS[vrt] += alphaIncS[vrt]; }
+				}
+		}
+		if(movingON==1) {
+			if(vrt == 2 || vrt == 7){ alphaS[vrt] -= 10.0; }
+			else{ alphaS[vrt] += 10.0; }
+		}
+		 vrt++;
 	}
-  glBegin(GL_TRIANGLES);
-    for (int j = 0; j < vrtx_sun.size();){
-        glVertex3f(vrtx_sun[j++], vrtx_sun[j++], vrtx_sun[j++]);
-    }
-  glEnd();
-
-  // Mercury
-	vector<float> vrtx_Mercury;
-	vrtx_Mercury = vertices[1];
-  if(colourON==1) glColor3f(0.0, 0.5, 1);
-  for (int i = 0; i < 1; i++) {
-    glPushMatrix();
-			glTranslatef(MercuryRadiusOrbit * cos(alphaS[1]), 1.0, MercuryRadiusOrbit * sin(alphaS[1])); //proxima posicao no eixo XoZ
-    	glRotatef(10.0, 0.0, 1.0, 0.0);
-		  if(movingON==2) {
-			glRotatef(angles[1],rotatesX[1],rotatesY[1],rotatesZ[1]);
-			glTranslatef(translatesX[1],translatesY[1],translatesZ[1]);
-		}
-    glBegin(GL_TRIANGLES);
-      for (int j = 0; j < vrtx_Mercury.size();){
-          glVertex3f(vrtx_Mercury[j++], vrtx_Mercury[j++], vrtx_Mercury[j++]);
-      }
-    glEnd();
-    glPopMatrix();
-		if(movingON==1) alphaS[1] += alphaIncS[1]; // andar em sentido contrario, em circulos
-  }
-  if(movingON==1) alphaS[1] += 10.0;
-
-  // Venus
-	vector<float> vrtx_Venus;
-	vrtx_Venus = vertices[2];
-  if(colourON==1) glColor3f(1.0, 0.2, 0.2);
-  for (int i = 0; i < 1; i++) {
-      glPushMatrix();
-      glTranslatef(VenusRadiusOrbit * cos(alphaS[2]), 1.0, VenusRadiusOrbit * sin(alphaS[2]));
-		  if(movingON==2) {
-			glRotatef(angles[2],rotatesX[2],rotatesY[2],rotatesZ[2]);
-			glTranslatef(translatesX[2],translatesY[2],translatesZ[2]);
-		}
-		glBegin(GL_TRIANGLES);
-      for (int j = 0; j < vrtx_Venus.size();){
-          glVertex3f(vrtx_Venus[j++], vrtx_Venus[j++], vrtx_Venus[j++]);
-      }
-    glEnd();
-    glPopMatrix();
-		if(movingON==1) alphaS[2] -= alphaIncS[2]; // andar em sentido contrario, em circulos
-  }
-  if(movingON==1) alphaS[2] -= 10.0;
-
-  // Terra
-	vector<float> vrtx_Earth;
-	vrtx_Earth = vertices[3];
-  if(colourON==1) glColor3f(1.0, 0.5, 1.0);
-  for (int i = 0; i < 1; i++) {
-      glPushMatrix();
-      glTranslatef(TerraRadiusOrbit * cos(alphaS[3]), 1.0, TerraRadiusOrbit * sin(alphaS[3]));
-		  if(movingON==2) {
-			glRotatef(angles[3],rotatesX[3],rotatesY[3],rotatesZ[3]);
-			glTranslatef(translatesX[3],translatesY[3],translatesZ[3]);
-		}
-		glBegin(GL_TRIANGLES);
-      for (int j = 0; j < vrtx_Earth.size();){
-          glVertex3f(vrtx_Earth[j++], vrtx_Earth[j++], vrtx_Earth[j++]);
-      }
-    glEnd();
-    glPopMatrix();
-		if(movingON==1) alphaS[3] += alphaIncS[3]; // andar em sentido contrario, em circulos
-  }
-  if(movingON==1) alphaS[3] += 10.0;
-
-  // Marte
-	vector<float> vrtx_Mars;
-	vrtx_Mars = vertices[4];
-  if(colourON==1) glColor3f(0.0, 0.5, 1.0);
-  for (int i = 0; i < 1; i++) {
-      glPushMatrix();
-      glTranslatef(MarteRadiusOrbit * cos(alphaS[4]), 1.0, MarteRadiusOrbit * sin(alphaS[4]));
-		  if(movingON==2) {
-			glRotatef(angles[4],rotatesX[4],rotatesY[4],rotatesZ[4]);
-			glTranslatef(translatesX[4],translatesY[4],translatesZ[4]);
-		}
-		glBegin(GL_TRIANGLES);
-      for (int j = 0; j < vrtx_Mars.size();){
-          glVertex3f(vrtx_Mars[j++], vrtx_Mars[j++], vrtx_Mars[j++]);
-      }
-    glEnd();
-    glPopMatrix();
-		if(movingON==1) alphaS[4] += alphaIncS[4]; // andar em sentido contrario, em circulos
-  }
-  if(movingON==1) alphaS[4] += 10.0;
-
-  // Jupiter
-	vector<float> vrtx_Jupiter;
-	vrtx_Jupiter = vertices[5];
-  if(colourON==1) glColor3f(0.5, 0.5, 0.5);
-  for (int i = 0; i < 1; i++) {
-      glPushMatrix();
-      glTranslatef(JupiterRadiusOrbit * cos(alphaS[5]), 1.0, JupiterRadiusOrbit * sin(alphaS[5]));
-		  if(movingON==2) {
-			glRotatef(angles[5],rotatesX[5],rotatesY[5],rotatesZ[5]);
-			glTranslatef(translatesX[5],translatesY[5],translatesZ[5]);
-		}
-		glBegin(GL_TRIANGLES);
-      for (int j = 0; j < vrtx_Jupiter.size();){
-          glVertex3f(vrtx_Jupiter[j++], vrtx_Jupiter[j++], vrtx_Jupiter[j++]);
-      }
-    glEnd();
-    glPopMatrix();
-		if(movingON==1) alphaS[5] += alphaIncS[5]; // andar em sentido contrario, em circulos
-  }
-  if(movingON==1) alphaS[5] += 10.0;
-
-  // Saturno
-	vector<float> vrtx_Saturn;
-	vrtx_Saturn = vertices[6];
-  if(colourON==1) glColor3f(0.0, 0.0, 0.5);
-  for (int i = 0; i < 1; i++) {
-     glPushMatrix();
-     glTranslatef(SaturnoRadiusOrbit * cos(alphaS[6]), 1.0, SaturnoRadiusOrbit * sin(alphaS[6]));
-		 if(movingON==2) {
-		 glRotatef(angles[6],rotatesX[6],rotatesY[6],rotatesZ[6]);
-		 glTranslatef(translatesX[6],translatesY[6],translatesZ[6]);
-		}
-		glBegin(GL_TRIANGLES);
-      for (int j = 0; j < vrtx_Saturn.size();){
-          glVertex3f(vrtx_Saturn[j++], vrtx_Saturn[j++], vrtx_Saturn[j++]);
-      }
-    glEnd();
-		if(colourON==1) glColor3f(0.0, 1.0, 0.5);
-		glutWireTorus(1.5,10,20,20);
-    glPopMatrix();
-		if(movingON==1) alphaS[6] += alphaIncS[6]; // andar em sentido contrario, em circulos
-  }
-  if(movingON==1) alphaS[6] += 10.0;
-
-  // Urano
-	vector<float> vrtx_Uranus;
-	vrtx_Uranus = vertices[7];
-  if(colourON==1) glColor3f(1.0, 0.5, 0.0);
-  for (int i = 0; i < 1; i++) {
-      glPushMatrix();
-      glTranslatef(UranoRadiusOrbit * cos(alphaS[7]), 1.0, UranoRadiusOrbit * sin(alphaS[7]));
-		  if(movingON==2) {
-			glRotatef(angles[7],rotatesX[7],rotatesY[7],rotatesZ[7]);
-			glTranslatef(translatesX[7],translatesY[7],translatesZ[7]);
-		}
-		glBegin(GL_TRIANGLES);
-      for (int j = 0; j < vrtx_Uranus.size();){
-          glVertex3f(vrtx_Uranus[j++], vrtx_Uranus[j++], vrtx_Uranus[j++]);
-      }
-    glEnd();
-		if(colourON==1) glColor3f(0.0, 0.0, 0.5);
-		glutWireTorus(1.5,10,20,20);
-    glPopMatrix();
-		if(movingON==1) alphaS[7] -= alphaIncS[7]; // andar em sentido contrario, em circulos
-  }
-  if(movingON==1) alphaS[7] -= 10.0;
-
-  // Neptuno
-	vector<float> vrtx_Neptune;
-	vrtx_Neptune = vertices[8];
-  if(colourON==1) glColor3f(0.0, 1.0, 0.5);
-  for (int i = 0; i < 1; i++) {
-    glPushMatrix();
-    glTranslatef(NeptunoRadiusOrbit * cos(alphaS[8]), 1.0, NeptunoRadiusOrbit * sin(alphaS[8]));
-		if(movingON==2) {
-			glRotatef(angles[8],rotatesX[8],rotatesY[8],rotatesZ[8]);
-			glTranslatef(translatesX[8],translatesY[8],translatesZ[8]);
-		}
-		glBegin(GL_TRIANGLES);
-      for (int j = 0; j < vrtx_Neptune.size();){
-          glVertex3f(vrtx_Neptune[j++], vrtx_Neptune[j++], vrtx_Neptune[j++]);
-      }
-    glEnd();
-		if(colourON==1) glColor3f(0.5, 1.0, 0.5);
-		glutWireTorus(1.5,15,20,20);
-    glPopMatrix();
-		if(movingON==1) alphaS[8] += alphaIncS[8]; // andar em sentido contrario, em circulos
-  }
-  if(movingON==1) alphaS[8] += 10.0;
 
 	// End of frame.
 	glutSwapBuffers();
 }
-
 
 // write function to process menu events
 void newMenu (int id_op){
