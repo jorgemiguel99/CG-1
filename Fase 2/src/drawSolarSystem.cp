@@ -50,9 +50,6 @@ float NeptunoRadiusOrbit     = 250.0;
 // Global variable that allows to know if XML file was found and read
 int read=0;
 
-// Global variable to activate Colour as defined previously
-int colourON=0;
-
 // Global variable to activate movement around the Sun as defined previously
 int movingON=1;
 
@@ -381,11 +378,8 @@ int main(int argc, char **argv) {
   glutAddMenuEntry("Change Colour to Pink",'5');
   glutAddMenuEntry("Change Colour to Yellow",'6');
   glutAddMenuEntry("Change Colour to Bright Blue",'7');
-	glutAddMenuEntry("Enable Colour Similar Reality",'8');
-	glutAddMenuEntry("Disable Colour Similar Reality",'9');
 	glutAddMenuEntry("Stop Translation around Sun",'s');
 	glutAddMenuEntry("Restart Translation around Sun",'r');
-	glutAddMenuEntry("Use Translation & Rotation from 3d file",'t');
   //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 
@@ -446,7 +440,6 @@ void renderScene(void) {
 	glTranslatef(translate_x,translate_y,translate_z);
   // Draw plane.
   glBegin(GL_TRIANGLES);
-    if(colourON==1) glColor3f(0.5,0.5,0.5);
     glVertex3f(-600, 0, -600);
     glVertex3f(-600, 0, 600);
     glVertex3f(600, 0, 600);
@@ -468,12 +461,13 @@ void renderScene(void) {
 		}
 	glEnd();
 	vrt++;
-	cout << planets.size() << endl;
 	while(vrt<planets.size()){
-		cout << vrt << endl;
 		vrtx_aux = vertices[vrt];
 		for (int i = 0; i < 1; i++) {
 				glPushMatrix();
+				// Introducing circular momentum around the Sun is not required at this Stage
+				// is only introduced to make it more real and is only applied
+				// to the first 9 positions that together forms our Solar System (facts)
 				switch (vrt) {
 					case 1:
 									glTranslatef(MercuryRadiusOrbit * cos(alphaS[vrt]), 1.0, MercuryRadiusOrbit * sin(alphaS[vrt])); //proxima posicao no eixo XoZ
@@ -508,6 +502,8 @@ void renderScene(void) {
 					}
 				glEnd();
 				// Drawing Rings
+				// Glut functions used just to increase similarities to the real Solar System
+				// As result those aren´t read from 3d files read from XML file
 				switch (vrt) {
 					case 6:
 									glutWireTorus(1.5,10,20,20);
@@ -557,9 +553,8 @@ void keyPressed(unsigned char key, int x, int y) {
       else if (key == 'm' || key == 'M') glPolygonMode(GL_FRONT_AND_BACK,GL_LINE); //GL_FRONT_AND_BACK & GL_LINE
       else if (key == 'o' || key == 'O') glPolygonMode(GL_FRONT_AND_BACK,GL_POINT); //GL_FRONT_AND_BACK & GL_POINT
       else if (key == 'p' || key == 'P') glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); //GL_FRONT_AND_BACK & GL_FILL*/
-			else if (key == 's' || key == 'S') movingON=0;
-			else if (key == 'r' || key == 'R') movingON=1;
-			else if (key == 't' || key == 'T') movingON=2;
+			else if (key == 's' || key == 'S') movingON=0; // Parar rotação circular
+			else if (key == 'r' || key == 'R') movingON=1; // retomar rotação circular
 			// Move only camera
 			else if (key == 'g') py += 50;
 			else if (key == 'h') py -= 50;
@@ -588,13 +583,6 @@ void keyPressed(unsigned char key, int x, int y) {
       }
       else if (key == '7'){ // BRIGHT BLUE
           glColor3f(0.0f,1.0f,1.0f);
-      }
-			else if (key == '8'){
-        colourON=1;
-      }
-			else if (key == '9'){
-        colourON=0;
-				glColor3f(1.0f,1.0f,1.0f);
       }
       else if (key==27) exit(-1);
 
