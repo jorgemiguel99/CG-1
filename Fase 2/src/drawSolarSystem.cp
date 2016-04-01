@@ -48,6 +48,13 @@ float UranoRadiusOrbit       = 150.0;
 float SaturnoRadiusOrbit     = 200.0;
 float NeptunoRadiusOrbit     = 250.0;
 
+float earthMoonRadiusOrbit			= 20.0;
+float PhobosMoonRadiusOrbit			= 20.0;
+float CallistoMoonRadiusOrbit 	= 20.0;
+float TitanMoonRadiusOrbit			= 20.0;
+float OberonMoonRadiusOrbit			= 20.0;
+float TritonMoonRadiusOrbit			= 20.0;
+
 // Global variable that allows to know if XML file was found and read
 int read=0;
 
@@ -347,6 +354,7 @@ int main(int argc, char **argv) {
 				}*/
 				preencheAlphaS();
 				//printAlphaS();
+				//printFilenames();
         preencheVrtx(1);
 				preencheVrtx(2);
 				/* Verifying that vector < vector<string> > is OK!!
@@ -493,8 +501,9 @@ void renderScene(void) {
     glVertex3f(600, 0, 600);
   glEnd();
 
-	vector<float> vrtx_aux;
-	int vrt=0;
+	vector<float> vrtx_aux,vrtx_auxM;
+	int vrt=0,vrtM=0;
+	vrtx_auxM = verticesM[vrtM];
 	//Only executes for the exact number of planets read, vrt=0 is the Sun
 	vrtx_aux = verticesP[vrt]; // input read from XML
 	glRotatef(angles[vrt],rotatesX[vrt],rotatesY[vrt],rotatesZ[vrt]); // input read from XML
@@ -505,7 +514,7 @@ void renderScene(void) {
 		}
 	glEnd();
 	vrt++;
-	while(vrt<planets.size()){
+while(vrt<planets.size()){
 		vrtx_aux = verticesP[vrt];
 		for (int i = 0; i < 1; i++) {
 				glPushMatrix();
@@ -559,6 +568,78 @@ void renderScene(void) {
 					        glutWireTorus(1.5,15,20,20);
 									break;
 				}
+
+				for (int m = 0; m < 1; m++) {
+					if(vrt == 3){
+					glPushMatrix();
+					glTranslatef(earthMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, earthMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
+					glBegin(GL_TRIANGLES);
+						for (int j = 0; j < vrtx_auxM.size();){
+							glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
+						}
+						glEnd();
+					glPopMatrix();
+					if(movingON==1) { alphaSM[vrtM] += alphaIncSM[vrtM]; }
+				 }
+				 else if(vrt == 4){
+					 	glPushMatrix();
+						glTranslatef(PhobosMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, PhobosMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
+						glBegin(GL_TRIANGLES);
+						for (int j = 0; j < vrtx_auxM.size();){
+							glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
+						}
+						glEnd();
+						glPopMatrix();
+						if(movingON==1) { alphaSM[vrtM] += alphaIncSM[vrtM]; }
+				 }
+				 else if(vrt == 5){
+						glPushMatrix();
+						glTranslatef(CallistoMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, CallistoMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
+						glBegin(GL_TRIANGLES);
+						for (int j = 0; j < vrtx_auxM.size();){
+							glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
+						}
+					  glEnd();
+				    glPopMatrix();
+						if(movingON==1) { alphaSM[vrtM] += alphaIncSM[vrtM]; }
+			  }
+			  else if(vrt == 6){
+						glPushMatrix();
+						glTranslatef(TitanMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, TitanMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
+						glBegin(GL_TRIANGLES);
+						for (int j = 0; j < vrtx_auxM.size();){
+							glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
+						}
+						glEnd();
+						glPopMatrix();
+						if(movingON==1) { alphaSM[vrtM] += alphaIncSM[vrtM]; }
+				}
+				else if(vrt == 7){
+						glPushMatrix();
+						glTranslatef(OberonMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, OberonMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
+						glBegin(GL_TRIANGLES);
+						for (int j = 0; j < vrtx_auxM.size();){
+							glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
+						}
+						glEnd();
+						glPopMatrix();
+						if(movingON==1) { alphaSM[vrtM] += alphaIncSM[vrtM]; }
+			 }
+			 else if(vrt == 8){
+					 glPushMatrix();
+					 glTranslatef(TritonMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, TritonMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
+					 glBegin(GL_TRIANGLES);
+					 for (int j = 0; j < vrtx_auxM.size();){
+						 glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
+					 }
+					 glEnd();
+					 glPopMatrix();
+		    	 if(movingON==1) { alphaSM[vrtM] += alphaIncSM[vrtM]; }
+	    }
+			if(movingON==1) { alphaSM[vrtM] += 10.0; }
+			vrtM++;
+			if(vrtM<verticesM.size()) vrtx_auxM = verticesM[vrtM];
+			}
 				glPopMatrix();
 				if(movingON==1) {
 					if(vrt == 2 || vrt == 7){ alphaSP[vrt] -= alphaIncSP[vrt]; }
@@ -569,7 +650,7 @@ void renderScene(void) {
 			if(vrt == 2 || vrt == 7){ alphaSP[vrt] -= 10.0; }
 			else{ alphaSP[vrt] += 10.0; }
 		}
-		 vrt++;
+	 vrt++;
 	}
 
 	// End of frame.
@@ -698,16 +779,60 @@ void printTransformations(){
 void preencheAlphaS(){
  float aux4,aux5;
  for (int j = 0; j < planets.size();j++){
-	 aux4 = 0.0;
-	 alphaSP.push_back(aux4);
-	 aux5 = (2 * M_PI)/10.0;
-	 alphaIncSP.push_back(aux4);
+	aux4 = 0.0;
+	alphaSP.push_back(aux4);
+	 switch (j) {
+		 case 1:
+						aux5 = (2 * M_PI)/MercuryRadiusOrbit;
+						break;
+		 case 2:
+						aux5 = (2 * M_PI)/VenusRadiusOrbit;
+						break;
+		 case 3:
+						aux5 = (2 * M_PI)/TerraRadiusOrbit;
+						break;
+		 case 4:
+						aux5 = (2 * M_PI)/MarteRadiusOrbit;
+						break;
+		 case 5:
+						aux5 = (2 * M_PI)/JupiterRadiusOrbit;
+						break;
+		 case 6:
+						aux5 = (2 * M_PI)/SaturnoRadiusOrbit;
+						break;
+		 case 7:
+						aux5 = (2 * M_PI)/UranoRadiusOrbit;
+						break;
+		 case 8:
+						aux5 = (2 * M_PI)/NeptunoRadiusOrbit;
+						break;
+	 }
+	alphaIncSP.push_back(aux5);
  }
  for (int j = 0; j < moons.size();j++){
 	 aux4 = 0.0;
 	 alphaSM.push_back(aux4);
-	 aux5 = (2 * M_PI)/10.0;
-	 alphaIncSM.push_back(aux4);
+	 switch (j) {
+		 case 0:
+						aux5 = (2 * M_PI)/earthMoonRadiusOrbit;
+						break;
+		 case 1:
+						aux5 = (2 * M_PI)/PhobosMoonRadiusOrbit;
+						break;
+		 case 2:
+						aux5 = (2 * M_PI)/CallistoMoonRadiusOrbit;
+						break;
+		 case 3:
+						aux5 = (2 * M_PI)/TitanMoonRadiusOrbit;
+						break;
+		 case 4:
+						aux5 = (2 * M_PI)/OberonMoonRadiusOrbit;
+						break;
+		 case 5:
+						aux5 = (2 * M_PI)/TritonMoonRadiusOrbit;
+						break;
+	 }
+	 alphaIncSM.push_back(aux5);
  }
 }
 
