@@ -5,12 +5,16 @@
 
 #include <math.h>
 
+#include <iostream>
+
 #define _PI_ 3.14159
 
 #pragma comment(lib,"glew32.lib")
 
+using namespace std;
 
-float alfa = 0.0f, beta = 0.0f, radius = 5.0f;
+
+float alfa = 0.0f, beta = 0.0f, radius = 5;
 float camX, camY, camZ;
 
 GLuint vertexCount, vertices;
@@ -18,9 +22,13 @@ GLuint vertexCount, vertices;
 int timebase = 0, frame = 0;
 
 // Sphere variables
-float stacks = 30;
-float slices = 30;
+int stacks = 30;
+int slices = 30;
 float sphereRadius = 1;
+
+#define stacksC 30
+#define slicesC 30
+#define VERTEXB_SIZE (((stacksC - 2)*slicesC * 6 + 2 * slicesC * 3) * 3)
 
 void sphericalToCartesian() {
 
@@ -58,16 +66,20 @@ void changeSize(int w, int h) {
 
 void prepareSphere() {
 
-	float *vertexB;
+	
 	
 	float r = sphereRadius;
 
 	// a parte de cima e baixo contem  1 triangulo -> 3 vertices 
 	// restantes contêm 2 triangulos -> 6 vertices
 	int sphereCoordinatesSize = ((stacks - 2)*slices * 6 + 2 * slices * 3) * 3;
-	vertexB = (float *)malloc(sizeof(float) * sphereCoordinatesSize);
+	
 
-
+	//float *vertexB;
+	//vertexB = (float *)malloc(sizeof(float) * sphereCoordinatesSize);
+	
+	float vertexB[VERTEXB_SIZE];
+	
 	int vertex = 0;
 
 	float inicialPolar = -_PI_ / 2;
@@ -140,7 +152,7 @@ void prepareSphere() {
 	glBindBuffer(GL_ARRAY_BUFFER, vertices);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount * 3, vertexB, GL_STATIC_DRAW);
 
-	free(vertexB);
+	//free(vertexB);
 
 }
 
@@ -178,7 +190,7 @@ void renderScene(void) {
 		fps = frame*1000.0 / (time - timebase);
 		timebase = time;
 		frame = 0;
-		// sprintf(s, "FPS: %f6.2", fps);
+		 sprintf_s(s, "FPS: %f6.2", fps);
 		glutSetWindowTitle(s);
 	}
 

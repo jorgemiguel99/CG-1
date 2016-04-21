@@ -1,2 +1,2 @@
 ﻿  Source.cpp
-  GusSphereVBO.vcxproj -> c:\users\gustavo\documents\visual studio 2015\Projects\GusSphereVBO\Debug\GusSphereVBO.exe
+LINK : fatal error LNK1168: cannot open C:\Users\Gustavo\Documents\GitHub\CG\Fase 3\GusSphereVBO\Debug\GusSphereVBO.exe for writing
