@@ -21,7 +21,8 @@ GLuint vertexCount, vertices;
 // Sphere variables
 float stacks = 30;
 float slices = 30;
-float sphereRadius = 15;
+float planetsRadius[9] = {1,3,5,9,11,12,14,16,18};
+int planet=0;
 
 #define POINT_COUNT 8
 
@@ -61,10 +62,11 @@ void changeSize(int w, int h) {
 
 
 void prepareSphere() {
-
+	if(planet==9) planet=0;
+	else planet++;
 	float *vertexB;
 
-	float r = sphereRadius;
+	float r = planetsRadius[planet];
 
 	// a parte de cima e baixo contem  1 triangulo -> 3 vertices
 	// restantes cont�m 2 triangulos -> 6 vertices
@@ -206,10 +208,10 @@ void renderCatmullRomCurve() {
 }
 
 void renderScene(void) {
-//	int numberCurves=(int) sizeof(raio)/sizeof(float);
 	float raio[9]={0,10,20,30,40,50,60,70,80};
 	static float t[9] = {0,0,0,0,0,0,0,0,0};
 	float pos[4] = {1.0, 1.0, 1.0, 0.0}, res[3];
+	int numberCurves=(int) sizeof(raio)/sizeof(float);
 	char s[64];
 	int position;
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -219,7 +221,7 @@ void renderScene(void) {
 	gluLookAt(camX, camY, camZ, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
 
 	//PREENCHER CURVA
-	for(position=0;position<9;position++){
+	for(position=0;position<numberCurves;position++){
 		p[0][0] = (3.0/2)*raio[position];
 		p[0][1] = 0;
 		p[0][2] = 0;
