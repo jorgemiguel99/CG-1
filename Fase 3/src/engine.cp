@@ -1,6 +1,6 @@
-#include <GLUT/glut.h>      //-- MAC
-#include <OpenGL/glu.h>    //-- MAC
-#include <OpenGL/gl.h>    //-- MAC
+//#include <GLUT/glut.h>      //-- MAC
+//#include <OpenGL/glu.h>    //-- MAC
+//#include <OpenGL/gl.h>    //-- MAC
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -13,23 +13,30 @@
 #include <string>
 #include <math.h>
 #include <algorithm>
-// #include <windows.h>
-// #include <GL/glut.h>
-// #include <GL/glu.h>
-// #include <GL/gl.h>
-//#include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
-#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
+//windows include
+ #include <windows.h>
+#include<Glew\glew.h>
+ #include <GL/glut.h>
+#include <GL/glu.h>
+ #include <GL/gl.h>
+
+#include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
+//#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
 
 #define _USE_MATH_DEFINES
 
 using namespace std;
 
+#define M_PI 3.14159
+
+
+#pragma comment(lib,"glew32.lib")
 
 // Declared here and implemented after main in order to better organization of the code
-void init();
+void initGl();
+void initVBOS();
 void changeSize(int, int);
 void renderScene(void);
-void idleScene(void);
 void keyPressed(unsigned char, int, int);
 void newMenu (int id_op);
 void keyboardExtra(int key_code, int x, int y);
@@ -39,6 +46,12 @@ void preencheAlphaS();
 void printAlphaS();
 
 // Declare radii of all 8 planets orbits
+float planetRadiusOrbit[8] = { 20.0,40,55,80,110,150,200,250 };
+float moonRadiusOrbit[6] = { 20,20,20,20,20,20 };
+int planetMoonsQuantity[8] = { 0,0,1,1,1,1,1,1 };
+// boolean, check if planet has rings
+int planetRings[8] = { 0,0,0,0,0,1,1,1 };
+/*
 float MercuryRadiusOrbit     = 20.0;
 float VenusRadiusOrbit       = 40.0;
 float TerraRadiusOrbit       = 55.0;
@@ -47,14 +60,15 @@ float JupiterRadiusOrbit     = 110.0;
 float UranoRadiusOrbit       = 150.0;
 float SaturnoRadiusOrbit     = 200.0;
 float NeptunoRadiusOrbit     = 250.0;
-
+*/
+/*
 float earthMoonRadiusOrbit			= 20.0;
 float PhobosMoonRadiusOrbit			= 20.0;
 float CallistoMoonRadiusOrbit 	= 20.0;
 float TitanMoonRadiusOrbit			= 20.0;
 float OberonMoonRadiusOrbit			= 20.0;
 float TritonMoonRadiusOrbit			= 20.0;
-
+*/
 // Global variable that allows to know if XML file was found and read
 int read=0;
 
@@ -248,7 +262,7 @@ void preencheVrtx(int flag){
 	}
 }
 
-void readXML(string f){
+void readXML(const char* f){
 // Load the xml file, I put your XML in a file named test.xml
 TiXmlDocument XMLdoc(f);
 bool loadOkay = XMLdoc.LoadFile();
@@ -435,8 +449,9 @@ int main(int argc, char **argv) {
   //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-  // put init here
-  init();
+  glewInit();
+  initGl();
+  initVBOS();
 
   // enter GLUT's main cycle.
 	glutMainLoop();
@@ -447,12 +462,14 @@ int main(int argc, char **argv) {
 else cout << "Try again! Use: draw <filename.3d>" << endl;
 return 1;
 }
-void init () {
+void initGl () {
 	glClearColor(0.0,0.0,0.0,0.0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
   //default
 	glPolygonMode(GL_FRONT,GL_LINE);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
 }
 
 void changeSize(int w, int h) {
@@ -478,10 +495,43 @@ void changeSize(int w, int h) {
 	glMatrixMode(GL_MODELVIEW);
 }
 
+#define MAX_STACKS 100
+#define MAX_SLICES 100
+#define VERTEX_MAX_SIZE (((MAX_STACKS - 2)*MAX_SLICES * 6 + 2 * MAX_SLICES * 3) * 3)
+float vboVerticeBuffer[VERTEX_MAX_SIZE];
+int nBuffers; // Planetas + luas
+GLuint *vertexCount, *buffer;
+/*
+	Coloca os pontos dos planetas no buffer* seguidos
+	No mesmo buffer, no final dos planetas coloca as luas seguidas
+*/
+void initVBOS() {
+
+
+	nBuffers = verticesP.size() + verticesM.size();
+	buffer =(GLuint*) malloc(nBuffers * sizeof(GLuint));
+	vertexCount = (GLuint*)malloc(nBuffers * sizeof(GLuint));
+	glGenBuffers(nBuffers, buffer);
+
+	for (int i = 0; i < nBuffers; i++) {
+		vector<float> vertices;
+		if (i < verticesP.size()) vertices = verticesP[i];
+			else vertices = verticesM[i - verticesP.size()];
+		int points;
+		for (points = 0; points < vertices.size();points++)
+			vboVerticeBuffer[points] = vertices[points];
+			
+		vertexCount[i] = points / 3;
+	
+		glBindBuffer(GL_ARRAY_BUFFER, buffer[i]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount[i] * 3, vboVerticeBuffer, GL_STATIC_DRAW);
+	}
+
+}
+
 void renderScene(void) {
 	// Clear buffers.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	// Set the camera.
 	glLoadIdentity();
 	gluLookAt(px, py, pz,0.0,0.0,-1.0,0.0f,1.0f,0.0f);
@@ -490,8 +540,8 @@ void renderScene(void) {
 	glRotatef( rotate_y, 0.0, 1.0, 0.0 );
 	glRotatef( rotate_z, 0.0, 0.0, 1.0 );
 	glTranslatef(translate_x,translate_y,translate_z);
-  // Draw plane.
-  glBegin(GL_TRIANGLES);
+    // Draw plane.
+    glBegin(GL_TRIANGLES);
     glVertex3f(-600, 0, -600);
     glVertex3f(-600, 0, 600);
     glVertex3f(600, 0, 600);
@@ -499,143 +549,54 @@ void renderScene(void) {
     glVertex3f(600, 0, -600);
     glVertex3f(-600, 0, -600);
     glVertex3f(600, 0, 600);
-  glEnd();
+    glEnd();
+	// draw Sun
+	glRotatef(angles[0], rotatesX[0], rotatesY[0], rotatesZ[0]);
+	glTranslatef(translatesX[0], translatesY[0], translatesZ[0]);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glDrawArrays(GL_TRIANGLES, 0, vertexCount[0]);
+	
+	for (int planetIndex = 0,moonIndex = 0; planetIndex < 8; planetIndex++) {
+		glPushMatrix();
+		// Introducing circular momentum around the Sun is not required at this Stage
+		// is only introduced to make it more real and is only applied
+		// to the first 9 positions that together forms our Solar System (facts)
 
-	vector<float> vrtx_aux,vrtx_auxM;
-	int vrt=0,vrtM=0;
-	vrtx_auxM = verticesM[vrtM];
-	//Only executes for the exact number of planets read, vrt=0 is the Sun
-	vrtx_aux = verticesP[vrt]; // input read from XML
-	glRotatef(angles[vrt],rotatesX[vrt],rotatesY[vrt],rotatesZ[vrt]); // input read from XML
-	glTranslatef(translatesX[vrt],translatesY[vrt],translatesZ[vrt]); // input read from XML
-	glBegin(GL_TRIANGLES);
-		for (int j = 0; j < vrtx_aux.size();){
-			glVertex3f(vrtx_aux[j++], vrtx_aux[j++], vrtx_aux[j++]);
+		// Planet position
+		glTranslatef(planetRadiusOrbit[planetIndex] * cos(alphaSP[planetIndex]), 1.0, planetRadiusOrbit[planetIndex] * sin(alphaSP[planetIndex]));
+
+		glRotatef(angles[planetIndex], rotatesX[planetIndex], rotatesY[planetIndex], rotatesZ[planetIndex]);
+		glTranslatef(translatesX[planetIndex], translatesY[planetIndex], translatesZ[planetIndex]);
+		// draw planet
+
+		// +1 , sun offset on array
+		glBindBuffer(GL_ARRAY_BUFFER, buffer[planetIndex + 1]);
+		glVertexPointer(3, GL_FLOAT, 0, 0);
+		glDrawArrays(GL_TRIANGLES, 0, vertexCount[planetIndex +1]);
+		
+		// Drawing Rings
+		// Glut functions used just to increase similarities to the real Solar System
+		// As result those aren´t read from 3d files read from XML file
+		if(planetRings[planetIndex])
+			glutWireTorus(1.5, 10, 20, 20);
+		
+		if(planetMoonsQuantity[planetIndex]) {
+			glPushMatrix();
+			//proxima posiçao no eixo XoZ
+			// check if moon Index used right for aplhaSM
+			glTranslatef(moonRadiusOrbit[moonIndex] * cos(alphaSM[moonIndex]), 1.0, moonRadiusOrbit[moonIndex] * sin(alphaSM[moonIndex]));
+			
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[8 + 1 + moonIndex]);
+			glVertexPointer(3, GL_FLOAT, 0, 0);
+			glDrawArrays(GL_TRIANGLES, 0, vertexCount[8 + 1 + moonIndex]);
+	
+			glPopMatrix();
 		}
-	glEnd();
-	vrt++;
-while(vrt<planets.size()){
-		vrtx_aux = verticesP[vrt];
-				glPushMatrix();
-				// Introducing circular momentum around the Sun is not required at this Stage
-				// is only introduced to make it more real and is only applied
-				// to the first 9 positions that together forms our Solar System (facts)
-				switch (vrt) {
-					case 1:
-									glTranslatef(MercuryRadiusOrbit * cos(alphaSP[vrt]), 1.0, MercuryRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
-									break;
-				  case 2:
-									glTranslatef(VenusRadiusOrbit * cos(alphaSP[vrt]), 1.0, VenusRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
-									break;
-				  case 3:
-									glTranslatef(TerraRadiusOrbit * cos(alphaSP[vrt]), 1.0, TerraRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
-									break;
-				  case 4:
-									glTranslatef(MarteRadiusOrbit * cos(alphaSP[vrt]), 1.0, MarteRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
-									break;
-					case 5:
-									glTranslatef(JupiterRadiusOrbit * cos(alphaSP[vrt]), 1.0, JupiterRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
-								  break;
-				  case 6:
-									glTranslatef(SaturnoRadiusOrbit * cos(alphaSP[vrt]), 1.0, SaturnoRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
-									break;
-				  case 7:
-		  						glTranslatef(UranoRadiusOrbit * cos(alphaSP[vrt]), 1.0, UranoRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
-									break;
-				  case 8:
-		  						glTranslatef(NeptunoRadiusOrbit * cos(alphaSP[vrt]), 1.0, NeptunoRadiusOrbit * sin(alphaSP[vrt])); //proxima posicao no eixo XoZ
-	   							break;
-				}
-				glRotatef(angles[vrt],rotatesX[vrt],rotatesY[vrt],rotatesZ[vrt]);
-				glTranslatef(translatesX[vrt],translatesY[vrt],translatesZ[vrt]);
-				glBegin(GL_TRIANGLES);
-					for (int j = 0; j < vrtx_aux.size();){
-							glVertex3f(vrtx_aux[j++], vrtx_aux[j++], vrtx_aux[j++]);
-					}
-				glEnd();
-				// Drawing Rings
-				// Glut functions used just to increase similarities to the real Solar System
-				// As result those aren´t read from 3d files read from XML file
-				switch (vrt) {
-					case 6:
-									glutWireTorus(1.5,10,20,20);
-									break;
-				  case 7:
-					        glutWireTorus(1.5,10,20,20);
-									break;
-				  case 8:
-					        glutWireTorus(1.5,15,20,20);
-									break;
-				}
-
-
-					if(vrt == 3){
-					glPushMatrix();
-					glTranslatef(earthMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, earthMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
-					glBegin(GL_TRIANGLES);
-						for (int j = 0; j < vrtx_auxM.size();){
-							glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
-						}
-						glEnd();
-					glPopMatrix();
-				 }
-				 else if(vrt == 4){
-					 	glPushMatrix();
-						glTranslatef(PhobosMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, PhobosMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
-						glBegin(GL_TRIANGLES);
-						for (int j = 0; j < vrtx_auxM.size();){
-							glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
-						}
-						glEnd();
-						glPopMatrix();
-				 }
-				 else if(vrt == 5){
-						glPushMatrix();
-						glTranslatef(CallistoMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, CallistoMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
-						glBegin(GL_TRIANGLES);
-						for (int j = 0; j < vrtx_auxM.size();){
-							glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
-						}
-					  glEnd();
-				    glPopMatrix();
-			  }
-			  else if(vrt == 6){
-						glPushMatrix();
-						glTranslatef(TitanMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, TitanMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
-						glBegin(GL_TRIANGLES);
-						for (int j = 0; j < vrtx_auxM.size();){
-							glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
-						}
-						glEnd();
-						glPopMatrix();
-				}
-				else if(vrt == 7){
-						glPushMatrix();
-						glTranslatef(OberonMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, OberonMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
-						glBegin(GL_TRIANGLES);
-						for (int j = 0; j < vrtx_auxM.size();){
-							glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
-						}
-						glEnd();
-					  glPopMatrix();
-			 }
-			 else if(vrt == 8){
-					 glPushMatrix();
-					 glTranslatef(TritonMoonRadiusOrbit * cos(alphaSM[vrtM]), 1.0, TritonMoonRadiusOrbit * sin(alphaSM[vrtM])); //proxima posicao no eixo XoZ
-					 glBegin(GL_TRIANGLES);
-					 for (int j = 0; j < vrtx_auxM.size();){
-						 glVertex3f(vrtx_auxM[j++], vrtx_auxM[j++], vrtx_auxM[j++]);
-					 }
-					 glEnd();
-					 glPopMatrix();
-	    }
-			vrtM++;
-			if(vrtM<verticesM.size()) vrtx_auxM = verticesM[vrtM];
-
-				glPopMatrix();
-	 vrt++;
+		glPopMatrix();
 	}
-
+	
 	// End of frame.
 	glutSwapBuffers();
 }
@@ -762,57 +723,13 @@ void preencheAlphaS(){
  for (int j = 0; j < planets.size();j++){
 	aux4 = 0.0;
 	alphaSP.push_back(aux4);
-	 switch (j) {
-		 case 1:
-						aux5 = (2 * M_PI)/MercuryRadiusOrbit;
-						break;
-		 case 2:
-						aux5 = (2 * M_PI)/VenusRadiusOrbit;
-						break;
-		 case 3:
-						aux5 = (2 * M_PI)/TerraRadiusOrbit;
-						break;
-		 case 4:
-						aux5 = (2 * M_PI)/MarteRadiusOrbit;
-						break;
-		 case 5:
-						aux5 = (2 * M_PI)/JupiterRadiusOrbit;
-						break;
-		 case 6:
-						aux5 = (2 * M_PI)/SaturnoRadiusOrbit;
-						break;
-		 case 7:
-						aux5 = (2 * M_PI)/UranoRadiusOrbit;
-						break;
-		 case 8:
-						aux5 = (2 * M_PI)/NeptunoRadiusOrbit;
-						break;
-	 }
+	aux5 = (2 * M_PI) / planetRadiusOrbit[j];
 	alphaIncSP.push_back(aux5);
  }
  for (int j = 0; j < moons.size();j++){
 	 aux4 = 0.0;
 	 alphaSM.push_back(aux4);
-	 switch (j) {
-		 case 0:
-						aux5 = (2 * M_PI)/earthMoonRadiusOrbit;
-						break;
-		 case 1:
-						aux5 = (2 * M_PI)/PhobosMoonRadiusOrbit;
-						break;
-		 case 2:
-						aux5 = (2 * M_PI)/CallistoMoonRadiusOrbit;
-						break;
-		 case 3:
-						aux5 = (2 * M_PI)/TitanMoonRadiusOrbit;
-						break;
-		 case 4:
-						aux5 = (2 * M_PI)/OberonMoonRadiusOrbit;
-						break;
-		 case 5:
-						aux5 = (2 * M_PI)/TritonMoonRadiusOrbit;
-						break;
-	 }
+	 aux5 = (2 * M_PI) / moonRadiusOrbit[j];
 	 alphaIncSM.push_back(aux5);
  }
 }
