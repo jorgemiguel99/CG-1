@@ -16,12 +16,13 @@ int startX, startY, tracking = 0;
 
 int alphaMouse = 0, betaMouse = 0, rMouse = 5;
 
-GLuint vertexCount, vertices;
+GLuint vertexCount, vertices[9];
 
 // Sphere variables
 float stacks = 30;
 float slices = 30;
-float planetsRadius[9] = {1,3,5,9,11,12,14,16,18};
+float planetsRadii[9]={5,1,2,3,4,5,6,7,8};
+float planetsRadiusOrbits[9] = {0,30,50,90,110,120,140,160,180};
 int planet=0;
 
 #define POINT_COUNT 8
@@ -61,18 +62,18 @@ void changeSize(int w, int h) {
 }
 
 
-void prepareSphere() {
-	if(planet==9) planet=0;
-	else planet++;
+void preparePlanets() {
+	float r;
+	int sphereCoordinatesSize;
+	for(planet=0;planet<9;planet++){
 	float *vertexB;
 
-	float r = planetsRadius[planet];
+	r = planetsRadii[planet];
 
 	// a parte de cima e baixo contem  1 triangulo -> 3 vertices
 	// restantes cont�m 2 triangulos -> 6 vertices
-	int sphereCoordinatesSize = ((stacks - 2)*slices * 6 + 2 * slices * 3) * 3;
+	sphereCoordinatesSize = ((stacks - 2)*slices * 6 + 2 * slices * 3) * 3;
 	vertexB = (float *)malloc(sizeof(float) * sphereCoordinatesSize);
-
 
 	int vertex = 0;
 
@@ -142,21 +143,72 @@ void prepareSphere() {
 
 	vertexCount = vertex;
 
-	glGenBuffers(1, &vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, vertices);
+	if(planet==0) glGenBuffers(9, vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, vertices[planet]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount * 3, vertexB, GL_STATIC_DRAW);
 
 	free(vertexB);
-
+  }
 }
 
-void drawSphere() {
+void drawPlanets(int position) {
+	switch (position) {
+		case 0:
+						glBindBuffer(GL_ARRAY_BUFFER, vertices[0]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 1:
+						glBindBuffer(GL_ARRAY_BUFFER, vertices[1]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 2:
+						glBindBuffer(GL_ARRAY_BUFFER, vertices[2]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 3:
+						glBindBuffer(GL_ARRAY_BUFFER, vertices[3]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 4:
+						glBindBuffer(GL_ARRAY_BUFFER, vertices[4]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 5:
+						glBindBuffer(GL_ARRAY_BUFFER, vertices[5]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 6:
+						glBindBuffer(GL_ARRAY_BUFFER, vertices[6]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 7:
+						glBindBuffer(GL_ARRAY_BUFFER, vertices[7]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 8:
+						glBindBuffer(GL_ARRAY_BUFFER, vertices[8]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, vertices);
-	glVertexPointer(3, GL_FLOAT, 0, 0);
-
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 
 void getCatmullRomPoint(float t, int *indices, float *res) {
@@ -208,10 +260,9 @@ void renderCatmullRomCurve() {
 }
 
 void renderScene(void) {
-	float raio[9]={0,10,20,30,40,50,60,70,80};
 	static float t[9] = {0,0,0,0,0,0,0,0,0};
 	float pos[4] = {1.0, 1.0, 1.0, 0.0}, res[3];
-	int numberCurves=(int) sizeof(raio)/sizeof(float);
+	int numberCurves=(int) sizeof(planetsRadii)/sizeof(float);
 	char s[64];
 	int position;
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -222,37 +273,37 @@ void renderScene(void) {
 
 	//PREENCHER CURVA
 	for(position=0;position<numberCurves;position++){
-		p[0][0] = (3.0/2)*raio[position];
+		p[0][0] = (3.0/2)*planetsRadiusOrbits[position];
 		p[0][1] = 0;
 		p[0][2] = 0;
 
-		p[1][0] = (2.2/2)*raio[position];
+		p[1][0] = (2.2/2)*planetsRadiusOrbits[position];
 		p[1][1] = 0;
-		p[1][2] = (-1.5/2)*raio[position];
+		p[1][2] = (-1.5/2)*planetsRadiusOrbits[position];
 
 		p[2][0] = 0;
 		p[2][1] = 0;
-		p[2][2] = (-2.0/2)*raio[position];
+		p[2][2] = (-2.0/2)*planetsRadiusOrbits[position];
 
-		p[3][0] = (-2.2/2)*raio[position];
+		p[3][0] = (-2.2/2)*planetsRadiusOrbits[position];
 		p[3][1] = 0;
-		p[3][2] = (-1.5/2)*raio[position];
+		p[3][2] = (-1.5/2)*planetsRadiusOrbits[position];
 
-		p[4][0] = (-3.0/2)*raio[position];
+		p[4][0] = (-3.0/2)*planetsRadiusOrbits[position];
 		p[4][1] = 0;
 		p[4][2] = 0;
 
-		p[5][0] = (-2.2/2)*raio[position];
+		p[5][0] = (-2.2/2)*planetsRadiusOrbits[position];
 		p[5][1] = 0;
-		p[5][2] = (1.5/2)*raio[position];
+		p[5][2] = (1.5/2)*planetsRadiusOrbits[position];
 
 		p[6][0] = 0;
 		p[6][1] = 0;
-		p[6][2] = (2.0/2)*raio[position];
+		p[6][2] = (2.0/2)*planetsRadiusOrbits[position];
 
-		p[7][0] = (2.2/2)*raio[position];
+		p[7][0] = (2.2/2)*planetsRadiusOrbits[position];
 		p[7][1] = 0;
-		p[7][2] = (1.5/2)*raio[position];
+		p[7][2] = (1.5/2)*planetsRadiusOrbits[position];
 
 		getGlobalCatmullRomPoint(t[position], res);
 
@@ -260,7 +311,7 @@ void renderScene(void) {
 
 		glPushMatrix();
 		glTranslatef(res[0], res[1], res[2]);
-		drawSphere();
+		drawPlanets(position);
 		glPopMatrix();
 		switch (position) {
 			case 0:
@@ -270,7 +321,7 @@ void renderScene(void) {
 						t[position] += 0.05;
 						break;
 			case 2:
-						t[position] -= 0.03;
+						t[position] += 0.03;
 						break;
 			case 3:
 						t[position] += 0.02;
@@ -285,7 +336,7 @@ void renderScene(void) {
 						t[position] += 0.001;
 						break;
 			case 7:
-						t[position] -= 0.0005;
+						t[position] += 0.0005;
 						break;
 			case 8:
 						t[position] += 0.0001;
@@ -361,7 +412,7 @@ void initGL() {
 	sphericalToCartesian();
 	glEnableClientState(GL_VERTEX_ARRAY);
 
-	prepareSphere();
+	preparePlanets();
 }
 
 int main(int argc, char **argv) {
