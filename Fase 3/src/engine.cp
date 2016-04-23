@@ -30,7 +30,6 @@ using namespace std;
 
 #define _M_PI_ 3.14159
 
-
 #pragma comment(lib,"glew32.lib")
 
 // camera variables
@@ -41,11 +40,13 @@ int alphaMouse = 0, betaMouse = 0, rMouse = 5;
 
 // Declared here and implemented after main in order to better organization of the code
 void initGl();
-void initVBOS();
+void initVBOsPlanets();
+void initVBOsMoons();
 void sphericalToCartesian();
 void getGlobalCatmullRomPoint(float gt, float *res);
 void renderCatmullRomCurve();
-void drawPlanetVBO();
+void drawPlanetVBO(int);
+void drawMoonVBO(int);
 void changeSize(int, int);
 void renderScene(void);
 void keyPressed(unsigned char, int, int);
@@ -57,14 +58,18 @@ void printFilenames();
 void printTransformations();
 
 // Declare radii of all 8 planets orbits
-float planetRadiusOrbit[9] = {0.0,20.0,40,55,80,110,150,200,250 };
+float planetsRadiusOrbits[9] = {0,30,50,90,110,120,140,160,180};
 float moonRadiusOrbit[6] = { 20,20,20,20,20,20 };
 int planetMoonsQuantity[9] = {0,0,0,1,1,1,1,1,1 };
 // boolean, check if planet has rings
 int planetRings[9] = {0,0,0,0,0,0,1,1,1 };
 
-int planet=0;
-int moon=0;
+//VBO
+#define MAX_STACKS 100
+#define MAX_SLICES 100
+#define VERTEX_MAX_SIZE (((MAX_STACKS - 2)*MAX_SLICES * 6 + 2 * MAX_SLICES * 3) * 3)
+
+GLuint vertexCountP, vertexCountM, *planetas, *luas;
 
 #define POINT_COUNT 8
 // Points that make up the loop for catmull-rom interpolation
@@ -446,7 +451,7 @@ int main(int argc, char **argv) {
 
   glewInit();
   initGl();
-  initVBOS();
+  initVBOsPlanets();
 
   // enter GLUT's main cycle.
 	glutMainLoop();
@@ -491,44 +496,10 @@ void changeSize(int w, int h) {
 	glMatrixMode(GL_MODELVIEW);
 }
 
-#define MAX_STACKS 100
-#define MAX_SLICES 100
-#define VERTEX_MAX_SIZE (((MAX_STACKS - 2)*MAX_SLICES * 6 + 2 * MAX_SLICES * 3) * 3)
-float vboVerticeBuffer[VERTEX_MAX_SIZE];
-int nBuffers; // Planetas + luas
-GLuint *vertexCount, *buffer;
-/*
-	Coloca os pontos dos planetas no buffer* seguidos
-	No mesmo buffer, no final dos planetas coloca as luas seguidas
-*/
-void initVBOS() {
-
-
-	nBuffers = verticesP.size() + verticesM.size();
-	buffer =(GLuint*) malloc(nBuffers * sizeof(GLuint));
-	vertexCount = (GLuint*)malloc(nBuffers * sizeof(GLuint));
-	glGenBuffers(nBuffers, buffer);
-
-	for (int i = 0; i < nBuffers; i++) {
-		vector<float> vertices;
-		if (i < verticesP.size()) vertices = verticesP[i];
-			else vertices = verticesM[i - verticesP.size()];
-		int points;
-		for (points = 0; points < vertices.size();points++)
-			vboVerticeBuffer[points] = vertices[points];
-
-		vertexCount[i] = points / 3;
-
-		glBindBuffer(GL_ARRAY_BUFFER, buffer[i]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount[i] * 3, vboVerticeBuffer, GL_STATIC_DRAW);
-	}
-
-}
-
 void renderScene(void) {
   static float t[9] = {0,0,0,0,0,0,0,0,0};
-  float pos[4] = {1.0, 1.0, 1.0, 0.0}, res[3];
-  int numberCurves=(int) sizeof(planetRadiusOrbit)/sizeof(float);
+  float pos[4] = {1.0, 1.0, 1.0, 0.0}, res[3],res2[3];
+  int numberCurves=(int) verticesP.size();
   int position;
 
 	// Clear buffers.
@@ -540,50 +511,40 @@ void renderScene(void) {
   glRotatef( rotate_y, 0.0, 1.0, 0.0 );
   glRotatef( rotate_z, 0.0, 0.0, 1.0 );
   glTranslatef(translate_x,translate_y,translate_z);
-    // Draw plane.
-    glBegin(GL_TRIANGLES);
-    glVertex3f(-600, 0, -600);
-    glVertex3f(-600, 0, 600);
-    glVertex3f(600, 0, 600);
-
-    glVertex3f(600, 0, -600);
-    glVertex3f(-600, 0, -600);
-    glVertex3f(600, 0, 600);
-    glEnd();
 
   //PREENCHER CURVAS
 	for(position=0;position<numberCurves;position++){
-		p[0][0] = (3.0/2)*planetRadiusOrbit[position];
+		p[0][0] = (3.0/2)*planetsRadiusOrbits[position];
 		p[0][1] = 0;
 		p[0][2] = 0;
 
-		p[1][0] = (2.2/2)*planetRadiusOrbit[position];
+		p[1][0] = (2.2/2)*planetsRadiusOrbits[position];
 		p[1][1] = 0;
-		p[1][2] = (-1.5/2)*planetRadiusOrbit[position];
+		p[1][2] = (-1.5/2)*planetsRadiusOrbits[position];
 
 		p[2][0] = 0;
 		p[2][1] = 0;
-		p[2][2] = (-2.0/2)*planetRadiusOrbit[position];
+		p[2][2] = (-2.0/2)*planetsRadiusOrbits[position];
 
-		p[3][0] = (-2.2/2)*planetRadiusOrbit[position];
+		p[3][0] = (-2.2/2)*planetsRadiusOrbits[position];
 		p[3][1] = 0;
-		p[3][2] = (-1.5/2)*planetRadiusOrbit[position];
+		p[3][2] = (-1.5/2)*planetsRadiusOrbits[position];
 
-		p[4][0] = (-3.0/2)*planetRadiusOrbit[position];
+		p[4][0] = (-3.0/2)*planetsRadiusOrbits[position];
 		p[4][1] = 0;
 		p[4][2] = 0;
 
-		p[5][0] = (-2.2/2)*planetRadiusOrbit[position];
+		p[5][0] = (-2.2/2)*planetsRadiusOrbits[position];
 		p[5][1] = 0;
-		p[5][2] = (1.5/2)*planetRadiusOrbit[position];
+		p[5][2] = (1.5/2)*planetsRadiusOrbits[position];
 
 		p[6][0] = 0;
 		p[6][1] = 0;
-		p[6][2] = (2.0/2)*planetRadiusOrbit[position];
+		p[6][2] = (2.0/2)*planetsRadiusOrbits[position];
 
-		p[7][0] = (2.2/2)*planetRadiusOrbit[position];
+		p[7][0] = (2.2/2)*planetsRadiusOrbits[position];
 		p[7][1] = 0;
-		p[7][2] = (1.5/2)*planetRadiusOrbit[position];
+		p[7][2] = (1.5/2)*planetsRadiusOrbits[position];
 
 		getGlobalCatmullRomPoint(t[position], res);
 
@@ -591,7 +552,11 @@ void renderScene(void) {
 
 		glPushMatrix();
 		glTranslatef(res[0], res[1], res[2]);
-		drawPlanetVBO();
+
+		glRotatef(angles[position], rotatesX[position], rotatesY[position], rotatesZ[position]);
+	  glTranslatef(translatesX[position], translatesY[position], translatesZ[position]);
+
+		drawPlanetVBO(position);
 		glPopMatrix();
 		switch (position) {
 			case 0:
@@ -852,42 +817,149 @@ void renderCatmullRomCurve() {
 	glEnd();
 }
 
-void drawPlanetVBO(){
-  // draw Sun
-  // glRotatef(angles[0], rotatesX[0], rotatesY[0], rotatesZ[0]);
-  // glTranslatef(translatesX[0], translatesY[0], translatesZ[0]);
-  //
-  // glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-  // glVertexPointer(3, GL_FLOAT, 0, 0);
-  // glDrawArrays(GL_TRIANGLES, 0, vertexCount[0]);
-
-  for (int planetIndex = 0,moonIndex = 0; planetIndex < 9; planetIndex++) {
-    // glRotatef(angles[planetIndex], rotatesX[planetIndex], rotatesY[planetIndex], rotatesZ[planetIndex]);
-    // glTranslatef(translatesX[planetIndex], translatesY[planetIndex], translatesZ[planetIndex]);
-    // draw planet
-
-    // +1 , sun offset on array
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[planetIndex + 1]);
-    glVertexPointer(3, GL_FLOAT, 0, 0);
-    glDrawArrays(GL_TRIANGLES, 0, vertexCount[planetIndex + 1]);
-
-    // Drawing Rings
-    // Glut functions used just to increase similarities to the real Solar System
-    // As result those aren´t read from 3d files read from XML file
-    // if(planetRings[planetIndex]) glutWireTorus(1.5, 10, 20, 20);
-
-    // if(planetMoonsQuantity[planetIndex]) {
-    //   //glPushMatrix();
-    //   //proxima posiçao no eixo XoZ
-    //   // check if moon Index used right for aplhaSM
-    //   //glTranslatef(moonRadiusOrbit[moonIndex] * cos(alphaSM[moonIndex]), 1.0, moonRadiusOrbit[moonIndex] * sin(alphaSM[moonIndex]));
-    //
-    //   glBindBuffer(GL_ARRAY_BUFFER, buffer[8 + 1 + moonIndex]);
-    //   glVertexPointer(3, GL_FLOAT, 0, 0);
-    //   glDrawArrays(GL_TRIANGLES, 0, vertexCount[8 + 1 + moonIndex]);
-    //
-    //   glPopMatrix();
-    // }
-    // glPopMatrix();
-  }
+void drawPlanetVBO(int position){
+	switch (position) {
+		case 0:
+						glBindBuffer(GL_ARRAY_BUFFER, planetas[0]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCountP);
+						break;
+		case 1:
+						glBindBuffer(GL_ARRAY_BUFFER, planetas[1]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCountP);
+						break;
+		case 2:
+						glBindBuffer(GL_ARRAY_BUFFER, planetas[2]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCountP);
+						break;
+		case 3:
+						glBindBuffer(GL_ARRAY_BUFFER, planetas[3]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCountP);
+						break;
+		case 4:
+						glBindBuffer(GL_ARRAY_BUFFER, planetas[4]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCountP);
+						break;
+		case 5:
+						glBindBuffer(GL_ARRAY_BUFFER, planetas[5]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCountP);
+						break;
+		case 6:
+						glBindBuffer(GL_ARRAY_BUFFER, planetas[6]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCountP);
+						glutWireTorus(1.5, 10, 20, 20);
+						break;
+		case 7:
+						glBindBuffer(GL_ARRAY_BUFFER, planetas[7]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCountP);
+						glutWireTorus(1.5, 10, 20, 20);
+						break;
+		case 8:
+						glBindBuffer(GL_ARRAY_BUFFER, planetas[8]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCountP);
+						glutWireTorus(1.5, 10, 20, 20);
+						break;
+	}
 }
+
+	void initVBOsPlanets() {
+		int vertex = 0,i,j,points,numberOfPlanets=verticesP.size();
+		planetas=(GLuint *)malloc(sizeof(GLuint) * numberOfPlanets);
+		glGenBuffers(numberOfPlanets, planetas);
+		vector<float> auxiliar;
+		for(i=0;i<numberOfPlanets;i++){
+			float *vertexPlanets=(float *)malloc(sizeof(float) * VERTEX_MAX_SIZE);
+			//Each i stands for one planet
+			auxiliar=verticesP[i];
+
+			for (points = 0; points < auxiliar.size();points++){
+					vertexPlanets[points] = auxiliar[points];
+			}
+			vertexCountP = points;
+
+			glBindBuffer(GL_ARRAY_BUFFER, planetas[i]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCountP, vertexPlanets, GL_STATIC_DRAW);
+
+			free(vertexPlanets);
+		}
+	}
+
+	void drawMoonVBO(int position){
+		switch (position) {
+			case 3:
+							glBindBuffer(GL_ARRAY_BUFFER, luas[0]);
+							glVertexPointer(3, GL_FLOAT, 0, 0);
+							glColor3f(1.0f, 0.0f, 0.0f);
+							glDrawArrays(GL_TRIANGLES, 0, vertexCountM);
+							break;
+			case 4:
+							glBindBuffer(GL_ARRAY_BUFFER, luas[4]);
+							glVertexPointer(3, GL_FLOAT, 0, 0);
+							glColor3f(1.0f, 0.0f, 0.0f);
+							glDrawArrays(GL_TRIANGLES, 0, vertexCountM);
+							break;
+			case 5:
+							glBindBuffer(GL_ARRAY_BUFFER, luas[5]);
+							glVertexPointer(3, GL_FLOAT, 0, 0);
+							glColor3f(1.0f, 0.0f, 0.0f);
+							glDrawArrays(GL_TRIANGLES, 0, vertexCountM);
+							break;
+			case 6:
+							glBindBuffer(GL_ARRAY_BUFFER, luas[6]);
+							glVertexPointer(3, GL_FLOAT, 0, 0);
+							glColor3f(1.0f, 0.0f, 0.0f);
+							glDrawArrays(GL_TRIANGLES, 0, vertexCountM);
+							break;
+			case 7:
+							glBindBuffer(GL_ARRAY_BUFFER, luas[7]);
+							glVertexPointer(3, GL_FLOAT, 0, 0);
+							glColor3f(1.0f, 0.0f, 0.0f);
+							glDrawArrays(GL_TRIANGLES, 0, vertexCountM);
+							break;
+			case 8:
+							glBindBuffer(GL_ARRAY_BUFFER, luas[8]);
+							glVertexPointer(3, GL_FLOAT, 0, 0);
+							glColor3f(1.0f, 0.0f, 0.0f);
+							glDrawArrays(GL_TRIANGLES, 0, vertexCountM);
+							break;
+		}
+	}
+
+	void initVBOsMoons() {
+		int vertex = 0,i,j,points,numberOfMoons=verticesM.size();
+		luas=(GLuint *)malloc(sizeof(GLuint) * numberOfMoons);
+		glGenBuffers(numberOfMoons, luas);
+		vector<float> auxiliar;
+		for(i=0;i<numberOfMoons;i++){
+			float *vertexMoons=(float *)malloc(sizeof(float) * VERTEX_MAX_SIZE);
+			//Each i stands for one planet
+			auxiliar=verticesM[i];
+
+			for (points = 0; points < auxiliar.size();points++){
+					vertexMoons[points] = auxiliar[points];
+			}
+			vertexCountM = points;
+
+			glBindBuffer(GL_ARRAY_BUFFER, luas[i]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCountM, vertexMoons, GL_STATIC_DRAW);
+
+			free(vertexMoons);
+		}
+	}
