@@ -9,8 +9,8 @@
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
-//#include <windows.h>
-#include <GLUT/glut.h>
+#include <windows.h>
+#include <GL/glut.h>
 #include <math.h>
 
 using namespace std;
@@ -32,30 +32,12 @@ vector<string> patchesString;
 vector<string> verticesString;
 
 // Global variable to save patches floats
-vector< vector<float> > patches;
+vector<vector<float>> patches;
 
 // Global variable to save control points floats
-vector< vector<float> > vertices;
+vector<vector<float>> vertices;
 
 vector<float> values;
-
-void printFloatVector(){
-    vector<float> aux;
-    for (int j = 0; j < patches.size();j++){
-        aux.erase(aux.begin(),aux.end());
-        aux=patches[j];
-        for(int k=0;k<aux.size();k++){
-            cout << "patch #" << k << " => " << aux[k] << endl;
-        }
-    }
-    for (int j=0;j<vertices.size();j++){
-        aux.erase(aux.begin(),aux.end());
-        aux=vertices[j];
-        for(int k=0;k<aux.size();k++){
-            cout << "vertices #" << k << " => " << aux[k] << endl;
-        }
-    }
-}
 
 // Reads the patch and saves on a vector
 vector<string> readPatchFile(string figure) {
@@ -88,7 +70,6 @@ void separeContent() {
 string parsing(string aux) {
 	string auxParsed = "";
 	int auxSize = aux.size();
-	//cout << "Size of String input: " << auxSize << endl;
 	int count = 0;
 	while (count <= auxSize) {
 		if (aux[count] != ',') {
@@ -96,7 +77,6 @@ string parsing(string aux) {
 		}
 		count++;
 	}
-	//cout << auxParsed << endl;
 	return auxParsed;
 }
 
@@ -132,27 +112,19 @@ void preencheVectors(int flag) {
 	}
 }
 
-void getBezierPoint(float u, float v, vector<float> indices, float res[4][3]) {
-	float U[4] = { powf(u, 3), powf(u, 2), u, 1 };
-	float M[4][4] = { {-1.0, 3.0, -3.0, 1.0}, {3.0, -6.0, 3.0, 0.0}, {-3.0, 3.0, 0.0, 0.0}, {1.0, 0.0, 0.0, 0.0} };
-	float b[4][1] = { {powf(1 - v, 3)}, {3 * v * powf(1 - v, 2)}, {3 * powf(v, 2) * (1 - v)}, {powf(v, 3)} };
+float getBezierPoint(float u, float v, vector<float> indices, int coord) {
+	float pointValue = 0;
 
-	// UM = U * M
-	float UM[4];
-	for (int i = 0; i < 4; i++) UM[i] = U[0] * M[0][i] + U[1] * M[1][i] + U[2] * M[2][i] + U[3] * M[3][i];
+	float bu[4][1] = { {powf(1 - u, 3)}, {3 * u * powf(1 - u, 2)}, {3 * powf(u, 2) * (1 - u)}, {powf(u, 3)} };
+	float bv[4][1] = { {powf(1 - v, 3)}, {3 * v * powf(1 - v, 2)}, {3 * powf(v, 2) * (1 - v)}, {powf(v, 3)} };
 
-	// res = UM * vertices * b
-	//float res[4][3];
-	int k = 0;
 	for (int i = 0; i < 4; i++) {
-		//res[i] = (float*)malloc(3 * sizeof(float));
-		float UMP[3];
-		for (int j = 0; j < 3; j++) {
-			UMP[j] = UM[0] * vertices[indices[k]][j] + UM[1] * vertices[indices[k + 1]][j] + UM[2] * vertices[indices[k + 2]][j] + UM[3] * vertices[indices[k + 3]][j];
-			res[i][j] = b[i][0] * UM[j];
+		for (int j = 0; j < 4; j++) {
+			pointValue += vertices[indices[j + 4 * i]][coord] * bu[i][0] * bv[j][0];
 		}
-		k += 4;
 	}
+
+	return pointValue;
 }
 
 void renderTeapot() {
@@ -164,11 +136,15 @@ void renderTeapot() {
 			float u = 0.0;
 			while (u <= 1) {
 				float res[4][3];
-				getBezierPoint(u, v, indicesPatch, res);
-				for (int i = 0; i < 4; i++) glVertex3f(res[i][0], res[i][1], res[i][2]);
-				u += 0.01;
+				for (int i = 0; i < 4; i++) {
+					res[i][0] = getBezierPoint(u, v, indicesPatch, 0);
+					res[i][1] = getBezierPoint(u, v, indicesPatch, 1);
+					res[i][2] = getBezierPoint(u, v, indicesPatch, 2);
+					glVertex3f(res[i][0], res[i][1], res[i][2]);
+				}
+				u += 0.05;
 			}
-			v += 0.01;
+			v += 0.05;
 		}
 	}
 	glEnd();
@@ -272,7 +248,6 @@ int main(int argc, char **argv) {
 	separeContent();
 	preencheVectors(1);
 	preencheVectors(2);
-	printFloatVector();
 
 	// Callback registration
 	glutDisplayFunc(renderScene);
