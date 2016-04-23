@@ -1,6 +1,7 @@
-//#include <GLUT/glut.h>      //-- MAC
-//#include <OpenGL/glu.h>    //-- MAC
-//#include <OpenGL/gl.h>    //-- MAC
+#include <GL/glew.h>
+#include <GLUT/glut.h>      //-- MAC
+#include <OpenGL/glu.h>    //-- MAC
+#include <OpenGL/gl.h>    //-- MAC
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -14,69 +15,63 @@
 #include <math.h>
 #include <algorithm>
 //windows include
- #include <windows.h>
-#include<Glew\glew.h>
- #include <GL/glut.h>
-#include <GL/glu.h>
- #include <GL/gl.h>
+//  #include <windows.h>
+// #include<Glew\glew.h>
+//  #include <GL/glut.h>
+// #include <GL/glu.h>
+//  #include <GL/gl.h>
 
-#include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
-//#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
+//#include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
+#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
 
 #define _USE_MATH_DEFINES
 
 using namespace std;
 
-#define M_PI 3.14159
+#define _M_PI_ 3.14159
 
 
 #pragma comment(lib,"glew32.lib")
 
+// camera variables
+float alfa = 0.0f, beta = 0.0f, radius = 500.0f;
+float camX, camY=15, camZ = 15;
+int startX, startY, tracking = 0;
+int alphaMouse = 0, betaMouse = 0, rMouse = 5;
+
 // Declared here and implemented after main in order to better organization of the code
 void initGl();
 void initVBOS();
+void sphericalToCartesian();
+void getGlobalCatmullRomPoint(float gt, float *res);
+void renderCatmullRomCurve();
+void drawPlanetVBO();
 void changeSize(int, int);
 void renderScene(void);
 void keyPressed(unsigned char, int, int);
 void newMenu (int id_op);
 void keyboardExtra(int key_code, int x, int y);
+void processMouseButtons(int button, int state, int xx, int yy);
+void processMouseMotion(int xx, int yy);
 void printFilenames();
 void printTransformations();
-void preencheAlphaS();
-void printAlphaS();
 
 // Declare radii of all 8 planets orbits
-float planetRadiusOrbit[8] = { 20.0,40,55,80,110,150,200,250 };
+float planetRadiusOrbit[9] = {0.0,20.0,40,55,80,110,150,200,250 };
 float moonRadiusOrbit[6] = { 20,20,20,20,20,20 };
-int planetMoonsQuantity[8] = { 0,0,1,1,1,1,1,1 };
+int planetMoonsQuantity[9] = {0,0,0,1,1,1,1,1,1 };
 // boolean, check if planet has rings
-int planetRings[8] = { 0,0,0,0,0,1,1,1 };
-/*
-float MercuryRadiusOrbit     = 20.0;
-float VenusRadiusOrbit       = 40.0;
-float TerraRadiusOrbit       = 55.0;
-float MarteRadiusOrbit       = 80.0;
-float JupiterRadiusOrbit     = 110.0;
-float UranoRadiusOrbit       = 150.0;
-float SaturnoRadiusOrbit     = 200.0;
-float NeptunoRadiusOrbit     = 250.0;
-*/
-/*
-float earthMoonRadiusOrbit			= 20.0;
-float PhobosMoonRadiusOrbit			= 20.0;
-float CallistoMoonRadiusOrbit 	= 20.0;
-float TitanMoonRadiusOrbit			= 20.0;
-float OberonMoonRadiusOrbit			= 20.0;
-float TritonMoonRadiusOrbit			= 20.0;
-*/
+int planetRings[9] = {0,0,0,0,0,0,1,1,1 };
+
+int planet=0;
+int moon=0;
+
+#define POINT_COUNT 8
+// Points that make up the loop for catmull-rom interpolation
+float p[POINT_COUNT][3] = { { 0, 0 , 0 }, { 0, 0 , 0 },{ 0, 0 , 0 },{ 0, 0 , 0 },{ 0, 0 , 0 },{ 0, 0 , 0 },{ 0, 0 , 0 },{ 0, 0 , 0 }};
+
 // Global variable that allows to know if XML file was found and read
 int read=0;
-
-// Global variable to activate movement around the Sun as defined previously
-int movingON=1;
-
-// Global Variables to Transformations
-float px = 0.0, py = 100.0, pz = 100.0;
 
 float rotate_y = 0;
 float rotate_x = 0;
@@ -345,7 +340,7 @@ int main(int argc, char **argv) {
 
 	// The function "stoff" transforms the content of a string in a float
 
-  if (splitted[0] == "Draw" || splitted[0] == "draw") {	// Draw -> receives the name of the .3d file
+  if (splitted[0] == "engine" || splitted[0] == "Engine") {	// Draw -> receives the name of the .3d file
     if (splitted.size() == 1){
       readXML("SolarSystemXML.xml");
       if(read!=0){
@@ -366,8 +361,6 @@ int main(int argc, char **argv) {
 								cout << aux2[k] << endl;
 						}
 				}*/
-				preencheAlphaS();
-				//printAlphaS();
 				//printFilenames();
         preencheVrtx(1);
 				preencheVrtx(2);
@@ -407,7 +400,7 @@ int main(int argc, char **argv) {
   glutInitWindowPosition(0, 0);
 
   // Creates a window using internal glut functionality
-  glutCreateWindow("Solar System - Stage 2");
+  glutCreateWindow("Solar System - Stage 3");
 
   // Callback function responsible for the window's contents.
   glutDisplayFunc(renderScene);
@@ -418,7 +411,9 @@ int main(int argc, char **argv) {
   // Function called when a key is pressed.
   glutKeyboardFunc(keyPressed);
   glutSpecialFunc(keyboardExtra);
-
+  // mouse callbacks
+  glutMouseFunc(processMouseButtons);
+  glutMotionFunc(processMouseMotion);
   //menu
   glutCreateMenu(newMenu);
   glutAddMenuEntry("Increase Translate x value",'j');
@@ -468,7 +463,8 @@ void initGl () {
 	glEnable(GL_CULL_FACE);
   //default
 	glPolygonMode(GL_FRONT,GL_LINE);
-
+  // init
+  sphericalToCartesian();
 	glEnableClientState(GL_VERTEX_ARRAY);
 }
 
@@ -520,9 +516,9 @@ void initVBOS() {
 		int points;
 		for (points = 0; points < vertices.size();points++)
 			vboVerticeBuffer[points] = vertices[points];
-			
+
 		vertexCount[i] = points / 3;
-	
+
 		glBindBuffer(GL_ARRAY_BUFFER, buffer[i]);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount[i] * 3, vboVerticeBuffer, GL_STATIC_DRAW);
 	}
@@ -530,16 +526,20 @@ void initVBOS() {
 }
 
 void renderScene(void) {
+  static float t[9] = {0,0,0,0,0,0,0,0,0};
+  float pos[4] = {1.0, 1.0, 1.0, 0.0}, res[3];
+  int numberCurves=(int) sizeof(planetRadiusOrbit)/sizeof(float);
+  int position;
+
 	// Clear buffers.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Set the camera.
 	glLoadIdentity();
-	gluLookAt(px, py, pz,0.0,0.0,-1.0,0.0f,1.0f,0.0f);
-
-	glRotatef( rotate_x, 1.0, 0.0, 0.0 );
-	glRotatef( rotate_y, 0.0, 1.0, 0.0 );
-	glRotatef( rotate_z, 0.0, 0.0, 1.0 );
-	glTranslatef(translate_x,translate_y,translate_z);
+	gluLookAt(camX, camY, camZ,0.0,0.0,-1.0,0.0f,1.0f,0.0f);
+  glRotatef( rotate_x, 1.0, 0.0, 0.0 );
+  glRotatef( rotate_y, 0.0, 1.0, 0.0 );
+  glRotatef( rotate_z, 0.0, 0.0, 1.0 );
+  glTranslatef(translate_x,translate_y,translate_z);
     // Draw plane.
     glBegin(GL_TRIANGLES);
     glVertex3f(-600, 0, -600);
@@ -550,53 +550,81 @@ void renderScene(void) {
     glVertex3f(-600, 0, -600);
     glVertex3f(600, 0, 600);
     glEnd();
-	// draw Sun
-	glRotatef(angles[0], rotatesX[0], rotatesY[0], rotatesZ[0]);
-	glTranslatef(translatesX[0], translatesY[0], translatesZ[0]);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-	glVertexPointer(3, GL_FLOAT, 0, 0);
-	glDrawArrays(GL_TRIANGLES, 0, vertexCount[0]);
-	
-	for (int planetIndex = 0,moonIndex = 0; planetIndex < 8; planetIndex++) {
+
+  //PREENCHER CURVAS
+	for(position=0;position<numberCurves;position++){
+		p[0][0] = (3.0/2)*planetRadiusOrbit[position];
+		p[0][1] = 0;
+		p[0][2] = 0;
+
+		p[1][0] = (2.2/2)*planetRadiusOrbit[position];
+		p[1][1] = 0;
+		p[1][2] = (-1.5/2)*planetRadiusOrbit[position];
+
+		p[2][0] = 0;
+		p[2][1] = 0;
+		p[2][2] = (-2.0/2)*planetRadiusOrbit[position];
+
+		p[3][0] = (-2.2/2)*planetRadiusOrbit[position];
+		p[3][1] = 0;
+		p[3][2] = (-1.5/2)*planetRadiusOrbit[position];
+
+		p[4][0] = (-3.0/2)*planetRadiusOrbit[position];
+		p[4][1] = 0;
+		p[4][2] = 0;
+
+		p[5][0] = (-2.2/2)*planetRadiusOrbit[position];
+		p[5][1] = 0;
+		p[5][2] = (1.5/2)*planetRadiusOrbit[position];
+
+		p[6][0] = 0;
+		p[6][1] = 0;
+		p[6][2] = (2.0/2)*planetRadiusOrbit[position];
+
+		p[7][0] = (2.2/2)*planetRadiusOrbit[position];
+		p[7][1] = 0;
+		p[7][2] = (1.5/2)*planetRadiusOrbit[position];
+
+		getGlobalCatmullRomPoint(t[position], res);
+
+		renderCatmullRomCurve();
+
 		glPushMatrix();
-		// Introducing circular momentum around the Sun is not required at this Stage
-		// is only introduced to make it more real and is only applied
-		// to the first 9 positions that together forms our Solar System (facts)
-
-		// Planet position
-		glTranslatef(planetRadiusOrbit[planetIndex] * cos(alphaSP[planetIndex]), 1.0, planetRadiusOrbit[planetIndex] * sin(alphaSP[planetIndex]));
-
-		glRotatef(angles[planetIndex], rotatesX[planetIndex], rotatesY[planetIndex], rotatesZ[planetIndex]);
-		glTranslatef(translatesX[planetIndex], translatesY[planetIndex], translatesZ[planetIndex]);
-		// draw planet
-
-		// +1 , sun offset on array
-		glBindBuffer(GL_ARRAY_BUFFER, buffer[planetIndex + 1]);
-		glVertexPointer(3, GL_FLOAT, 0, 0);
-		glDrawArrays(GL_TRIANGLES, 0, vertexCount[planetIndex +1]);
-		
-		// Drawing Rings
-		// Glut functions used just to increase similarities to the real Solar System
-		// As result those aren´t read from 3d files read from XML file
-		if(planetRings[planetIndex])
-			glutWireTorus(1.5, 10, 20, 20);
-		
-		if(planetMoonsQuantity[planetIndex]) {
-			glPushMatrix();
-			//proxima posiçao no eixo XoZ
-			// check if moon Index used right for aplhaSM
-			glTranslatef(moonRadiusOrbit[moonIndex] * cos(alphaSM[moonIndex]), 1.0, moonRadiusOrbit[moonIndex] * sin(alphaSM[moonIndex]));
-			
-			glBindBuffer(GL_ARRAY_BUFFER, buffer[8 + 1 + moonIndex]);
-			glVertexPointer(3, GL_FLOAT, 0, 0);
-			glDrawArrays(GL_TRIANGLES, 0, vertexCount[8 + 1 + moonIndex]);
-	
-			glPopMatrix();
-		}
+		glTranslatef(res[0], res[1], res[2]);
+		drawPlanetVBO();
 		glPopMatrix();
+		switch (position) {
+			case 0:
+						t[position] += 0.000001;
+						break;
+			case 1:
+						t[position] += 0.05;
+						break;
+			case 2:
+						t[position] += 0.03;
+						break;
+			case 3:
+						t[position] += 0.02;
+						break;
+			case 4:
+						t[position] += 0.01;
+						break;
+			case 5:
+						t[position] += 0.005;
+						break;
+			case 6:
+						t[position] += 0.001;
+						break;
+			case 7:
+						t[position] += 0.0005;
+						break;
+			case 8:
+						t[position] += 0.0001;
+						break;
+
+		}
 	}
-	
+
 	// End of frame.
 	glutSwapBuffers();
 }
@@ -623,10 +651,10 @@ void keyPressed(unsigned char key, int x, int y) {
       else if (key == 'o' || key == 'O') glPolygonMode(GL_FRONT_AND_BACK,GL_POINT); //GL_FRONT_AND_BACK & GL_POINT
       else if (key == 'p' || key == 'P') glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); //GL_FRONT_AND_BACK & GL_FILL*/
 			// Move only camera
-			else if (key == 'g') py += 50;
-			else if (key == 'h') py -= 50;
-			else if (key == 'i') pz += 50;
-			else if (key == 'u') pz += 50;
+			else if (key == 'g') camY += 50;
+			else if (key == 'h') camY -= 50;
+			else if (key == 'i') camZ += 50;
+			else if (key == 'u') camZ += 50;
 			else if (key == '0'){ // DEFAULT IS WHITE
           glColor3f(1.0f,1.0f,1.0f);
       }
@@ -676,6 +704,57 @@ void keyboardExtra(int key_code, int x, int y){
 		glutPostRedisplay();
 }
 
+void processMouseButtons(int button, int state, int xx, int yy) {
+	if (state == GLUT_DOWN) {
+		startX = xx;
+		startY = yy;
+		if (button == GLUT_LEFT_BUTTON) tracking = 1;
+		else if (button == GLUT_RIGHT_BUTTON) tracking = 2;
+		else tracking = 0;
+	}
+	else if (state == GLUT_UP) {
+		if (tracking == 1) {
+			alphaMouse += (xx - startX);
+			betaMouse += (yy - startY);
+		}
+		else if (tracking == 2) {
+			rMouse -= yy - startY;
+			if (rMouse < 3) rMouse = 3.0;
+		}
+		tracking = 0;
+	}
+}
+
+void processMouseMotion(int xx, int yy) {
+	int deltaX, deltaY;
+	int alphaAux, betaAux;
+	int rAux;
+
+	if (!tracking) return;
+
+	deltaX = xx - startX;
+	deltaY = yy - startY;
+
+	if (tracking == 1) {
+		alphaAux = alphaMouse + deltaX;
+		betaAux = betaMouse + deltaY;
+
+		if (betaAux > 85.0) betaAux = 85.0;
+		else if (betaAux < -85.0) betaAux = -85.0;
+        rAux = rMouse;
+        if (rAux < 500) rAux = 500;
+	}
+	else if (tracking == 2) {
+		alphaAux = alphaMouse;
+		betaAux = betaMouse;
+		rAux = rMouse - deltaY;
+		if (rAux < 500) rAux = 500;
+	}
+	camX = rAux * sin(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
+	camZ = rAux * cos(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
+	camY = rAux * sin(betaAux * 3.14 / 180.0);
+}
+
 void printFilenames(){
 	cout << "\nPlanets:" << endl;
 	for (int j = 0; j < planets.size();j++){
@@ -718,37 +797,97 @@ void printTransformations(){
 	}
 }
 
-void preencheAlphaS(){
- float aux4,aux5;
- for (int j = 0; j < planets.size();j++){
-	aux4 = 0.0;
-	alphaSP.push_back(aux4);
-	aux5 = (2 * M_PI) / planetRadiusOrbit[j];
-	alphaIncSP.push_back(aux5);
- }
- for (int j = 0; j < moons.size();j++){
-	 aux4 = 0.0;
-	 alphaSM.push_back(aux4);
-	 aux5 = (2 * M_PI) / moonRadiusOrbit[j];
-	 alphaIncSM.push_back(aux5);
- }
+void sphericalToCartesian() {
+
+	camX = radius * cos(beta) * sin(alfa);
+	camY = radius * sin(beta);
+	camZ = radius * cos(beta) * cos(alfa);
 }
 
-void printAlphaS(){
- cout << "\nAlphaSP" << endl;
- for (int j = 0; j < alphaSP.size();j++){
-	 cout << alphaSP[j] << endl;
- }
- cout << "\nAlphaIncSP" << endl;
- for (int j = 0; j < alphaIncSP.size();j++){
-	 cout <<  alphaIncSP[j] << endl;
- }
- cout << "\nAlphaSM" << endl;
- for (int j = 0; j < alphaSM.size();j++){
-	 cout << alphaSM[j] << endl;
- }
- cout << "\nAlphaIncSM" << endl;
- for (int j = 0; j < alphaIncSM.size();j++){
-	 cout <<  alphaIncSM[j] << endl;
- }
+void getCatmullRomPoint(float t, int *indices, float *res) {
+	// catmull-rom matrix
+	float m[4][4] = { { -0.5f, 1.5f, -1.5f, 0.5f },{ 1.0f, -2.5f, 2.0f, -0.5f },{ -0.5f, 0.0f, 0.5f, 0.0f },{ 0.0f, 1.0f, 0.0f, 0.0f } };
+
+	res[0] = 0.0; res[1] = 0.0; res[2] = 0.0;
+
+	float T[4] = { powf(t, 3), powf(t, 2), t, 1 }, mult[4];
+
+	// mult = T * M
+	for (int i = 0; i < 4; i++) {
+		mult[i] = T[0] * m[0][i] + T[1] * m[1][i] + T[2] * m[2][i] + T[3] * m[3][i];
+	}
+
+	// res = mult * p
+	for (int i = 0; i < 3; i++) {
+		res[i] = mult[0] * p[indices[0]][i] + mult[1] * p[indices[1]][i] + mult[2] * p[indices[2]][i] + mult[3] * p[indices[3]][i];
+	}
+}
+
+// given global t, returns the point in the curve
+void getGlobalCatmullRomPoint(float gt, float *res) {
+	float t = gt * POINT_COUNT; // this is the real global t
+	int index = floor(t); // which segment
+	t = t - index; // where within the segment
+
+	// indices store the points
+	int indices[4];
+	indices[0] = (index + POINT_COUNT - 1) % POINT_COUNT;
+	indices[1] = (indices[0] + 1) % POINT_COUNT;
+	indices[2] = (indices[1] + 1) % POINT_COUNT;
+	indices[3] = (indices[2] + 1) % POINT_COUNT;
+
+	getCatmullRomPoint(t, indices, res);
+}
+
+void renderCatmullRomCurve() {
+	float gt = 0.0;
+
+	glBegin(GL_LINE_LOOP);
+	while (gt < 1) {
+		float res[3];
+		getGlobalCatmullRomPoint(gt, res);
+		glVertex3f(res[0], res[1], res[2]);
+		gt += 0.0001;
+	}
+	glEnd();
+}
+
+void drawPlanetVBO(){
+  // draw Sun
+  // glRotatef(angles[0], rotatesX[0], rotatesY[0], rotatesZ[0]);
+  // glTranslatef(translatesX[0], translatesY[0], translatesZ[0]);
+  //
+  // glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+  // glVertexPointer(3, GL_FLOAT, 0, 0);
+  // glDrawArrays(GL_TRIANGLES, 0, vertexCount[0]);
+
+  for (int planetIndex = 0,moonIndex = 0; planetIndex < 9; planetIndex++) {
+    // glRotatef(angles[planetIndex], rotatesX[planetIndex], rotatesY[planetIndex], rotatesZ[planetIndex]);
+    // glTranslatef(translatesX[planetIndex], translatesY[planetIndex], translatesZ[planetIndex]);
+    // draw planet
+
+    // +1 , sun offset on array
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[planetIndex + 1]);
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount[planetIndex + 1]);
+
+    // Drawing Rings
+    // Glut functions used just to increase similarities to the real Solar System
+    // As result those aren´t read from 3d files read from XML file
+    // if(planetRings[planetIndex]) glutWireTorus(1.5, 10, 20, 20);
+
+    // if(planetMoonsQuantity[planetIndex]) {
+    //   //glPushMatrix();
+    //   //proxima posiçao no eixo XoZ
+    //   // check if moon Index used right for aplhaSM
+    //   //glTranslatef(moonRadiusOrbit[moonIndex] * cos(alphaSM[moonIndex]), 1.0, moonRadiusOrbit[moonIndex] * sin(alphaSM[moonIndex]));
+    //
+    //   glBindBuffer(GL_ARRAY_BUFFER, buffer[8 + 1 + moonIndex]);
+    //   glVertexPointer(3, GL_FLOAT, 0, 0);
+    //   glDrawArrays(GL_TRIANGLES, 0, vertexCount[8 + 1 + moonIndex]);
+    //
+    //   glPopMatrix();
+    // }
+    // glPopMatrix();
+  }
 }
