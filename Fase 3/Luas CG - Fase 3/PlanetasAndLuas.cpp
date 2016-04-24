@@ -8,7 +8,6 @@
 #define _PI_ 3.14159
 
 #pragma comment(lib,"glew32.lib")
-void luas();
 
 float alfa = 0.0f, beta = 0.0f, radius = 500.0f;
 float camX, camY=15, camZ = 15;
@@ -17,14 +16,16 @@ int startX, startY, tracking = 0;
 
 int alphaMouse = 0, betaMouse = 0, rMouse = 5;
 
-GLuint vertexCount, vertices[9];
+GLuint vertexCount, vertices[9], luas[9];
 
 // Sphere variables
 float stacks = 30;
 float slices = 30;
 float planetsRadii[9]={5,1,2,3,4,5,6,7,8};
-float planetsRadiusOrbits[9] = {0,30,50,90,110,120,140,160,180};
-int planet=0;
+float moonsRadii[9]={0,0,0,2,5,6,8,6,7};
+float planetsRadiusOrbits[9] = {0,30,50,70,90,110,130,150,170};
+float MoonsRadiusOrbits[9] = {0,0,0,30,25,20,30,25,20};
+int planet=0,moon=0;
 
 #define POINT_COUNT 8
 
@@ -212,6 +213,156 @@ void drawPlanets(int position) {
 
 }
 
+
+void prepareMoons() {
+	float r;
+	int sphereCoordinatesSize;
+	for(moon=0;moon<9;moon++){
+	float *vertexB;
+
+	r = moonsRadii[moon];
+
+	// a parte de cima e baixo contem  1 triangulo -> 3 vertices
+	// restantes cont�m 2 triangulos -> 6 vertices
+	sphereCoordinatesSize = ((stacks - 2)*slices * 6 + 2 * slices * 3) * 3;
+	vertexB = (float *)malloc(sizeof(float) * sphereCoordinatesSize);
+
+	int vertex = 0;
+
+	float inicialPolar = -_PI_ / 2;
+
+	for (int i = 0; i < stacks; i++) {
+
+		float polar = inicialPolar + i * (_PI_ / stacks);
+		float polar2 = inicialPolar + (i + 1) * (_PI_ / stacks);
+
+		for (int j = 0; j < slices; j++) {
+
+			float longitude = j * (2 * _PI_ / slices);
+			float longitude2 = (j + 1) * (2 * _PI_ / slices);
+
+
+			float z1 = r * cos(polar) * cos(longitude);
+			float x1 = r * cos(polar) * sin(longitude);
+			float y1 = r * sin(polar);
+
+			float z2 = r * cos(polar2) * cos(longitude);
+			float x2 = r * cos(polar2) * sin(longitude);
+			float y2 = r * sin(polar2);
+
+			float z3 = r * cos(polar) * cos(longitude2);
+			float x3 = r * cos(polar) * sin(longitude2);
+			float y3 = r * sin(polar);
+
+			float z4 = r * cos(polar2) * cos(longitude2);
+			float x4 = r * cos(polar2) * sin(longitude2);
+			float y4 = r * sin(polar2);
+
+			if (i == 0) {
+
+				vertexB[vertex * 3 + 0] = x3; vertexB[vertex * 3 + 1] = y3; vertexB[vertex * 3 + 2] = z3;
+				vertex++;
+				vertexB[vertex * 3 + 0] = x4;	vertexB[vertex * 3 + 1] = y4;	vertexB[vertex * 3 + 2] = z4;
+				vertex++;
+				vertexB[vertex * 3 + 0] = x2;	vertexB[vertex * 3 + 1] = y2;	vertexB[vertex * 3 + 2] = z2;
+				vertex++;
+			}
+			else if (i == stacks - 1) {
+				vertexB[vertex * 3 + 0] = x1;	vertexB[vertex * 3 + 1] = y1;	vertexB[vertex * 3 + 2] = z1;
+				vertex++;
+				vertexB[vertex * 3 + 0] = x3;	vertexB[vertex * 3 + 1] = y3;	vertexB[vertex * 3 + 2] = z3;
+				vertex++;
+				vertexB[vertex * 3 + 0] = x2;	vertexB[vertex * 3 + 1] = y2;	vertexB[vertex * 3 + 2] = z2;
+				vertex++;
+			}
+			else {
+				vertexB[vertex * 3 + 0] = x3; vertexB[vertex * 3 + 1] = y3; vertexB[vertex * 3 + 2] = z3;
+				vertex++;
+				vertexB[vertex * 3 + 0] = x2;	vertexB[vertex * 3 + 1] = y2;	vertexB[vertex * 3 + 2] = z2;
+				vertex++;
+				vertexB[vertex * 3 + 0] = x1;	vertexB[vertex * 3 + 1] = y1;	vertexB[vertex * 3 + 2] = z1;
+				vertex++;
+
+				vertexB[vertex * 3 + 0] = x3;	vertexB[vertex * 3 + 1] = y3;	vertexB[vertex * 3 + 2] = z3;
+				vertex++;
+				vertexB[vertex * 3 + 0] = x4;	vertexB[vertex * 3 + 1] = y4;	vertexB[vertex * 3 + 2] = z4;
+				vertex++;
+				vertexB[vertex * 3 + 0] = x2;	vertexB[vertex * 3 + 1] = y2;	vertexB[vertex * 3 + 2] = z2;
+				vertex++;
+			}
+		}
+	}
+
+	vertexCount = vertex;
+
+	if(moon==0) glGenBuffers(9, luas);
+	glBindBuffer(GL_ARRAY_BUFFER, luas[moon]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount * 3, vertexB, GL_STATIC_DRAW);
+
+	free(vertexB);
+  }
+}
+
+void drawMoons(int position) {
+	switch (position) {
+		case 0:
+						glBindBuffer(GL_ARRAY_BUFFER, luas[0]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 1:
+						glBindBuffer(GL_ARRAY_BUFFER, luas[1]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 2:
+						glBindBuffer(GL_ARRAY_BUFFER, luas[2]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 3:
+						glBindBuffer(GL_ARRAY_BUFFER, luas[3]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 4:
+						glBindBuffer(GL_ARRAY_BUFFER, luas[4]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 5:
+						glBindBuffer(GL_ARRAY_BUFFER, luas[5]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 6:
+						glBindBuffer(GL_ARRAY_BUFFER, luas[6]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 7:
+						glBindBuffer(GL_ARRAY_BUFFER, luas[7]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+		case 8:
+						glBindBuffer(GL_ARRAY_BUFFER, luas[8]);
+						glVertexPointer(3, GL_FLOAT, 0, 0);
+						glColor3f(1.0f, 0.0f, 0.0f);
+						glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+						break;
+	}
+
+}
+
 void getCatmullRomPoint(float t, int *indices, float *res) {
 	// catmull-rom matrix
 	float m[4][4] = { { -0.5f, 1.5f, -1.5f, 0.5f },{ 1.0f, -2.5f, 2.0f, -0.5f },{ -0.5f, 0.0f, 0.5f, 0.0f },{ 0.0f, 1.0f, 0.0f, 0.0f } };
@@ -262,19 +413,19 @@ void renderCatmullRomCurve() {
 
 void renderScene(void) {
 	static float t[9] = {0,0,0,0,0,0,0,0,0};
-	float pos[4] = {1.0, 1.0, 1.0, 0.0}, res[3];
+	static float l[9] = {0,0,0,0,0,0,0,0,0};
+	float pos[4] = {1.0, 1.0, 1.0, 0.0}, res[3],resM[3];
 	int numberCurves=(int) sizeof(planetsRadii)/sizeof(float);
 	char s[64];
-	int position;
+	int position,moonP;
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	float tm=0;
+
 	glLoadIdentity();
 	gluLookAt(camX, camY, camZ, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
 
-	//PREENCHER CURVA
-	//for(position=0;position<numberCurves;position++){
-		for(position=0;position<2;position++){
+	//PREENCHER CURVA Planetas
+	for(position=0;position<numberCurves;position++){
 		p[0][0] = (3.0/2)*planetsRadiusOrbits[position];
 		p[0][1] = 0;
 		p[0][2] = 0;
@@ -314,81 +465,122 @@ void renderScene(void) {
 		glPushMatrix();
 		glTranslatef(res[0], res[1], res[2]);
 		drawPlanets(position);
-
 		glPopMatrix();
-		t[position] += 0.001;
-		// switch (position) {
-		// 	case 0:
-		// 				t[position] += 0.000001;
-		// 				break;
-			// case 1:
-			// 			t[position] += 0.05;
-			// 			break;
-			// case 2:
-			// 			t[position] += 0.03;
-			// 			break;
-			// case 3:
-			// 			t[position] += 0.02;
-			// 			break;
-			// case 4:
-			// 			t[position] += 0.01;
-			// 			break;
-			// case 5:
-			// 			t[position] += 0.005;
-			// 			break;
-			// case 6:
-			// 			t[position] += 0.001;
-			// 			break;
-			// case 7:
-			// 			t[position] += 0.0005;
-			// 			break;
-			// case 8:
-			// 			t[position] += 0.0001;
-			// 			break;
+		switch (position) {
+			case 0:
+						t[position] += 0.000001;
+						break;
+			case 1:
+						t[position] += 0.05;
+						break;
+			case 2:
+						t[position] += 0.03;
+						break;
+			case 3:
+						t[position] += 0.02;
+						break;
+			case 4:
+						t[position] += 0.01;
+						break;
+			case 5:
+						t[position] += 0.005;
+						break;
+			case 6:
+						t[position] += 0.001;
+						break;
+			case 7:
+						t[position] += 0.0005;
+						break;
+			case 8:
+						t[position] += 0.0001;
+						break;
 
-	//	}
+		}
 	}
-	p[0][0] = (4.0/2)*30;
+
+for(moonP=3;moonP<numberCurves;moonP++){
+	switch (moonP) {
+		case 3:
+					glTranslatef(55, 0, 0);
+					break;
+		case 4:
+					glTranslatef(45, 0, 0);
+					break;
+		case 5:
+					glTranslatef(35, 0, 0);
+					break;
+		case 6:
+					glTranslatef(15, 0, 0);
+					break;
+		case 7:
+					glTranslatef(40, 0, 0);
+					break;
+		case 8:
+					glTranslatef(35, 0, 0);
+					break;
+	}
+
+	p[0][0] = (4.0/2)*MoonsRadiusOrbits[moonP];
 	p[0][1] = 0;
 	p[0][2] = 0;
 
-	p[1][0] = (3.8/2)*30;
+	p[1][0] = (3.8/2)*MoonsRadiusOrbits[moonP];
 	p[1][1] = 0;
-	p[1][2] = (-1.5/2)*30;
+	p[1][2] = (-1.5/2)*MoonsRadiusOrbits[moonP];
 
-	p[2][0] = (3.0/2)*30;
+	p[2][0] = (3.0/2)*MoonsRadiusOrbits[moonP];
 	p[2][1] = 0;
-	p[2][2] = (-2.0/2)*30;
+	p[2][2] = (-2.0/2)*MoonsRadiusOrbits[moonP];
 
-	p[3][0] = (2.2/2)*30;
+	p[3][0] = (2.2/2)*MoonsRadiusOrbits[moonP];
 	p[3][1] = 0;
-	p[3][2] = (-1.5/2)*30;
+	p[3][2] = (-1.5/2)*MoonsRadiusOrbits[moonP];
 
-	p[4][0] = (2.0/2)*30;
+	p[4][0] = (2.0/2)*MoonsRadiusOrbits[moonP];
 	p[4][1] = 0;
 	p[4][2] = 0;
 
-	p[5][0] = (2.2/2)*30;
+	p[5][0] = (2.2/2)*MoonsRadiusOrbits[moonP];
 	p[5][1] = 0;
-	p[5][2] = (1.5/2)*30;
+	p[5][2] = (1.5/2)*MoonsRadiusOrbits[moonP];
 
-	p[6][0] = (3.0/2)*30;
+	p[6][0] = (3.0/2)*MoonsRadiusOrbits[moonP];
 	p[6][1] = 0;
-	p[6][2] = (2.0/2)*30;
+	p[6][2] = (2.0/2)*MoonsRadiusOrbits[moonP];
 
-	p[7][0] = (3.8/2)*30;
+	p[7][0] = (3.8/2)*MoonsRadiusOrbits[moonP];
 	p[7][1] = 0;
-	p[7][2] = (1.5/2)*30;
+	p[7][2] = (1.5/2)*MoonsRadiusOrbits[moonP];
 
-	getGlobalCatmullRomPoint(tm, res);
+	getGlobalCatmullRomPoint(l[moonP], resM);
 
 	renderCatmullRomCurve();
 
 	glPushMatrix();
-	glTranslatef(res[0], res[1], res[2]);
-	glutWireSphere(2,30,30);
+	glTranslatef(resM[0], resM[1], resM[2]);
+	drawMoons(moonP);
 	glPopMatrix();
-	tm += 0.001;
+	switch (moonP) {
+		case 3:
+					l[moonP] += 0.02;
+					break;
+		case 4:
+					l[moonP] += 0.01;
+					break;
+		case 5:
+					l[moonP] += 0.005;
+					break;
+		case 6:
+					l[moonP] += 0.001;
+					break;
+		case 7:
+			  	l[moonP] += 0.0005;
+					break;
+		case 8:
+				  l[moonP] += 0.0001;
+					break;
+	}
+}
 		// End of frame
 		glutSwapBuffers();
 }
@@ -458,7 +650,7 @@ void initGL() {
 	// init
 	sphericalToCartesian();
 	glEnableClientState(GL_VERTEX_ARRAY);
-
+	prepareMoons();
 	preparePlanets();
 }
 
