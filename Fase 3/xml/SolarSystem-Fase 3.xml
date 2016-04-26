@@ -1,0 +1,162 @@
+<scene>
+	<!-- SUN -->
+	<group>
+		<scale X=22 Y=22 Z=22/>
+		<colour R=255 G=165 B=0/>
+		<rotate angle=7.25 axisX=0 axisY=1 axisZ=0/>
+		<models>
+			<model file="sun.3d"/>
+		</models>
+	</group>
+	<!-- MERCURY -->
+	<group>
+			<translate X=20 Y=0 Z=0/>
+      <rotate time=5 angle=0.1 axisX=0 axisY=1 axisZ=0/>
+			<scale X=0.3 Y=0.3 Z=0.3/>
+			<colour R=102 G=102 B=102/>
+			<models>
+				<model file="mercury.3d"/>
+			</models>
+	</group>
+	<!-- VENUS -->
+	<group>
+			<translate X=40 Y=0 Z=0/>
+      <rotate time=5 angle=177 axisX=0 axisY=1 axisZ=0/>
+			<colour R=255 G=250 B=205/>
+			<models>
+				<model file="venus.3d"/>
+			</models>
+	</group>
+	<!-- EARTH -->
+	<group>
+			<translate X=55 Y=0 Z=0/>
+			<rotate time=5 angle=23 axisX=0 axisY=1 axisZ=0/>
+			<colour R=0 G=0 B=205/>
+			<models>
+				<model file="earth.3d"/>
+			</models>
+			<!-- EARTHMOON -->
+			<group>
+				<rotate time=2 axisX=0 axisY=1 axisZ=1/>
+				<translate X=20 Y=1 Z=0 />
+				<scale X=0.2 Y=0.2 Z=0.2/>
+				<colour R=125 G=125 B=125/>
+				<models>
+					<model file="earthMoon.3d"/>
+				</models>
+		 </group>
+	</group>
+	<!-- MARS -->
+	<group>
+			<translate X=80 Y=0 Z=0/>
+		  <rotate time=5 angle=25 axisX=0 axisY=1 axisZ=0/>
+			<scale X=0.5 Y=0.5 Z=0.5/>
+			<colour R=255 G=69 B=0/>
+			<models>
+				<model file="mars.3d"/>
+			</models>
+			<group>
+				<translate X=20 Y=1 Z=0/>
+				<rotate time=2 axisX=0 axisY=1 axisZ=1/>
+				<scale X=0.2 Y=0.2 Z=0.2/>
+				<colour R=120 G=120 B=130/>
+        <models>
+          <model file="PhobosMoon.3d"/>
+        </models>
+      </group>
+	</group>
+	<!-- JUPITER -->
+	<group>
+			<translate X=110 Y=0 Z=0/>
+			<rotate time=50 axisX=0 axisY=1 axisZ=0/>
+			<scale X=5.5 Y=5.5 Z=5.5/>
+			<colour R=160 G=102 B=60/>
+			<models>
+				<model file="jupiter.3d"/>
+			</models>
+			<group>
+				<translate X=20 Y=1 Z=0 />
+				<rotate time=2 axisX=0 axisY=1 axisZ=1/>
+				<scale X=0.2 Y=0.2 Z=0.2/>
+				<colour R=225 G=225 B=225/>
+        <models>
+          <model file="CallistoMoon.3d"/>
+        </models>
+      </group>
+	</group>
+	<!-- SATURN -->
+	<group>
+			<translate X=150 Y=0 Z=0/>
+			<rotate time=5 angle=27 axisX=0 axisY=1 axisZ=0/>
+			<scale X=5.3 Y=5.3 Z=5.3/>
+			<colour R=222 G=184 B=135/>
+			<models>
+				<model file="saturn.3d"/>
+			</models>
+			<group>
+				<translate X=20 Y=1 Z=0/>
+				<rotate time=2 axisX=0 axisY=1 axisZ=1/>
+				<scale X=0.2 Y=0.2 Z=0.2/>
+				<colour R=255 G=255 B=255/>
+				<models>
+					<model file="TitanMoon.3d"/>
+				</models>
+			</group>
+	</group>
+	<!-- URANUS -->
+	<group>
+		<translate X=200 Y=0 Z=0/>
+		<rotate time=5 angle=98 axisX=0 axisY=1 axisZ=0/>
+		<scale X=4.3 Y=4.3 Z=4.3/>
+		<colour R=70 G=130 B=180/>
+				<models>
+					<model file="uranus.3d" />
+				</models>
+		<group>
+			<translate X=20 Y=1 Z=0/>
+			<rotate time=2 axisX=0 axisY=1 axisZ=1/>
+			<scale X=0.2 Y=0.2 Z=0.2/>
+			<colour R=155 G=185 B=205/>
+			<models>
+				<model file="OberonMoon.3d" />
+			</models>
+		</group>
+	</group>
+	<!-- NEPTUNE -->
+	<group>
+			<translate X=250 Y=0 Z=0 />
+      <rotate time=5 angle=120 axisX=0 axisY=1 axisZ=0 />
+			<scale X=5 Y=5 Z=5/>
+			<colour R=65 G=105 B=225/>
+			<models>
+				<model file="neptune.3d" />
+			</models>
+			<group>
+				<translate X=20 Y=1 Z=0/>
+				<rotate time=2 axisX=0 axisY=1 axisZ=1/>
+				<scale X=0.2 Y=0.2 Z=0.2/>
+				<colour R=195 G=85 B=105/>
+        <models>
+          <model file="TritonMoon.3d" />
+        </models>
+      </group>
+	</group>
+  <!-- TEAPOT WITH BEZIER CURVES -->
+	<group>
+	  <translate time=30>
+	     <ponto X= Y= Z=/>
+	     <ponto X= Y= Z=/>
+			 <ponto X= Y= Z=/>
+			 <ponto X= Y= Z=/>
+			 <ponto X= Y= Z=/>
+			 <ponto X= Y= Z=/>
+			 <ponto X= Y= Z=/>
+			 <ponto X= Y= Z=/>
+	  </translate>
+	  <rotate angle=-90 axisX=0 axisY=1 axisZ=0/>
+		<colour R=15 G=5 B=95/>
+		<models>
+			<model file="teapotBezier.3d" />
+		</models>
+	</group>
+</scene>
