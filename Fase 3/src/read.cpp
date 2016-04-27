@@ -27,6 +27,12 @@ node_group* initNodeGroup() {
 
 	r->child = (node_group**)malloc(10 * sizeof(struct node_group));
 	r->childIndex = 0;
+
+	r->rotation_period = 0;
+	r->translation_period = 0;
+	
+	r->pointIndex=0;
+	
 	return r;
 }
 
@@ -71,9 +77,38 @@ scene* readXML(const char* f, int* vboNbuffers) {
 void readGroup(TiXmlElement *pGroup, node_group* node,int* vboNbuffers) {
 	TiXmlElement* pTranslate = pGroup->FirstChildElement("translate");
 	if (pTranslate) {
-		node->translate->push_back(atof(pTranslate->Attribute("X")));
-		node->translate->push_back(atof(pTranslate->Attribute("Y")));
-		node->translate->push_back(atof(pTranslate->Attribute("Z")));
+		const char* time = pTranslate->Attribute("time");
+		if (time) {
+			node->translation_period = atof(time);
+
+			TiXmlElement* pPoint = pTranslate->FirstChildElement("point");
+			
+			while (pPoint) {
+				if (node->pointIndex == 0) {
+					node->p = (float**)malloc(EXTENDED_SIZE * sizeof(float*));
+				}
+				node->p[node->pointIndex] = (float*)malloc(3 * sizeof(float));
+				float x = atof(pPoint->Attribute("X"));
+				node->p[node->pointIndex][0] = 4;
+				float y = atof(pPoint->Attribute("Y"));
+				float z = atof(pPoint->Attribute("Z"));
+
+				node->p[node->pointIndex][0] = x;
+				node->p[node->pointIndex][1] = y;
+				node->p[node->pointIndex][2] = z;
+				/*
+				node->p[node->pointIndex][0] = atof(pPoint->Attribute("X"));
+				node->p[node->pointIndex][1] = (atof(pPoint->Attribute("Y")));
+				node->p[node->pointIndex][2] = (atof(pPoint->Attribute("Z")));
+				*/
+				pPoint = pPoint->NextSiblingElement("point");
+				node->pointIndex++;
+			}
+		} else {
+			node->translate->push_back(atof(pTranslate->Attribute("X")));
+			node->translate->push_back(atof(pTranslate->Attribute("Y")));
+			node->translate->push_back(atof(pTranslate->Attribute("Z")));
+		}
 	}
 
 	TiXmlElement* pRotate = pGroup->FirstChildElement("rotate");
@@ -83,6 +118,13 @@ void readGroup(TiXmlElement *pGroup, node_group* node,int* vboNbuffers) {
 		node->rotate->push_back(atof(pRotate->Attribute("axisX")));
 		node->rotate->push_back(atof(pRotate->Attribute("axisY")));
 		node->rotate->push_back(atof(pRotate->Attribute("axisZ")));
+	}
+
+	TiXmlElement* pCor = pGroup->FirstChildElement("colour");
+	if (pCor) {
+		node->colour[0] = atoi(pCor->Attribute("R"));
+		node->colour[1] = atoi(pCor->Attribute("G"));
+		node->colour[2] = atoi(pCor->Attribute("B"));
 	}
 
 	TiXmlElement* pModels = pGroup->FirstChildElement("models");

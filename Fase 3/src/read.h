@@ -20,11 +20,20 @@
 
 #include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
 
+#define EXTENDED_SIZE 10
 
 using namespace std;
 
 
 extern struct node_group {
+	float translation_period;
+	float rotation_period;
+	float** p;
+	int pointIndex;
+	float start_time;
+
+	int colour[3] = { 255,255,255 };
+
 	vector<float>* translate;
 	vector<float>* rotate;
 	vector<int>* vboIndex;
