@@ -156,7 +156,7 @@
 	  <rotate angle=-90 axisX=0 axisY=1 axisZ=0/>
 		<colour R=15 G=5 B=95/>
 		<models>
-			<model file="teapotBezier.3d" />
+			<model file="teapot.3d" />
 		</models>
 	</group>
 </scene>
