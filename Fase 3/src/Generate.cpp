@@ -223,6 +223,7 @@ float getBezierPoint(float u, float v, vector<float> indices, int coord) {
 
 // Prints the teapot vertices on the .3d file
 void printTeapot() {
+	float res[3];
 	ofstream teapot;
 	teapot.open(filename.c_str());
 	float **teapotPoints = (float**) malloc(1000000 * sizeof(float**)); // Saves the points of the teapot to be able to count their number first and print them after that
@@ -236,21 +237,18 @@ void printTeapot() {
 			float u = 0.0;
 
 			while (u <= 1) {
-				float res[4][3];
+				res[0] = getBezierPoint(u, v, indicesPatch, 0);
+				res[1] = getBezierPoint(u, v, indicesPatch, 1);
+				res[2] = getBezierPoint(u, v, indicesPatch, 2);
 
-				for (int i = 0; i < 4; i++) {
-					res[i][0] = getBezierPoint(u, v, indicesPatch, 0);
-					res[i][1] = getBezierPoint(u, v, indicesPatch, 1);
-					res[i][2] = getBezierPoint(u, v, indicesPatch, 2);
-
-					teapotPoints[pointNumber] = (float*) malloc(3 * sizeof(float*));
+				teapotPoints[pointNumber] = (float*) malloc(3 * sizeof(float*));
 					
-					teapotPoints[pointNumber][0] = res[i][0];
-					teapotPoints[pointNumber][1] = res[i][1];
-					teapotPoints[pointNumber][2] = res[i][2];
+				teapotPoints[pointNumber][0] = res[0];
+				teapotPoints[pointNumber][1] = res[1];
+				teapotPoints[pointNumber][2] = res[2];
 
-					pointNumber++;
-				}
+				pointNumber++;
+
 				u += 0.05;
 			}
 			v += 0.05;
