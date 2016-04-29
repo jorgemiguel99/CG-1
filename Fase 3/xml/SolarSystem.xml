@@ -265,5 +265,22 @@
         </models>
       </group>
     </group>
+    <group>
+     <translate time=30>
+        <point X=30 Y=0 Z=0 />
+        <point X=-50 Y=0 Z=-50 />
+        <point X=-270 Y=0 Z=-75 />
+        <point X=-490 Y=0 Z=-50 />
+        <point X=-570 Y=0 Z=0 />
+        <point X=-490 Y=0 Z=50 />
+        <point X=-270 Y=0 Z=75 />
+        <point X=-50 Y=0 Z=50 />
+    </translate> 
+    <group>
+      <models>
+        <model file="teapot.3d" />
+      </models>
+    </group>
+    </group>
  </group>
 </scene>
