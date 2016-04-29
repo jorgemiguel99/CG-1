@@ -27,7 +27,6 @@ using namespace std;
 
 extern struct node_group {
 	float translation_period;
-	float rotation_period;
 	float** p;
 	int pointIndex;
 	float start_time;
@@ -35,7 +34,8 @@ extern struct node_group {
 	int colour[3] = { 255,255,255 };
 
 	vector<float>* translate;
-	vector<float>* rotate;
+	vector<float>* rotateAxis;
+	vector<float>* rotate_period;
 	vector<int>* vboIndex;
 	vector<string>* model_file;
 	node_group** child; // multiple child pointers

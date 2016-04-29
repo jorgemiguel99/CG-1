@@ -281,12 +281,8 @@ void renderTree(node_group* node) {
 	float res[3];
 	if (node->pointIndex > 0) {
 	
-		if (node->start_time == 0) {
-			node->start_time = glutGet(GLUT_ELAPSED_TIME) * 0.001;
-		}
-		else {
-			node->start_time = glutGet(GLUT_ELAPSED_TIME) * 0.001;
-		}
+		node->start_time = glutGet(GLUT_ELAPSED_TIME) * 0.001;
+
 		float taux = node->start_time/node->translation_period;
 		float t = taux - (int)taux;
 
@@ -296,11 +292,24 @@ void renderTree(node_group* node) {
 		glTranslatef(res[0], res[1], res[2]);
 	}
 	else if (node->translate->size() > 0) {
-		     glTranslatef(node->translate->at(0), node->translate->at(1), node->translate->at(2));
+		glTranslatef(node->translate->at(0), node->translate->at(1), node->translate->at(2));
 	}
-	if(node->rotate->size()>0)
-		glRotatef(node->rotate->at(0), node->rotate->at(1), node->rotate->at(2), node->rotate->at(3));
+	if (node->rotateAxis->size() > 0) {
+		glRotatef(node->rotateAxis->at(0), node->rotateAxis->at(1), node->rotateAxis->at(2), node->rotateAxis->at(3));
+	}
+	if (node->rotate_period->size() > 0) {
+		float currentTime = glutGet(GLUT_ELAPSED_TIME) * 0.001;
+		int voltas = currentTime / node->rotate_period->at(0);
+		/*
+					t -> angle
+					period -> 360
+		*/
+		float t = currentTime - voltas * node->rotate_period->at(0);
 
+		float angle = t * 360 / node->rotate_period->at(0);
+
+		glRotatef(angle, node->rotate_period->at(1), node->rotate_period->at(2), node->rotate_period->at(3));
+	}
 	for (int i = 0; i < node->vboIndex->size(); i++) {
 		glColor3f((float)node->colour[0]/255, (float) node->colour[1] / 255,(float) node->colour[2] / 255);
 		glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i)]);
