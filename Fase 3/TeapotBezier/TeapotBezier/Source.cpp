@@ -130,6 +130,7 @@ float getBezierPoint(float u, float v, vector<float> indices, int coord) {
 void renderTeapot() {
 	float res[3];
 	glBegin(GL_LINE_LOOP);
+	float tesselation = 0.1;
 	for (int patch = 0; patch < numPatches; patch++) {
 		vector<float> indicesPatch = patches[patch];
 		float v = 0.0;
@@ -141,9 +142,34 @@ void renderTeapot() {
 				res[2] = getBezierPoint(u, v, indicesPatch, 2);
 				glVertex3f(res[0], res[1], res[2]);
 
-				u += 0.05;
+				res[0] = getBezierPoint(u + tesselation, v, indicesPatch, 0);
+				res[1] = getBezierPoint(u + tesselation, v, indicesPatch, 1);
+				res[2] = getBezierPoint(u + tesselation, v, indicesPatch, 2);
+				glVertex3f(res[0], res[1], res[2]);
+
+				res[0] = getBezierPoint(u, v + tesselation, indicesPatch, 0);
+				res[1] = getBezierPoint(u, v + tesselation, indicesPatch, 1);
+				res[2] = getBezierPoint(u, v + tesselation, indicesPatch, 2);
+				glVertex3f(res[0], res[1], res[2]);
+
+				res[0] = getBezierPoint(u, v + tesselation, indicesPatch, 0);
+				res[1] = getBezierPoint(u, v + tesselation, indicesPatch, 1);
+				res[2] = getBezierPoint(u, v + tesselation, indicesPatch, 2);
+				glVertex3f(res[0], res[1], res[2]);
+
+				res[0] = getBezierPoint(u + tesselation, v, indicesPatch, 0);
+				res[1] = getBezierPoint(u + tesselation, v, indicesPatch, 1);
+				res[2] = getBezierPoint(u + tesselation, v, indicesPatch, 2);
+				glVertex3f(res[0], res[1], res[2]);
+
+				res[0] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 0);
+				res[1] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 1);
+				res[2] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 2);
+				glVertex3f(res[0], res[1], res[2]);
+
+				u += tesselation;
 			}
-			v += 0.05;
+			v += tesselation;
 		}
 	}
 	glEnd();
