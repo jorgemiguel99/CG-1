@@ -1,20 +1,20 @@
 
 /* MAC INCLUDES */
-//#include <GL/glew.h>
-//#include <GLUT/glut.h>
-//#include <OpenGL/glu.h>
-//#include <OpenGL/gl.h>
+#include <GL/glew.h>
+#include <GLUT/glut.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/gl.h>
 
 /* tinyxml is included in file transformationTree.h
 		MAC -> Change location path
 */
 
 //windows includeS
-  #include <windows.h>
- #include<Glew\glew.h>
-  #include <GL/glut.h>
- #include <GL/glu.h>
-  #include <GL/gl.h>
+//  #include <windows.h>
+// #include<Glew\glew.h>
+//  #include <GL/glut.h>
+// #include <GL/glu.h>
+//  #include <GL/gl.h>
 
 #include "read.h"
 

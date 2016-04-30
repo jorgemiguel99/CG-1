@@ -9,8 +9,8 @@
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
-//#include <windows.h>
-//#include <GL/glut.h>
+// #include <windows.h>
+// #include <GL/glut.h>
 #include <math.h>
 #include <GLUT/glut.h> //-- MAC
 
@@ -228,6 +228,7 @@ void printTeapot() {
 	teapot.open(filename.c_str());
 	float **teapotPoints = (float**) malloc(1000000 * sizeof(float**)); // Saves the points of the teapot to be able to count their number first and print them after that
 	int pointNumber = 0; // Number of vertices of the teapot
+	float tesselation = 0.1;
 
 	for (int patch = 0; patch < numPatches; patch++) {
 		vector<float> indicesPatch = patches[patch];
@@ -237,21 +238,63 @@ void printTeapot() {
 			float u = 0.0;
 
 			while (u <= 1) {
+				teapotPoints[pointNumber] = (float*)malloc(3 * sizeof(float*));
 				res[0] = getBezierPoint(u, v, indicesPatch, 0);
 				res[1] = getBezierPoint(u, v, indicesPatch, 1);
 				res[2] = getBezierPoint(u, v, indicesPatch, 2);
-
-				teapotPoints[pointNumber] = (float*) malloc(3 * sizeof(float*));
-					
 				teapotPoints[pointNumber][0] = res[0];
 				teapotPoints[pointNumber][1] = res[1];
 				teapotPoints[pointNumber][2] = res[2];
-
 				pointNumber++;
 
-				u += 0.05;
+				teapotPoints[pointNumber] = (float*)malloc(3 * sizeof(float*));
+				res[0] = getBezierPoint(u + tesselation, v, indicesPatch, 0);
+				res[1] = getBezierPoint(u + tesselation, v, indicesPatch, 1);
+				res[2] = getBezierPoint(u + tesselation, v, indicesPatch, 2);
+				teapotPoints[pointNumber][0] = res[0];
+				teapotPoints[pointNumber][1] = res[1];
+				teapotPoints[pointNumber][2] = res[2];
+				pointNumber++;
+
+				teapotPoints[pointNumber] = (float*)malloc(3 * sizeof(float*));
+				res[0] = getBezierPoint(u, v + tesselation, indicesPatch, 0);
+				res[1] = getBezierPoint(u, v + tesselation, indicesPatch, 1);
+				res[2] = getBezierPoint(u, v + tesselation, indicesPatch, 2);
+				teapotPoints[pointNumber][0] = res[0];
+				teapotPoints[pointNumber][1] = res[1];
+				teapotPoints[pointNumber][2] = res[2];
+				pointNumber++;
+
+				teapotPoints[pointNumber] = (float*)malloc(3 * sizeof(float*));
+				res[0] = getBezierPoint(u, v + tesselation, indicesPatch, 0);
+				res[1] = getBezierPoint(u, v + tesselation, indicesPatch, 1);
+				res[2] = getBezierPoint(u, v + tesselation, indicesPatch, 2);
+				teapotPoints[pointNumber][0] = res[0];
+				teapotPoints[pointNumber][1] = res[1];
+				teapotPoints[pointNumber][2] = res[2];
+				pointNumber++;
+
+				teapotPoints[pointNumber] = (float*)malloc(3 * sizeof(float*));
+				res[0] = getBezierPoint(u + tesselation, v, indicesPatch, 0);
+				res[1] = getBezierPoint(u + tesselation, v, indicesPatch, 1);
+				res[2] = getBezierPoint(u + tesselation, v, indicesPatch, 2);
+				teapotPoints[pointNumber][0] = res[0];
+				teapotPoints[pointNumber][1] = res[1];
+				teapotPoints[pointNumber][2] = res[2];
+				pointNumber++;
+
+				teapotPoints[pointNumber] = (float*)malloc(3 * sizeof(float*));
+				res[0] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 0);
+				res[1] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 1);
+				res[2] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 2);
+				teapotPoints[pointNumber][0] = res[0];
+				teapotPoints[pointNumber][1] = res[1];
+				teapotPoints[pointNumber][2] = res[2];
+				pointNumber++;
+
+				u += tesselation;
 			}
-			v += 0.05;
+			v += tesselation;
 		}
 	}
 
@@ -413,7 +456,7 @@ int main(int argc, char **argv) {
 				printSphere3d();
 				cout << "neptune.3d created" << endl;
 
-				// Moons 
+				// Moons
 				filename = "earthMoon.3d";
 				radius = radius_earthMoon;
 				slices = 30;

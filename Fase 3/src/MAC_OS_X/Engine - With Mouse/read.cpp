@@ -15,8 +15,8 @@ node_group* initNodeGroup() {
 	r->translate = (vector<float>*)malloc(sizeof(vector<float>));
 	r->translate = new vector<float>();
 
-	r->rotate = (vector<float>*)malloc(sizeof(vector<float>));
-	r->rotate = new vector<float>();
+	r->rotateAxis = (vector<float>*)malloc(sizeof(vector<float>));
+	r->rotateAxis = new vector<float>();
 
 
 	r->vboIndex = (vector<int>*)malloc(sizeof(vector<int>));
@@ -28,7 +28,9 @@ node_group* initNodeGroup() {
 	r->child = (node_group**)malloc(10 * sizeof(struct node_group));
 	r->childIndex = 0;
 
-	r->rotation_period = 0;
+	r->rotate_period = (vector<float>*)malloc(sizeof(vector<float>));
+	r->rotate_period = new vector<float>();
+
 	r->translation_period = 0;
 	
 	r->pointIndex=0;
@@ -112,12 +114,22 @@ void readGroup(TiXmlElement *pGroup, node_group* node,int* vboNbuffers) {
 	}
 
 	TiXmlElement* pRotate = pGroup->FirstChildElement("rotate");
-	if (pRotate)
+	while (pRotate)
 	{
-		node->rotate->push_back(atof(pRotate->Attribute("angle")));
-		node->rotate->push_back(atof(pRotate->Attribute("axisX")));
-		node->rotate->push_back(atof(pRotate->Attribute("axisY")));
-		node->rotate->push_back(atof(pRotate->Attribute("axisZ")));
+
+		if (const char* angle = pRotate->Attribute("angle")) {
+			node->rotateAxis->push_back(atof(angle));
+			node->rotateAxis->push_back(atof(pRotate->Attribute("axisX")));
+			node->rotateAxis->push_back(atof(pRotate->Attribute("axisY")));
+			node->rotateAxis->push_back(atof(pRotate->Attribute("axisZ")));
+		}
+		else if (const char* time = pRotate->Attribute("time")) {
+			node->rotate_period->push_back(atof(time));
+			node->rotate_period->push_back(atof(pRotate->Attribute("axisX")));
+			node->rotate_period->push_back(atof(pRotate->Attribute("axisY")));
+			node->rotate_period->push_back(atof(pRotate->Attribute("axisZ")));
+		}
+		pRotate = pRotate->NextSiblingElement("rotate");
 	}
 
 	TiXmlElement* pCor = pGroup->FirstChildElement("colour");
