@@ -1,20 +1,20 @@
 
 /* MAC INCLUDES */
-//#include <GL/glew.h>
-//#include <GLUT/glut.h>
-//#include <OpenGL/glu.h>
-//#include <OpenGL/gl.h>
+//#include <GLUT/glut.h>    
+//#include <OpenGL/glu.h>   
+//#include <OpenGL/gl.h>    
 
-/* tinyxml is included in file transformationTree.h
+/* tinyxml is included in file transformationTree.h 
 		MAC -> Change location path
 */
 
 //windows includeS
-  #include <windows.h>
- #include<Glew\glew.h>
-  #include <GL/glut.h>
- #include <GL/glu.h>
-  #include <GL/gl.h>
+ #include <windows.h>
+#include<Glew\glew.h>
+ #include <GL/glut.h>
+#include <GL/glu.h>
+ #include <GL/gl.h>
+
 
 #include "read.h"
 
@@ -26,20 +26,15 @@ void initVBOS();
 void changeSize(int, int);
 void renderScene(void);
 void keyPressed(unsigned char, int, int);
-void processMouseButtons(int, int, int, int);
-void processMouseMotion(int, int);
 void newMenu (int id_op);
 void keyboardExtra(int key_code, int x, int y);
 void bufferData(node_group* group, int* bufferIndex);
-
 
 /* scene is a structure with xml group information*/
 scene* sceneData;
 
 // Global Variables to Transformations
 float px = 0.0, py = 100.0, pz = 100.0;
-int startX, startY, tracking = 0;
-int alpha = 0, beta = 0, r = 50;
 
 float rotate_y = 0;
 float rotate_x = 0;
@@ -52,11 +47,6 @@ float translate_z = 0;
 // Global variable process input
 vector<string> splitted;
 
-// VBOS variables
-#define MAX_STACKS 100
-#define MAX_SLICES 100
-#define VERTEX_MAX_SIZE (((MAX_STACKS - 2)*MAX_SLICES * 6 + 2 * MAX_SLICES * 3) * 3)
-float vboVerticeBuffer[VERTEX_MAX_SIZE];
 int nBuffers; // Planetas + luas
 GLuint *vertexCount, *buffer;
 
@@ -90,7 +80,7 @@ int main(int argc, char **argv) {
   sceneData = readXML("SolarSystem.xml",&nBuffers);
 
 	  //testTree(sceneData);
-
+				
   glutInit(&argc, argv);
 
   // Sets up a double buffer with RGBA components and a depth component
@@ -114,9 +104,7 @@ int main(int argc, char **argv) {
   // Function called when a key is pressed.
   glutKeyboardFunc(keyPressed);
   glutSpecialFunc(keyboardExtra);
-  // mouse callbacks
-  glutMouseFunc(processMouseButtons);
-  glutMotionFunc(processMouseMotion);
+
   //menu
   glutCreateMenu(newMenu);
   glutAddMenuEntry("Increase Translate x value",'j');
@@ -142,6 +130,8 @@ int main(int argc, char **argv) {
   glutAddMenuEntry("Change Colour to Pink",'5');
   glutAddMenuEntry("Change Colour to Yellow",'6');
   glutAddMenuEntry("Change Colour to Bright Blue",'7');
+	glutAddMenuEntry("Stop Translation around Sun",'s');
+	glutAddMenuEntry("Restart Translation around Sun",'r');
   //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 
@@ -153,7 +143,7 @@ int main(int argc, char **argv) {
   // enter GLUT's main cycle.
 	glutMainLoop();
   /*
-
+ 
  else cout << "Try again! Amount of arguments incorrect" << endl;
 }
 else cout << "Try again! Use: draw <filename.3d>" << endl;
@@ -213,6 +203,8 @@ void bufferData(node_group* group, int* bufferIndex) {
 	for (int i = 0; i < group->model_file->size(); i++) {
 		string filename = group->model_file->at(i);
 		vector<float> points = read3Dfile(filename);
+
+		float* vboVerticeBuffer = (float*)malloc(points.size() * sizeof(float));
 
 		for (int p = 0; p < points.size(); p++)
 			vboVerticeBuffer[p] = points[p];
@@ -279,17 +271,14 @@ void renderCatmullRomCurve(float** p,int point_count) {
 
 
 void renderTree(node_group* node) {
-	float res[3];
 	if (node->pointIndex > 0) {
-
-		node->start_time = glutGet(GLUT_ELAPSED_TIME) * 0.001;
-
-		float taux = node->start_time/node->translation_period;
+		float taux = glutGet(GLUT_ELAPSED_TIME) * 0.001 /node->translation_period;
 		float t = taux - (int)taux;
 
+		float res[3];
 		renderCatmullRomCurve(node->p, node->pointIndex);
 		getGlobalCatmullRomPoint(t, res,node->p,node->pointIndex);
-
+	
 		glTranslatef(res[0], res[1], res[2]);
 	}
 	else if (node->translate->size() > 0) {
@@ -311,13 +300,14 @@ void renderTree(node_group* node) {
 
 		glRotatef(angle, node->rotate_period->at(1), node->rotate_period->at(2), node->rotate_period->at(3));
 	}
+
+	glColor3f((float)node->colour[0] / 255, (float)node->colour[1] / 255, (float)node->colour[2] / 255);
 	for (int i = 0; i < node->vboIndex->size(); i++) {
-		glColor3f((float)node->colour[0]/255, (float) node->colour[1] / 255,(float) node->colour[2] / 255);
 		glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i)]);
 		glVertexPointer(3, GL_FLOAT, 0, 0);
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount[node->vboIndex->at(i)]);
-		glColor3f(1,1,1);
 	}
+	glColor3f(1, 1, 1);
 
 	for (int i = 0; i < node->childIndex; i++) {
 		glPushMatrix();
@@ -421,67 +411,3 @@ void keyboardExtra(int key_code, int x, int y) {
 	glutPostRedisplay();
 }
 
-void processMouseButtons(int button, int state, int xx, int yy)
-{
-	if (state == GLUT_DOWN)  {
-		startX = xx;
-		startY = yy;
-		if (button == GLUT_LEFT_BUTTON)
-			tracking = 1;
-		else if (button == GLUT_RIGHT_BUTTON)
-			tracking = 2;
-		else
-			tracking = 0;
-	}
-	else if (state == GLUT_UP) {
-		if (tracking == 1) {
-			alpha += (xx - startX);
-			beta += (yy - startY);
-		}
-		else if (tracking == 2) {
-
-			r -= yy - startY;
-			if (r < 3)
-				r = 3.0;
-		}
-		tracking = 0;
-	}
-}
-
-
-void processMouseMotion(int xx, int yy)
-{
-	int deltaX, deltaY;
-	int alphaAux, betaAux;
-	int rAux;
-
-	if (!tracking)
-		return;
-
-	deltaX = xx - startX;
-	deltaY = yy - startY;
-
-	if (tracking == 1) {
-
-		alphaAux = alpha + deltaX;
-		betaAux = beta + deltaY;
-
-		if (betaAux > 85.0)
-			betaAux = 85.0;
-		else if (betaAux < -85.0)
-			betaAux = -85.0;
-
-		rAux = r;
-	}
-	else if (tracking == 2) {
-
-		alphaAux = alpha;
-		betaAux = beta;
-		rAux = r - deltaY;
-		if (rAux < 50)
-			rAux = 50;
-	}
-	px = rAux * sin(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
-  pz = rAux * cos(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
-	py = rAux *	sin(betaAux * 3.14 / 180.0);
-}

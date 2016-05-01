@@ -31,7 +31,7 @@
     </translate>
     <group>
       <rotate angle=0.01 axisX=1 axisY=0 axisZ=0 />
-      <rotate time=59 axisX=0 axisY=1 axisZ=0/>
+      <rotate time=8 axisX=0 axisY=1 axisZ=0/>
       <colour R=102 G=102 B=102/>
       <models>
         <model file="mercury.3d" />
@@ -52,7 +52,7 @@
     </translate>
     <group>
        <rotate angle=177.4 axisX=1 axisY=0 axisZ=0 />
-       <rotate time=243 axisX=0 axisY=-1 axisZ=0/>
+       <rotate time=12 axisX=0 axisY=-1 axisZ=0/>
        <colour R=255 G=250 B=205/>
        <models>
          <model file="venus.3d" />
@@ -72,14 +72,14 @@
     </translate>
     <group>
       <rotate angle=23.4 axisX=1 axisY=0 axisZ=0 />
-      <rotate time=1 axisX=0 axisY=1 axisZ=0/>
+      <rotate time=3 axisX=0 axisY=1 axisZ=0/>
       <colour R=0 G=0 B=205/>
       <models>
          <model file="earth.3d" />
       </models>
     </group>    
     <group>
-       <translate time=2>
+       <translate time=5>
 	      <point X=45 Y=0 Z=0 />
 	      <point X=33 Y=0 Z=-22.5 />
 	      <point X=0 Y=0 Z=-30 />
@@ -91,7 +91,7 @@
       </translate>
       <colour R=125 G=125 B=125/>
       <rotate angle=6.7 axisX=1 axisY=0 axisZ=0/>
-      <rotate time=27.3 axisX=0 axisY=1 axisZ=0/>
+      <rotate time=5 axisX=0 axisY=1 axisZ=0/>
       <models>
         <model file="earthMoon.3d" />
       </models>
@@ -110,7 +110,7 @@
       </translate>
       <group>
 	<rotate angle=1.9 axisX=1 axisY=0 axisZ=0 />
-	<rotate time=1.025 axisX=0 axisY=1 axisZ=0/>
+	<rotate time=3.2 axisX=0 axisY=1 axisZ=0/>
         <colour R=255 G=69 B=0/>
         <models>
           <model file="mars.3d" />
@@ -127,6 +127,8 @@
 	      <point X=0 Y=0 Z=25 />
 	      <point X=27.5 Y=0 Z=18.75 />
         </translate>
+        <rotate angle=3.5 axisX=1 axisY=0 axisZ=0 />
+        <rotate time=6 axisX=0 axisY=1 axisZ=0/>
 	<colour R=120 G=120 B=130/>
         <models>
           <model file="PhobosMoon.3d" />
@@ -146,14 +148,14 @@
       </translate>
       <group>      
 	  <rotate angle=3.1 axisX=1 axisY=0 axisZ=0 />
-          <rotate time=0.4125 axisX=0 axisY=1 axisZ=0/>
+          <rotate time=2 axisX=0 axisY=1 axisZ=0/>
           <colour R=160 G=102 B=60/>      
           <models>
             <model file="jupiter.3d" />
           </models>
       </group>
       <group>
-        <translate time=12>
+        <translate time=3>
 	      <point X=30 Y=0 Z=0 />
 	      <point X=22 Y=0 Z=-15 />
 	      <point X=0 Y=0 Z=-20 />
@@ -164,6 +166,8 @@
 	      <point X=22 Y=0 Z=15 />
         </translate>
 	<colour R=225 G=225 B=225/>
+        <rotate angle=4.4 axisX=1 axisY=0 axisZ=0 />
+        <rotate time=5 axisX=0 axisY=1 axisZ=0/>
         <models>
           <model file="CallistoMoon.3d" />
         </models>
@@ -182,7 +186,7 @@
       </translate>
       <group>      
 	<rotate angle=26.7 axisX=1 axisY=0 axisZ=0 />
-        <rotate time=0.45 axisX=0 axisY=1 axisZ=0/>
+        <rotate time=1.5 axisX=0 axisY=1 axisZ=0/>
         <colour R=222 G=184 B=135/>
         <models>
           <model file="saturn.3d" />
@@ -199,6 +203,8 @@
 	      <point X=0 Y=0 Z=30 />
 	      <point X=33 Y=0 Z=22.5 />
         </translate>
+        <rotate angle=4.4 axisX=1 axisY=0 axisZ=0 />
+        <rotate time=3 axisX=0 axisY=1 axisZ=0/>
 	<colour R=255 G=255 B=255/>
         <models>
           <model file="TitanMoon.3d" />
@@ -218,7 +224,7 @@
       </translate>
       <group>
         <rotate angle=97.8 axisX=1 axisY=0 axisZ=0 />
-	<rotate time=0.7167 axisX=0 axisY=-1 axisZ=0/>
+	<rotate time=1 axisX=0 axisY=-1 axisZ=0/>
 	<colour R=70 G=130 B=180/>
         <models>
           <model file="uranus.3d" />
@@ -236,7 +242,9 @@
 	      <point X=27.5 Y=0 Z=18.75 />
         </translate>
 	<colour R=155 G=185 B=205/>
-        <models>
+        <rotate angle=0.4 axisX=1 axisY=0 axisZ=0 />
+        <rotate time=5 axisX=0 axisY=1 axisZ=0/>
+	<models>
           <model file="OberonMoon.3d" />
         </models>
       </group>
@@ -254,7 +262,7 @@
       </translate>
       <group>
 	<rotate angle=28.3 axisX=1 axisY=0 axisZ=0 />
-        <rotate time=0.67 axisX=0 axisY=1 axisZ=0/>
+        <rotate time=1 axisX=0 axisY=1 axisZ=0/>
         <colour R=65 G=105 B=225/>
         <models>
           <model file="neptune.3d" />
@@ -271,6 +279,8 @@
 	      <point X=0 Y=0 Z=20 />
 	      <point X=22 Y=0 Z=15 />
         </translate>
+        <rotate angle=0.9 axisX=1 axisY=0 axisZ=0 />
+        <rotate time=2 axisX=0 axisY=1 axisZ=0/>
 	<colour R=195 G=85 B=105/>
         <models>
           <model file="TritonMoon.3d" />

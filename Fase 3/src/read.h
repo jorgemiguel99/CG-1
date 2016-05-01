@@ -29,7 +29,6 @@ extern struct node_group {
 	float translation_period;
 	float** p;
 	int pointIndex;
-	float start_time;
 
 	int colour[3] = { 255,255,255 };
 

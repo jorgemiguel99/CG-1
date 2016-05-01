@@ -1,0 +1,30 @@
+﻿  engine.cpp
+c:\users\gustavo\documents\visual studio 2015\projects\fase3\ensaio1read\read.h(42): warning C4091: 'extern ': ignored on left of 'node_group' when no variable is declared
+c:\users\gustavo\documents\visual studio 2015\projects\fase3\ensaio1read\read.h(47): warning C4091: 'extern ': ignored on left of 'scene' when no variable is declared
+engine.cpp(203): warning C4018: '<': signed/unsigned mismatch
+engine.cpp(209): warning C4018: '<': signed/unsigned mismatch
+engine.cpp(305): warning C4018: '<': signed/unsigned mismatch
+  read.cpp
+c:\users\gustavo\documents\visual studio 2015\projects\fase3\ensaio1read\read.h(42): warning C4091: 'extern ': ignored on left of 'node_group' when no variable is declared
+c:\users\gustavo\documents\visual studio 2015\projects\fase3\ensaio1read\read.h(47): warning C4091: 'extern ': ignored on left of 'scene' when no variable is declared
+read.cpp(84): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+read.cpp(93): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+read.cpp(95): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+read.cpp(96): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+read.cpp(110): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(111): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(112): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(121): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(122): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(123): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(124): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(127): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(128): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(129): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(130): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating code
+  1 of 695 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Ensaio1Read.vcxproj -> C:\Users\Gustavo\Documents\Visual Studio 2015\Projects\Fase3\Release\Ensaio1Read.exe
