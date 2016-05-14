@@ -9,7 +9,8 @@
   <group>
     <colour R=255 G=255 B=255/> 	  
     <models>
-      <model file="plane.3d"/>
+    <!-- ambR=0.2 ambG=0.2 ambB=0.2 or diffR=1.0 diffG=1.0 diffB=1.0 or specR=0.5 specG=0.5 specB=0.5 or emsR=0.8 emsG=0.8 emsB=0.8  -->
+      <model file="plane.3d" ambR=0.2 ambG=0.2 ambB=0.2/>
     </models>	      
   </group>
   <!-- SUN -->
@@ -18,7 +19,7 @@
       <rotate angle=7.25 axisX=1 axisY=0 axisZ=0 />
       <rotate time=36 axisX=0 axisY=1 axisZ=0/>
       <models>
-        <model file="sun.3d" texture="sun.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+        <model file="sun.3d" texture="sun.jpg"/>
       </models>
   </group>
   <!-- MERCURY -->
@@ -38,7 +39,7 @@
       <rotate time=8 axisX=0 axisY=1 axisZ=0/>
       <colour R=102 G=102 B=102/>
       <models>
-        <model file="mercury.3d" texture="mercury.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+        <model file="mercury.3d" texture="mercury.jpg"/>
       </models>
     </group>
   </group>
@@ -59,7 +60,7 @@
        <rotate time=12 axisX=0 axisY=-1 axisZ=0/>
        <colour R=255 G=250 B=205/>
        <models>
-         <model file="venus.3d" texture="venus.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+         <model file="venus.3d" texture="venus.jpg"/>
        </models>
     </group>
   </group>
@@ -79,7 +80,7 @@
       <rotate time=3 axisX=0 axisY=1 axisZ=0/>
       <colour R=0 G=0 B=205/>
       <models>
-         <model file="earth.3d" texture="earth.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+         <model file="earth.3d" texture="earth.jpg"/>
       </models>
     </group>    
     <group>
@@ -97,7 +98,7 @@
       <rotate angle=6.7 axisX=1 axisY=0 axisZ=0/>
       <rotate time=5 axisX=0 axisY=1 axisZ=0/>
       <models>
-        <model file="earthMoon.3d" texture="earthMoon.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+        <model file="earthMoon.3d" texture="earthMoon.jpg"/>
       </models>
     </group>
   </group>
@@ -117,7 +118,7 @@
 	<rotate time=3.2 axisX=0 axisY=1 axisZ=0/>
         <colour R=255 G=69 B=0/>
         <models>
-          <model file="mars.3d" texture="mars.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+          <model file="mars.3d" texture="mars.jpg"/>
         </models>
       </group>
       <group>
@@ -135,7 +136,7 @@
         <rotate time=6 axisX=0 axisY=1 axisZ=0/>
 	<colour R=120 G=120 B=130/>
         <models>
-          <model file="PhobosMoon.3d" texture="phobosMoon.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+          <model file="PhobosMoon.3d" texture="phobosMoon.jpg"/>
         </models>
       </group>
     </group>
@@ -155,7 +156,7 @@
           <rotate time=2 axisX=0 axisY=1 axisZ=0/>
           <colour R=160 G=102 B=60/>      
           <models>
-            <model file="jupiter.3d" texture="jupiter.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+            <model file="jupiter.3d" texture="jupiter.jpg"/>
           </models>
       </group>
       <group>
@@ -173,7 +174,7 @@
         <rotate angle=4.4 axisX=1 axisY=0 axisZ=0 />
         <rotate time=5 axisX=0 axisY=1 axisZ=0/>
         <models>
-          <model file="CallistoMoon.3d" texture="callistoMoon.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+          <model file="CallistoMoon.3d" texture="callistoMoon.jpg"/>
         </models>
       </group>
     </group>
@@ -193,7 +194,7 @@
         <rotate time=1.5 axisX=0 axisY=1 axisZ=0/>
         <colour R=222 G=184 B=135/>
         <models>
-          <model file="saturn.3d" texture="saturn.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+          <model file="saturn.3d" texture="saturn.jpg"/>
         </models>
       </group>
       <group>
@@ -211,7 +212,7 @@
         <rotate time=3 axisX=0 axisY=1 axisZ=0/>
 	<colour R=255 G=255 B=255/>
         <models>
-          <model file="TitanMoon.3d" texture="titanMoon.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+          <model file="TitanMoon.3d" texture="titanMoon.jpg"/>
         </models>
       </group>
     </group>
@@ -231,7 +232,7 @@
 	<rotate time=1 axisX=0 axisY=-1 axisZ=0/>
 	<colour R=70 G=130 B=180/>
         <models>
-          <model file="uranus.3d" texture="uranus.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+          <model file="uranus.3d" texture="uranus.jpg"/>
         </models>
       </group>
       <group>
@@ -249,7 +250,7 @@
         <rotate angle=0.4 axisX=1 axisY=0 axisZ=0 />
         <rotate time=5 axisX=0 axisY=1 axisZ=0/>
 	<models>
-          <model file="OberonMoon.3d" texture="oberonMoon.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+          <model file="OberonMoon.3d" texture="oberonMoon.jpg"/>
         </models>
       </group>
     </group>
@@ -269,7 +270,7 @@
         <rotate time=1 axisX=0 axisY=1 axisZ=0/>
         <colour R=65 G=105 B=225/>
         <models>
-          <model file="neptune.3d" texture="neptune.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+          <model file="neptune.3d" texture="neptune.jpg"/>
         </models>
       </group>
       <group>
@@ -287,7 +288,7 @@
         <rotate time=2 axisX=0 axisY=1 axisZ=0/>
 	<colour R=195 G=85 B=105/>
         <models>
-          <model file="TritonMoon.3d" texture="tritonMoon.jpg" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+          <model file="TritonMoon.3d" texture="tritonMoon.jpg"/>
         </models>
       </group>
     </group>
@@ -304,7 +305,8 @@
     </translate> 
     <group>
       <models>
-        <model file="teapot.3d" ambR=0.2 ambG=0.2 ambB=0.2 diffR=1.0 diffG=1.0 diffB=1.0 specR=0.5 specG=0.5 specB=0.5 emsR=0.8 emsG=0.8 emsB=0.8 />
+        <!-- ambR=0.2 ambG=0.2 ambB=0.2 or diffR=1.0 diffG=1.0 diffB=1.0 or specR=0.5 specG=0.5 specB=0.5 or emsR=0.8 emsG=0.8 emsB=0.8  -->
+        <model file="teapot.3d" diffR=1.0 diffG=1.0 diffB=1.0/>
       </models>
     </group>
     </group>
