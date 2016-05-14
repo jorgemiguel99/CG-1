@@ -9,10 +9,10 @@
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
-#include <windows.h>
-#include <GL/glut.h>
+//#include <windows.h>
+//#include <GL/glut.h>
 #include <math.h>
-// #include <GLUT/glut.h> //-- MAC
+#include <GLUT/glut.h> //-- MAC
 
 using namespace std;
 
@@ -68,10 +68,10 @@ vector<string> patchesString;
 vector<string> verticesString;
 
 // Global variable to save patches floats
-vector<vector<float>> patches;
+vector< vector<float> > patches;
 
 // Global variable to save control points floats
-vector<vector<float>> vertices;
+vector< vector<float> > vertices;
 
 vector<float> values;
 

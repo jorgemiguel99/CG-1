@@ -29,6 +29,7 @@ extern struct node_group {
 	float translation_period;
 	float** p;
 	int pointIndex;
+	float start_time;
 
 	int colour[3] = { 255,255,255 };
 
@@ -37,6 +38,7 @@ extern struct node_group {
 	vector<float>* rotate_period;
 	vector<int>* vboIndex;
 	vector<string>* model_file;
+    vector<string>* model_texture;
 	node_group** child; // multiple child pointers
 	int childIndex;
 };

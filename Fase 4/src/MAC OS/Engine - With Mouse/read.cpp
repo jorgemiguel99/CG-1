@@ -18,12 +18,14 @@ node_group* initNodeGroup() {
 	r->rotateAxis = (vector<float>*)malloc(sizeof(vector<float>));
 	r->rotateAxis = new vector<float>();
 
-
 	r->vboIndex = (vector<int>*)malloc(sizeof(vector<int>));
 	r->vboIndex = new vector<int>();
 
 	r->model_file = (vector<string>*)malloc(sizeof(vector<string>));
 	r->model_file = new vector<string>();
+    
+    r->model_texture = (vector<string>*)malloc(sizeof(vector<string>));
+    r->model_texture = new vector<string>();
 
 	r->child = (node_group**)malloc(10 * sizeof(struct node_group));
 	r->childIndex = 0;
@@ -141,12 +143,15 @@ void readGroup(TiXmlElement *pGroup, node_group* node,int* vboNbuffers) {
 
 	TiXmlElement* pModels = pGroup->FirstChildElement("models");
 	if (pModels) {
-		TiXmlElement* pModelFile = pModels->FirstChildElement("model");
-		while (pModelFile) {
-			string filename = (string)pModelFile->Attribute("file");
-
+		TiXmlElement* pModelFileAndTexture = pModels->FirstChildElement("model");
+		while (pModelFileAndTexture) {
+			string filename = (string)pModelFileAndTexture->Attribute("file");
 			node->model_file->push_back(filename);
-			(*vboNbuffers)=(*vboNbuffers)+1;
+            
+            string texture = (string)pModelFileAndTexture->Attribute("texture");
+            node->model_texture->push_back(texture);
+            
+			(*vboNbuffers)=(*vboNbuffers)+2;
 
 			pModelFile = pModelFile->NextSiblingElement("model");
 		}

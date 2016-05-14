@@ -38,6 +38,7 @@ extern struct node_group {
 	vector<float>* rotate_period;
 	vector<int>* vboIndex;
 	vector<string>* model_file;
+    vector<string>* model_texture;
 	node_group** child; // multiple child pointers
 	int childIndex;
 };
