@@ -26,6 +26,18 @@ node_group* initNodeGroup() {
     
     r->model_texture = (vector<string>*)malloc(sizeof(vector<string>));
     r->model_texture = new vector<string>();
+    
+    r->model_coloured_ambient = (vector<float>*)malloc(sizeof(vector<float>));
+    r->model_coloured_ambient = new vector<float>();
+    
+    r->model_coloured_diffuse = (vector<float>*)malloc(sizeof(vector<float>));
+    r->model_coloured_diffuse = new vector<float>();
+    
+    r->model_coloured_specular = (vector<float>*)malloc(sizeof(vector<float>));
+    r->model_coloured_specular = new vector<float>();
+    
+    r->model_coloured_emissive = (vector<float>*)malloc(sizeof(vector<float>));
+    r->model_coloured_emissive = new vector<float>();
 
 	r->child = (node_group**)malloc(10 * sizeof(struct node_group));
 	r->childIndex = 0;
@@ -38,6 +50,21 @@ node_group* initNodeGroup() {
 	r->pointIndex=0;
 	
 	return r;
+}
+
+node_group_light* initNodeGroupLight() { //Lights
+    node_group_light* r = (node_group_light*)malloc(sizeof(struct node_group_light));
+
+    r->light_type = (vector<string>*)malloc(sizeof(vector<string>));
+    r->light_type = new vector<string>();
+    
+    r->position = (vector<float>*)malloc(sizeof(vector<float>));
+    r->position = new vector<float>();
+
+    r->child = (node_group_light**)malloc(10 * sizeof(struct node_group_light));
+    r->childIndex = 0;
+    
+    return r;
 }
 
 int numberOfModels(node_group* node) {
@@ -58,7 +85,7 @@ int tree_high(node_group* node) {
 }
 
 
-scene* readXML(const char* f, int* vboNbuffers) {
+scene* readXML(const char* f, int* vboNbuffers, int* vboNbuffersLights) {
 
 	TiXmlDocument XMLdoc(f);
 	bool loadOkay = XMLdoc.LoadFile();
@@ -73,12 +100,20 @@ scene* readXML(const char* f, int* vboNbuffers) {
 
 	readGroup(pGroup, firstGroup, vboNbuffers);
 
+    //Lights
+    node_group_light* firstGroupLight = initNodeGroupLight();
+    
+    sceneData->lights_tree = firstGroupLight;
+    TiXmlElement *pGroupLight = pRoot->FirstChildElement("lights");
+    
+    readGroupLight(pGroupLight, firstGroupLight, vboNbuffersLights);
+
 	return sceneData;
 }
 
 
 
-void readGroup(TiXmlElement *pGroup, node_group* node,int* vboNbuffers) {
+void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers) {
 	TiXmlElement* pTranslate = pGroup->FirstChildElement("translate");
 	if (pTranslate) {
 		const char* time = pTranslate->Attribute("time");
@@ -148,12 +183,33 @@ void readGroup(TiXmlElement *pGroup, node_group* node,int* vboNbuffers) {
 			string filename = (string)pModelFileAndTexture->Attribute("file");
 			node->model_file->push_back(filename);
             
-            string texture = (string)pModelFileAndTexture->Attribute("texture");
-            node->model_texture->push_back(texture);
+            if (const char* ambient = pModelFileAndTexture->Attribute("ambR")) {
+                node->model_coloured_ambient->push_back(atof(ambient));
+                node->model_coloured_ambient->push_back(atof(pModelFileAndTexture->Attribute("ambG")));
+                node->model_coloured_ambient->push_back(atof(pModelFileAndTexture->Attribute("ambB")));
+            }
+            else if (const char* diffuse = pRotate->Attribute("diffR")) {
+                node->model_coloured_diffuse->push_back(atof(diffuse));
+                node->model_coloured_diffuse->push_back(atof(pModelFileAndTexture->Attribute("diffG")));
+                node->model_coloured_diffuse->push_back(atof(pModelFileAndTexture->Attribute("diffB")));
+            }
+            else if (const char* specular = pRotate->Attribute("specR")) {
+                node->model_coloured_specular->push_back(atof(specular));
+                node->model_coloured_specular->push_back(atof(pModelFileAndTexture->Attribute("specG")));
+                node->model_coloured_specular->push_back(atof(pModelFileAndTexture->Attribute("specB")));
+            }
+            else if (const char* emissive = pRotate->Attribute("emsR")) {
+                node->model_coloured_emissive->push_back(atof(emissive));
+                node->model_coloured_emissive->push_back(atof(pModelFileAndTexture->Attribute("emsG")));
+                node->model_coloured_emissive->push_back(atof(pModelFileAndTexture->Attribute("emsB")));
+            }
+            else if (const char* texture = (string)pModelFileAndTexture->Attribute("texture");){
+                node->model_texture->push_back(texture);
+            }
             
-			(*vboNbuffers)=(*vboNbuffers)+2;
+			(*vboNbuffers)=(*vboNbuffers)+1;// +2 no caso textura ??
 
-			pModelFile = pModelFile->NextSiblingElement("model");
+			pModelFileAndTexture = pModelFileAndTexture->NextSiblingElement("model");
 		}
 	}
 
@@ -166,6 +222,33 @@ void readGroup(TiXmlElement *pGroup, node_group* node,int* vboNbuffers) {
 
 		child_group = child_group->NextSiblingElement();
 	}
+}
+
+
+void readGroupLight(TiXmlElement *pGroupLight, node_group_light* nodeL, int* vboNbuffersLights) {
+    TiXmlElement* pLight= pGroupLight->FirstChildElement("light");
+    while (pLight) {
+        string typeL = (string)pLight->Attribute("type");
+        nodeL->light_type->push_back(typeL);
+        
+        nodeL->position->push_back(atof(pLight->Attribute("posX")));
+        nodeL->position->push_back(atof(pLight->Attribute("posY")));
+        nodeL->position->push_back(atof(pLight->Attribute("posZ")));
+        
+        (*vboNbuffersLights)=(*vboNbuffersLights)+1;
+        
+        pLight = pLight->NextSiblingElement("light");
+    }
+    
+    TiXmlElement* child_group_light = pGroupLight->FirstChildElement("light");
+    while (child_group_light)
+    {
+        node_group_light* newChild = initNodeGroupLight();
+        nodeL->childLight[nodeL->childIndexLight++] = newChild;
+        readGroupLight(child_group_light, newChild, vboNbuffersLights);
+        
+        child_group_light = child_group_light->NextSiblingElement();
+    }
 }
 
 

@@ -24,6 +24,12 @@
 
 using namespace std;
 
+extern struct node_group_light {
+    vector<string>* light_type; // POINT or SPOTLIGHT or ... -> 3 types studied in class
+    vector<float>* position;
+    node_group_light** childLight; // multiple child pointers
+    int childIndexLight;
+};
 
 extern struct node_group {
 	float translation_period;
@@ -38,18 +44,19 @@ extern struct node_group {
 	vector<float>* rotate_period;
 	vector<int>* vboIndex;
 	vector<string>* model_file;
-    vector<string>* model_texture;
-	node_group** child; // multiple child pointers
+    vector<string>* model_texture; // textured model
+    vector<float>* model_coloured_ambient; // Coloured model as ambR=0.2 ambG=0.2 ambB=0.2 or diffR=1.0 diffG=1.0 diffB=1.0 or specR=0.5 specG=0.5 specB=0.5 or emsR=0.8 emsG=0.8 emsB=0.8
+    vector<float>* model_coloured_diffuse;
+    vector<float>* model_coloured_specular;
+    vector<float>* model_coloured_emissive;
+    node_group** child; // multiple child pointers
 	int childIndex;
 };
 
 extern struct scene {
 	struct node_group* transformation_tree;
-	// lights[]
+    struct node_group_light* lights_tree;
 };
-
-
-
 
 void testTree(scene* sceneData);
 int numberOfModels(node_group* node);
@@ -58,7 +65,7 @@ vector<float> read3Dfile(string filename);
 vector<string> read3d(string figure);
 string reading(vector<string> aux);
 void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers);
-scene* readXML(const char* f, int* vboNbuffers);
+scene* readXML(const char* f, int* vboNbuffers, int* vboNbuffersLights);
 
 
 #endif
