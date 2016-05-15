@@ -2,11 +2,9 @@
 #include <stdio.h>
 #include <GL/glew.h>
 #include <GLUT/glut.h>
-//Colocar aqui includes DevIL WIMDOWS!!!
-// MAC OS X
-//#include <opencv2/highgui/highgui.hpp>
-//#include <opencv2/core/core.hpp>
-//#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
 #include <math.h>
 
 #define _PI_ 3.14159
@@ -398,21 +396,19 @@ int main(int argc, char **argv) {
 	if (err != GLEW_OK)  printf(" Error initializing GLEW! \n");
 	else printf("Initializing GLEW succeeded!\n");
 
-	// Textures MAC OS X
-//  cv::Mat img = cv::imread("earth.jpg");
-//  cols        = img.cols;
-//  rows        = img.rows;
-//
-//  glGenTextures(1, &texID);
-//  glBindTexture(GL_TEXTURE_2D, texID);
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cols, rows, 0, GL_BGR, GL_UNSIGNED_BYTE, img.data);
+	// Textures.
+  cv::Mat img = cv::imread("earth.jpg");
+  cols        = img.cols;
+  rows        = img.rows;
 
-    //Colocar aqui leitura de textura e imagem com o DevIL
-    
+  glGenTextures(1, &texID);
+  glBindTexture(GL_TEXTURE_2D, texID);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cols, rows, 0, GL_BGR, GL_UNSIGNED_BYTE, img.data);
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glGenBuffers(number, vertices);
 	glEnableClientState(GL_VERTEX_ARRAY);
