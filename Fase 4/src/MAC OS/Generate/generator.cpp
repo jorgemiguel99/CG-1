@@ -241,7 +241,7 @@ void printTeapot() {
 				teapotPoints[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				res[0] = getBezierPoint(u, v, indicesPatch, 0);
 				res[1] = getBezierPoint(u, v, indicesPatch, 1);
-				res[2] = getBezierPoint(u, v, indicesPatch, 2);		
+				res[2] = getBezierPoint(u, v, indicesPatch, 2);
 				teapotPoints[pointNumber][0] = res[0];
 				teapotPoints[pointNumber][1] = res[1];
 				teapotPoints[pointNumber][2] = res[2];
@@ -312,103 +312,114 @@ void printSphere3d() {
 	ofstream sphere;
 	sphere.open(filename.c_str());
 
-	int sphereVertex = (stacks - 2) * slices * 6 + 2 * slices * 3;
-    sphereVertex *= 2; // Vertex + Normal
-	sphere << sphereVertex << endl; // Total number of vertices
-
-	int i, j;
+	float x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4; // Vertex
+	float xx1, yy1, zz1, xx2, yy2, zz2, xx3, yy3, zz3, xx4, yy4, zz4; // Normals
+	float s1 ,t1 , s2, t2, s3, t3, s4, t4; // Textures
+	float angleToRad = M_PI / 180.0f;
 	float r = radius;
-	float inicialPolar = -M_PI / 2;
+	float textureS = 0.0;
+	float textureT = 0.0;
+	float textureSIncrement = 1/slices;
+	float textureTIncrement = 1/stacks;
+	float longitudeIncrement = 360/stacks;
+	float latitudeIncrement = 180/slices;
 
-	for (i = 0; i < stacks; i++) {
-		float polar = inicialPolar + i * (M_PI / stacks);
-		float polar2 = inicialPolar + (i + 1) * (M_PI / stacks);
+	int totalLines = 18*(360/longitudeIncrement)*(180/latitudeIncrement);
+	sphere << totalLines << endl;
 
-		for (j = 0; j < slices; j++) {
+	for (float latitude = 0; latitude < 180; latitude += latitudeIncrement){
 
-			float longitude = j * (2 * M_PI / slices);
-			float longitude2 = (j + 1) * (2 * M_PI / slices);
+		for (float longitude = 0; longitude < 360; longitude += longitudeIncrement) {
+			//Vertex 1
+			z1=r*cos(latitude*angleToRad);
+			x1=r*cos(longitude*angleToRad)*sin(latitude*angleToRad);
+			y1=r*sin(longitude*angleToRad)*sin(latitude*angleToRad);
 
-			// Vertices
-			float x1 = r * cos(polar) * sin(longitude);
-			float y1 = r * sin(polar);
-			float z1 = r * cos(polar) * cos(longitude);
+			//Normal 1
+			zz1=cos(latitude*angleToRad);
+			xx1=cos(longitude*angleToRad)*sin(latitude*angleToRad);
+			yy1=sin(longitude*angleToRad)*sin(latitude*angleToRad);
 
-			float x2 = r * cos(polar2) * sin(longitude);
-			float y2 = r * sin(polar2);
-			float z2 = r * cos(polar2) * cos(longitude);
+			//Texture 1
+			s1=longitude/360-0.25;
+			t1=latitude/180;
 
-			float x3 = r * cos(polar) * sin(longitude2);
-			float y3 = r * sin(polar);
-			float z3 = r * cos(polar) * cos(longitude2);
+			//Vertex 2
+			z2=r*cos((latitude+latitudeIncrement)*angleToRad);
+			x2=r*cos(longitude*angleToRad)*sin((latitude+latitudeIncrement)*angleToRad);
+			y2=r*sin(longitude*angleToRad)*sin((latitude+latitudeIncrement)*angleToRad);
 
-			float x4 = r * cos(polar2) * sin(longitude2);
-			float y4 = r * sin(polar2);
-			float z4 = r * cos(polar2) * cos(longitude2);
+			//Normal 2
+			zz2=cos((latitude+latitudeIncrement)*angleToRad);
+			xx2=cos(longitude*angleToRad)*sin((latitude+latitudeIncrement)*angleToRad);
+			yy2=sin(longitude*angleToRad)*sin((latitude+latitudeIncrement)*angleToRad);
 
-			// Normals
-			float xx1 = cos(polar) * sin(longitude);
-			float yy1 = sin(polar);
-			float zz1 = cos(polar) * cos(longitude);
+			//Texture 2
+			s2=longitude/360-0.25;
+			t2=(latitude+latitudeIncrement-1)/(180);
 
-			float xx2 = cos(polar2) * sin(longitude);
-			float yy2 = sin(polar2);
-			float zz2 = cos(polar2) * cos(longitude);
+			//Vertex 3
+			z3=r*cos((latitude)*angleToRad);
+			x3=r*cos((longitude+longitudeIncrement)*angleToRad)*sin((latitude)*angleToRad);
+			y3=r*sin((longitude+longitudeIncrement)*angleToRad)*sin((latitude)*angleToRad);
 
-			float xx3 = cos(polar) * sin(longitude2);
-			float yy3 = sin(polar);
-			float zz3 = cos(polar) * cos(longitude2);
+			//Normal 3
+			zz3=cos((latitude)*angleToRad);
+			xx3=cos((longitude+longitudeIncrement)*angleToRad)*sin((latitude)*angleToRad);
+			yy3=sin((longitude+longitudeIncrement)*angleToRad)*sin((latitude)*angleToRad);
 
-			float xx4 = cos(polar2) * sin(longitude2);
-			float yy4 = sin(polar2);
-			float zz4 = cos(polar2) * cos(longitude2);
+			//Texture 3
+			s3=(longitude+longitudeIncrement)/(360)-0.25;
+			t3=(latitude)/180;
 
-			// Textures
-			// (...)
+			//Vertex 4
+			z4=r*cos((latitude+latitudeIncrement)*angleToRad);
+			x4=r*cos((longitude+longitudeIncrement)*angleToRad)*sin((latitude+latitudeIncrement)*angleToRad);
+			y4=r*sin((longitude+longitudeIncrement)*angleToRad)*sin((latitude+latitudeIncrement)*angleToRad);
 
-			if (i == 0) {
-				sphere << x3 << " " << y3 << " " << z3 << endl;
-				sphere << xx3 << " " << yy3 << " " << zz3 << endl;
+			//Normal 4
+			zz4=cos((latitude+latitudeIncrement)*angleToRad);
+			xx4=cos((longitude+longitudeIncrement)*angleToRad)*sin((latitude+latitudeIncrement)*angleToRad);
+			yy4=sin((longitude+longitudeIncrement)*angleToRad)*sin((latitude+latitudeIncrement)*angleToRad);
 
-				sphere << x4 << " " << y4 << " " << z4 << endl;
-				sphere << xx4 << " " << yy4 << " " << zz4 << endl;
+			//Texture 4
+			s4=(longitude+longitudeIncrement)/360-0.25;
+			t4=(latitude+latitudeIncrement)/(180);
 
-				sphere << x2 << " " << y2 << " " << z2 << endl;
-				sphere << xx2 << " " << yy2 << " " << zz2 << endl;
-			}
-			else if (i == stacks - 1) {
-				sphere << x1 << " " << y1 << " " << z1 << endl;
-				sphere << xx1 << " " << yy1 << " " << zz1 << endl;
+			// Filling file.3d
+			// First line is Vertex Coordinates (3)
+			// Second line is Normal Coordinates (3)
+			// Third line is Texture Coordinates (2)
 
-				sphere << x3 << " " << y3 << " " << z3 << endl;
-				sphere << xx3 << " " << yy3 << " " << zz3 << endl;
+			sphere << x1 << " " << y1 << " " << z1 << endl;
+			sphere << xx1 << " " << yy1 << " " << zz1 << endl;
+			sphere << s1 << " " << t1 << endl;
 
-				sphere << x2 << " " << y2 << " " << z2 << endl;
-				sphere << xx2 << " " << yy2 << " " << zz2 << endl;
-			}
-			else {
-				sphere << x3 << " " << y3 << " " << z3 << endl;
-				sphere << xx3 << " " << yy3 << " " << zz3 << endl;
+			sphere << x2 << " " << y2 << " " << z2 << endl;
+			sphere << xx2 << " " << yy2 << " " << zz2 << endl;
+			sphere << s2 << " " << t2 << endl;
 
-				sphere << x2 << " " << y2 << " " << z2 << endl;
-				sphere << xx2 << " " << yy2 << " " << zz2 << endl;
+			sphere << x3 << " " << y3 << " " << z3 << endl;
+			sphere << xx3 << " " << yy3 << " " << zz3 << endl;
+			sphere << s3 << " " << t3 << endl;
 
-				sphere << x1 << " " << y1 << " " << z1 << endl;
-				sphere << xx1 << " " << yy1 << " " << zz1 << endl;
+			sphere << x3 << " " << y3 << " " << z3 << endl;
+			sphere << xx3 << " " << yy3 << " " << zz3 << endl;
+			sphere << s3 << " " << t3 << endl;
 
-				sphere << x3 << " " << y3 << " " << z3 << endl;
-				sphere << xx3 << " " << yy3 << " " << zz3 << endl;
+			sphere << x2 << " " << y2 << " " << z2 << endl;
+			sphere << xx2 << " " << yy2 << " " << zz2 << endl;
+			sphere << s2 << " " << t2 << endl;
 
-				sphere << x4 << " " << y4 << " " << z4 << endl;
-				sphere << xx4 << " " << yy4 << " " << zz4 << endl;
-
-				sphere << x2 << " " << y2 << " " << z2 << endl;
-				sphere << xx2 << " " << yy2 << " " << zz2 << endl;
+			sphere << x4 << " " << y4 << " " << z4 << endl;
+			sphere << xx4 << " " << yy4 << " " << zz4 << endl;
+			sphere << s4 << " " << t4 << endl;
 			}
 		}
-	}
-	sphere.close();
+		sphere.close();
 }
+
+
 
 // Main function
 int main(int argc, char **argv) {
@@ -498,7 +509,7 @@ int main(int argc, char **argv) {
 				printSphere3d();
 				cout << "neptune.3d created" << endl;
 
-				// Moons 
+				// Moons
 				filename = "earthMoon.3d";
 				radius = radius_earthMoon;
 				slices = 30;
