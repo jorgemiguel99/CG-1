@@ -95,7 +95,7 @@ void prepareSphere(float r, float slices, float stacks) {
 			yy1=sin(longitude*angleToRad)*sin(latitude*angleToRad);
 
 			//Texture 1
-			s1=longitude/360-0.25;
+			s1=longitude/360;
 			t1=latitude/180;
 
 			//Vertex 2
@@ -109,8 +109,8 @@ void prepareSphere(float r, float slices, float stacks) {
 			yy2=sin(longitude*angleToRad)*sin((latitude+latitudeIncrement)*angleToRad);
 
 			//Texture 2
-			s2=longitude/360-0.25;
-			t2=(latitude+latitudeIncrement-1)/(180);
+			s2=longitude/360;
+			t2=(latitude+latitudeIncrement)/(180);
 
 			//Vertex 3
 			z3=r*cos((latitude)*angleToRad);
@@ -123,7 +123,7 @@ void prepareSphere(float r, float slices, float stacks) {
 			yy3=sin((longitude+longitudeIncrement)*angleToRad)*sin((latitude)*angleToRad);
 
 			//Texture 3
-			s3=(longitude+longitudeIncrement)/(360)-0.25;
+			s3=(longitude+longitudeIncrement)/360;
 			t3=(latitude)/180;
 
 			//Vertex 4
@@ -137,8 +137,8 @@ void prepareSphere(float r, float slices, float stacks) {
 			yy4=sin((longitude+longitudeIncrement)*angleToRad)*sin((latitude+latitudeIncrement)*angleToRad);
 
 			//Texture 4
-			s4=(longitude+longitudeIncrement)/360-0.25;
-			t4=(latitude+latitudeIncrement)/(180);
+			s4=(longitude+longitudeIncrement)/360;
+			t4=(latitude+latitudeIncrement)/180;
 
 			// Filling VBO buffers
 			// Vertex
