@@ -29,6 +29,10 @@ float translate_z = 0;
 float alfa = 0.0f, beta = 0.0f, radii = 5;
 float camX, camY, camZ;
 
+GLfloat amb[4]  = {0.2, 0.2, 0.2, 1.0};
+GLfloat diff[4] = {1.0, 1.0, 1.0, 1.0};
+GLfloat pos[4]  = {1.0, 1.0, 1.0, 0.0};
+
 // Dimensions of the figures
 float length, width, height=5, radius=2, slices=30, stacks=30;
 
@@ -38,10 +42,11 @@ vector<string> file3dRead;
 // Global variable process input
 vector<string> splitted;
 
-GLuint k, vertices;
+GLuint k,l, vertices[2];
 
-// Global variable with 3d vertex
+//VBO
 float* vrtx;
+float* norm;
 
 // Splits a string into its substrings accordingly to its delimiter that must be provided
 vector<string> split(string str, char delimiter) {
@@ -57,9 +62,10 @@ vector<string> split(string str, char delimiter) {
 
 void printCone3d() {
   vrtx=(float*)malloc(sizeof(float)*100000);
+  norm=(float*)malloc(sizeof(float)*100000);
 	ofstream cone;
 	cone.open("cone.3d");
-  k=0;
+  k=0,l=0;
 
 	// pontos base + pontos lados + pontos do topo (slice so com triangulos)
 	int coneVertex = slices * 3 + (stacks - 1)*slices * 6 + slices * 3;
@@ -80,15 +86,25 @@ void printCone3d() {
 		float y2 = 0;
 		float z2 = radius*cos(alpha + beta);
 
+    float xx1 = sin(alpha);
+    float yy1 = 0;
+    float zz1 = cos(alpha);
 
+    float xx2 = sin(alpha + beta);
+    float yy2 = 0;
+    float zz2 = cos(alpha + beta);
 
-		// Base
+		// Base Vertex
 		cone << "0.0 0.0 0.0" << endl;
 		cone << x2 << " " << y2 << " " << z2 << endl;
 		cone << x1 << " " << y1 << " " << z1 << endl;
     vrtx[k++]=0.0;vrtx[k++]=0.0;vrtx[k++]=0.0;
     vrtx[k++]=x2;vrtx[k++]=y2;vrtx[k++]=z2;
     vrtx[k++]=x1;vrtx[k++]=y1;vrtx[k++]=z1;
+    // Base Normals
+    norm[l++]=0.0;norm[l++]=0.0;norm[l++]=0.0;
+    norm[l++]=xx2;norm[l++]=yy2;norm[l++]=zz2;
+    norm[l++]=xx1;norm[l++]=yy1;norm[l++]=zz1;
 
 		float radiusBot = radius;
 		float radiusTop;
@@ -117,7 +133,6 @@ void printCone3d() {
 			float y2 = y;
 			float z2 = radiusBot*cos(alpha + beta);
 
-
 			float x3 = radiusTop*sin(alpha);
 			float y3 = yn;
 			float z3 = radiusTop*cos(alpha);
@@ -126,16 +141,25 @@ void printCone3d() {
 			float y4 = yn;
 			float z4 = radiusTop*cos(alpha + beta);
 
-			if (j == stacks - 1) { // top slice
-				cone << x3 << " " << y3 << " " << z3 << endl;
-				cone << x1 << " " << y1 << " " << z1 << endl;
-				cone << x2 << " " << y2 << " " << z2 << endl;
-        vrtx[k++]=x3;vrtx[k++]=y3;vrtx[k++]=z3;
-        vrtx[k++]=x1;vrtx[k++]=y1;vrtx[k++]=z1;
-        vrtx[k++]=x2;vrtx[k++]=y2;vrtx[k++]=z2;
-			}
-			else {
-				// T: 3 - 1 - 2
+
+
+      float xx1 = sin(alpha);
+			float yy1 = y;
+			float zz1 = cos(alpha);
+
+			float xx2 = sin(alpha + beta);
+			float yy2 = y;
+			float zz2 = cos(alpha + beta);
+
+			float xx3 = sin(alpha);
+			float yy3 = yn;
+			float zz3 = cos(alpha);
+
+			float xx4 = sin(alpha + beta);
+			float yy4 = yn;
+			float zz4 = cos(alpha + beta);
+
+			if (j == stacks - 1) { // top slice Vertex
 				cone << x3 << " " << y3 << " " << z3 << endl;
 				cone << x1 << " " << y1 << " " << z1 << endl;
 				cone << x2 << " " << y2 << " " << z2 << endl;
@@ -143,40 +167,78 @@ void printCone3d() {
         vrtx[k++]=x1;vrtx[k++]=y1;vrtx[k++]=z1;
         vrtx[k++]=x2;vrtx[k++]=y2;vrtx[k++]=z2;
 
-				// T: 3 - 2 - 4
+        // top slice Normals
+        norm[l++]=xx3;norm[l++]=yy3;norm[l++]=zz3;
+        norm[l++]=xx1;norm[l++]=yy1;norm[l++]=zz1;
+        norm[l++]=xx2;norm[l++]=yy2;norm[l++]=zz2;
+			}
+			else {
+				// T: 3 - 1 - 2 Vertex
+				cone << x3 << " " << y3 << " " << z3 << endl;
+				cone << x1 << " " << y1 << " " << z1 << endl;
+				cone << x2 << " " << y2 << " " << z2 << endl;
+        vrtx[k++]=x3;vrtx[k++]=y3;vrtx[k++]=z3;
+        vrtx[k++]=x1;vrtx[k++]=y1;vrtx[k++]=z1;
+        vrtx[k++]=x2;vrtx[k++]=y2;vrtx[k++]=z2;
+
+        // T: 3 - 1 - 2 Normals
+        norm[l++]=xx3;norm[l++]=yy3;norm[l++]=zz3;
+        norm[l++]=xx1;norm[l++]=yy1;norm[l++]=zz1;
+        norm[l++]=xx2;norm[l++]=yy2;norm[l++]=zz2;
+
+				// T: 3 - 2 - 4 Vertex
 				cone << x3 << " " << y3 << " " << z3 << endl;
 				cone << x2 << " " << y2 << " " << z2 << endl;
 				cone << x4 << " " << y4 << " " << z4 << endl;
         vrtx[k++]=x3;vrtx[k++]=y3;vrtx[k++]=z3;
         vrtx[k++]=x2;vrtx[k++]=y2;vrtx[k++]=z2;
         vrtx[k++]=x4;vrtx[k++]=y4;vrtx[k++]=z4;
+
+        //  T: 3 - 2 - 4 Normals
+        norm[l++]=xx3;norm[l++]=yy3;norm[l++]=zz3;
+        norm[l++]=xx2;norm[l++]=yy2;norm[l++]=zz2;
+        norm[l++]=xx4;norm[l++]=yy4;norm[l++]=zz4;
 			}
 		}
 
 	}
 	cone.close();
-  glGenBuffers(1, &vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, vertices);
+  glGenBuffers(2, vertices);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vertices[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * k, vrtx, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vertices[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * k, norm, GL_STATIC_DRAW);
 }
 
 
 void drawCone() {
 
-	glBindBuffer(GL_ARRAY_BUFFER, vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, vertices[0]);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vertices[1]);
+	glNormalPointer(GL_FLOAT, 0, 0);
 
 	glDrawArrays(GL_TRIANGLES, 0, k);
 }
 
 // Show file.3d content in file3dRead vector
 void drawRenderSceneFile3d(void) {
-
+  glClearColor(0.0f,0.0f,0.0f,0.0f);
 	// Clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set the Camera
 	glLoadIdentity();
+
+  // light position
+  glLightfv(GL_LIGHT0, GL_POSITION, pos);
+  // light colors
+  glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, diff);
+
 	gluLookAt(px,py,pz,0,0,0,0.0f,1.0f,0.0f);
 
 	// Geometric Transformations
@@ -297,6 +359,11 @@ void initGL() {
 	// init
 	sphericalToCartesian();
 	glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_NORMAL_ARRAY);
+
+  //Light
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
 
 	printCone3d();
 }
@@ -308,7 +375,7 @@ int main(int argc, char **argv) {
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(100, 100);
   glutInitWindowSize(800, 800);
-  glutCreateWindow("Cone VBO");
+  glutCreateWindow("Solar System - Stage 1");
 
   // Callback registration
   glutDisplayFunc(drawRenderSceneFile3d);
