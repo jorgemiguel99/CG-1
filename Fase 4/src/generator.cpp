@@ -9,10 +9,10 @@
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
-//#include <windows.h>
-//#include <GL/glut.h>
+#include <windows.h>
+#include <GL/glut.h>
 #include <math.h>
-#include <GLUT/glut.h> //-- MAC
+//#include <GLUT/glut.h> //-- MAC
 
 using namespace std;
 
@@ -233,22 +233,54 @@ float getBezierPoint(float u, float v, vector<float> indices, int coord) {
 // 1 indicates that is dbu
 // 0 indicates that is dbv
 float getBezierPointTangents(float u, float v, vector<float> indices, int coord, int tangent) {
-	float pointValueTangent=0;
-	// Matrix M pre-multiplied with u or with  du
-	float bu[4][1] = { { powf(1 - u, 3) },{ 3 * u * powf(1 - u, 2) },{ 3 * powf(u, 2) * (1 - u) },{ powf(u, 3) } };
-	float bv[4][1] = { { powf(1 - v, 3) },{ 3 * v * powf(1 - v, 2) },{ 3 * powf(v, 2) * (1 - v) },{ powf(v, 3) } };
-	float dbu[4][1] = { { -3 * powf(u, 2) + 6 * u - 3 },{ 9 * powf(u, 2) - 12 * u + 3 },{ -9 * powf(u, 2) + 6 * u },{ 3* powf(u, 2) } };
-	float dbv[4][1] = {  { -3 * powf(v, 2) + 6 * v - 3 },{ 9 * powf(v, 2) - 12 * v + 3 },{ -9 * powf(v, 2) + 6 * v },{ 3* powf(v, 2) } };
+	float bu[4]  = { powf(u,3), powf(u,2), u, 1 };
+	float dbu[4] = { 3*powf(u,2), 2*u, 1, 0 };
+	float bv[4]  = { powf(v,3), powf(v,2), v, 1 };
+	float dbv[4] = { 3*powf(v,2), 2*v, 1, 0 };
 
-	//Matrix P 4x4 (16 control point to each coordinate)
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			if(tangent){ pointValueTangent += vertices[indices[j + 4 * i]][coord] * dbu[i][0] * bv[j][0]; } /** using dB(u,v)/du **/
-			else { pointValueTangent += vertices[indices[j + 4 * i]][coord] * bu[i][0] * dbv[j][0]; } /** using dB(u,v)/dv **/
+	float m[4][4] = {
+		{ -1.0,3.0f,-3.0f,1.0f },
+		{ 3.0f,-6.0f,3.0f,0.0f },
+		{ -3.0f,3.0f,0.0f,0.0f },
+		{ 1.0f,0.0f,0.0f,0.0f }
+	};
+
+	float p[4][4] = {
+		{ vertices[indices[0]][coord],vertices[indices[1]][coord],vertices[indices[2]][coord],vertices[indices[3]][coord] },
+		{ vertices[indices[4]][coord],vertices[indices[5]][coord],vertices[indices[6]][coord],vertices[indices[7]][coord] },
+		{ vertices[indices[8]][coord],vertices[indices[9]][coord],vertices[indices[10]][coord],vertices[indices[11]][coord] },
+		{ vertices[indices[12]][coord],vertices[indices[13]][coord],vertices[indices[14]][coord],vertices[indices[15]][coord] }
+	};
+
+	float aux1[4] = { 0.0f,0.0f,0.0f,0.0f };
+	float aux2[4] = { 0.0f,0.0f,0.0f,0.0f };
+	float aux3[4] = { 0.0f,0.0f,0.0f,0.0f };
+
+	if (tangent == 1) {
+		for (int i = 0; i < 4; i++) {
+			aux1[i] = (dbu[0] * m[0][i]) + (dbu[1] * m[1][i]) + (dbu[2] * m[2][i]) + (dbu[3] * m[3][i]);
+		}
+	}
+	else {
+		for (int i = 0; i < 4; i++) {
+			aux1[i] = (bu[0] * m[0][i]) + (bu[1] * m[1][i]) + (bu[2] * m[2][i]) + (bu[3] * m[3][i]);
 		}
 	}
 
-	return pointValueTangent;
+	for (int i = 0; i < 4; i++) {
+		aux2[i] = (aux1[0] * p[0][i]) + (aux1[1] * p[1][i]) + (aux1[2] * p[2][i]) + (aux1[3] * p[3][i]);
+	}
+
+	for (int i = 0; i < 4; i++) {
+		aux3[i] = (aux2[0] * m[i][0]) + (aux2[1] * m[i][1]) + (aux2[2] * m[i][2]) + (aux2[3] * m[i][3]);
+	}
+
+	if(tangent==1){
+		return ((aux3[0] * bv[0]) + (aux3[1] * bv[1]) + (aux3[2] * bv[2]) + (aux3[3] * bv[3]));
+	}
+	else{
+		return ((aux3[0] * dbv[0]) + (aux3[1] * dbv[1]) + (aux3[2] * dbv[2]) + (aux3[3] * dbv[3]));
+  }
 }
 
 void printTeapot() {
