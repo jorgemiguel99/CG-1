@@ -588,9 +588,9 @@ void printSphere3d() {
 			// Second line is Normal Coordinates (3)
 			// Third line is Texture Coordinates (2)
 
-			sphere << x1 << " " << y1 << " " << z1 << endl;
-			sphere << xx1 << " " << yy1 << " " << zz1 << endl;
-			sphere << s1 << " " << t1 << endl;
+			sphere << x1 << " " << y1 << " " << z1 << endl; // Vertex
+			sphere << xx1 << " " << yy1 << " " << zz1 << endl; // Normals
+			sphere << s1 << " " << t1 << endl; // Texture
 
 			sphere << x2 << " " << y2 << " " << z2 << endl;
 			sphere << xx2 << " " << yy2 << " " << zz2 << endl;
@@ -622,9 +622,9 @@ void printPlaneFigure3d() {
 
 	plane << "6" << endl;
 
-	plane << "0.0 " << "0.0 " << "0.0" << endl;
-	plane << "0.0 " << "0.0 " << "1.0" << endl;
-	plane << "0.0 " << "0.0" << endl;
+	plane << "0.0 " << "0.0 " << "0.0" << endl; // Vertex
+	plane << "0.0 " << "0.0 " << "1.0" << endl; // Normals
+	plane << "0.0 " << "0.0" << endl; // Texture
 
 	plane << length << ".0" << " 0.0 " << "0.0" << endl;
 	plane << "0.0 " << "0.0 " << "1.0" << endl;
@@ -655,9 +655,9 @@ void printBoxFigure3d() {
 
 	box << "36" << endl;
 
-	box << "0.0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "0.0 " << "1.0" << endl;
-	box << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "0.0 " << "0.0" << endl; // Vertex
+	box << "0.0 " << "0.0 " << "1.0" << endl; // Normals
+	box << "0.0 " << "0.0" << endl; // Texture
 
 	box << width << ".0 " << "0.0 " << "0.0" << endl;
 	box << "0.0 " << "0.0 " << "1.0" << endl;
@@ -803,78 +803,70 @@ void printBoxFigure3d() {
 }
 
 void printCilinderFigure3d() {
-	ofstream cilinder;
-	cilinder.open(filename.c_str());
-
-	int numpontos = 12 * sides;
-
-	cilinder << numpontos << endl;
+	ofstream cilindro;
+	cilindro.open("cilindro.3d");
 
 	float delta = 2.0f * _PI_ / sides;
+
 	for (int i = 0; i < sides; ++i) {
-		float vx1 = radius * sin(i * delta), vy1 = height / 2, vz1 = radius * cos(i * delta);
-		float vx2 = radius * sin((i + 1) * delta), vy2 = -height / 2, vz2 = radius * cos((i + 1) * delta);
-		
-		float nx1 = sin((i + 1) * delta), nz1 = cos((i + 1) * delta);
-		float nx2 = sin(i * delta), nz2 = cos(i * delta);
+		// top
+		// central point
+		cilindro << "0.0" << " " << height /2.0f << " " << "0.0" << endl; // Vertex
+		cilindro << "0.0" << " " << "1.0" << " " << "0.0" << endl; // Normals
+		cilindro << "0.4375" << " " << "0.1875" << endl; // Texture
 
-		float tx1 = 0.4375 + 0.1875 * sin(i * delta), ty1 = 0.1875 - 0.1875 * cos(i * delta);
-		float tx2 = 0.4375 + 0.1875 * sin((i + 1) * delta), ty2 = 0.1875 - 0.1875 * cos((i + 1) * delta);
-		float tx3 = (i + 1) / sides, ty3 = 0.1875 + 0.1875 * cos((i + 1) * delta);
-		float tx4 = i / sides;
-		float tx5 = 0.8125 + 0.1875 * sin((i + 1) * delta);
+		cilindro << radius * sin(i * delta) << " " << height /2.0f << " " << radius * cos(i * delta) << endl;
+		cilindro << "0.0" << " " << "1.0" << " " << "0.0" << endl;
+		cilindro << 0.4375 + 0.1875 * sin(i * delta) << " " << 0.1875 - 0.1875 * cos(i * delta) << endl;
 
-		cilinder << "0.0 " << vy1 << " 0.0" << endl;
-		cilinder << "0.0 " << "1.0" << " 0.0" << endl;
-		cilinder << "0.4375 " << "0.1875" << endl;
+		cilindro << radius * sin( (i+1) * delta) << " " << height /2.0f << " " << radius * cos( (i+1) * delta) << endl;
+		cilindro << "0.0" << " " << "1.0" << " " << "0.0" << endl;
+		cilindro << 0.4375 + 0.1875 * sin((i + 1) * delta) << " " << 0.1875 - 0.1875 * cos((i + 1) * delta) << endl;
 
-		cilinder << vx1 << " " << vy1 << " " << vz2 << endl;
-		cilinder << "0.0 " << "1.0" << " 0.0" << endl;
-		cilinder << tx1 << " " << ty1 << endl;
+		// body
+		// triângulo 1
+		cilindro << radius * sin( (i+1) * delta) << " " << height /2.0f << " " << radius * cos( (i+1) * delta) << endl;
+		cilindro << sin((i + 1) * delta) << " " << "0.0" << " " << cos((i + 1) * delta) << endl;
+		cilindro << (i + 1.0) / sides << " " << "1.0" << endl;
 
-		cilinder << vx2 << " " << vy1 << " " << vz2 << endl;
-		cilinder << "0.0 " << "1.0" << " 0.0" << endl;
-		cilinder << tx2 << " " << ty2 << endl;
+		cilindro << radius * sin( i * delta) << " " << height /2.0f << " " << radius * cos( i * delta) << endl;
+		cilindro << sin(i * delta) << " " << "0.0" << " " << cos(i * delta) << endl;
+		cilindro << (i + 0.0) / sides << " " << "1.0" << endl;
 
-		cilinder << vx2 << " " << vy1 << " " << vz2 << endl;
-		cilinder << nx1 << " 0.0 " << nz1 << endl;
-		cilinder << tx3 << " 1.0" << endl;
+		cilindro << radius * sin( i * delta) << " " << -height /2.0f << " " << radius * cos( i * delta) << endl;
+		cilindro << sin(i * delta) << " " << "0.0" << " " << cos(i * delta) << endl;
+		cilindro << (i + 0.0) / sides << " " << "0.375" << endl;
 
-		cilinder << vx1 << " " << vy1 << " " << vz1 << endl;
-		cilinder << nx2 << " 0.0 " << nz2 << endl;
-		cilinder << tx4 << " 1.0" << endl;
+		// triangle 2
+		cilindro << radius * sin( (i+1) * delta) << " " << -height /2.0f << " " << radius * cos( (i+1) * delta) << endl;
+		cilindro << sin((i + 1) * delta) << " " << "0.0" << " " << cos((i + 1) * delta) << endl;
+		cilindro << (i + 1.0) / sides << " " << "0.375" << endl;
 
-		cilinder << vx1 << " " << vy2 << " " << vz1 << endl;
-		cilinder << nx2 << " 0.0 " << nz2 << endl;
-		cilinder << tx4 << " 0.375" << endl;
+		cilindro << radius * sin( (i+1) * delta) << " " << height /2.0f << " " << radius * cos( (i+1) * delta) << endl;
+		cilindro << sin((i + 1) * delta) << " " << "0.0" << " " << cos((i + 1) * delta) << endl;
+		cilindro << (i + 1.0) / sides << " " << "1.0" << endl;
 
-		cilinder << vx2 << " " << vy2 << " " << vz2 << endl;
-		cilinder << nx1 << " 0.0 " << nz1 << endl;
-		cilinder << tx3 << " 0.375" << endl;
+		cilindro << radius * sin(i * delta) << " " << -height /2.0f << " " << radius * cos(i * delta) << endl;
+		cilindro << sin(i * delta) << " " << "0.0" << " " << cos(i * delta) << endl;
+		cilindro << (i + 0.0) / sides << " " << "0.375" << endl;
 
-		cilinder << vx2 << " " << vy1 << " " << vz2 << endl;
-		cilinder << nx1 << " 0.0 " << nz1 << endl;
-		cilinder << tx3 << " 1.0" << endl;
+		// base
+		// central point
+		cilindro << "0.0" << " " << -height /2.0f << " " << "0.0" << endl;
+		cilindro << "0.0" << " " << "-1.0" << " " << "0.0" << endl;
+		cilindro << "0.8125" << " " << "0.1875" << endl;
 
-		cilinder << vx1 << " " << vy2 << " " << vz1 << endl;
-		cilinder << nx2 << " 0.0 " << nz2 << endl;
-		cilinder << tx4 << " 0.375" << endl;
+		cilindro << radius * sin( (i+1) * delta) << " " << -height /2.0f << " " << radius * cos( (i+1) * delta) << endl;
+		cilindro << "0.0" << " " << "-1.0" << " " << "0.0" << endl;
+		cilindro << 0.8125 + 0.1875 * sin((i + 1) * delta) << " " << 0.1875 + 0.1875 * cos((i + 1) * delta) << endl;
 
-		cilinder << "0.0 " << vy2 << " 0.0" <<  endl;
-		cilinder << "0.0 " << " -1.0 " << "0.0" << endl;
-		cilinder << "0.8125" << " 0.1875" << endl;
-
-		cilinder << vx2 << " " << vy2 << " " << vz2 << endl;
-		cilinder << "0.0 " << " -1.0 " << "0.0" << endl;
-		cilinder << tx5 << " " << ty3 << endl;
-
-		cilinder << vx1 << " " << vy1 << " " << vz1 << endl;
-		cilinder << "0.0 " << " -1.0 " << "0.0" << endl;
-		cilinder << tx5 << " " << ty3 << endl;
+		cilindro << radius * sin( i * delta) << " " << -height /2.0f << " " << radius * cos( i * delta) << endl;
+		cilindro << "0.0" << " " << "-1.0" << " " << "0.0" << endl;
+		cilindro << 0.8125 + 0.1875 * sin(i * delta) << " " << 0.1875 + 0.1875 * cos(i * delta) << endl;
 	}
-
-	cilinder.close();
+	cilindro.close();
 }
+
 
 // Main function
 int main(int argc, char **argv) {
