@@ -33,7 +33,8 @@ void textureCreation() {
 	ilGenImages(1, &t);
 	ilBindImage(t);
 	if(figure == PLANE) ilLoadImage((ILstring) "plane.jpg");
-	else if(figure == BOX) ilLoadImage((ILstring) "cilinder.jpg");
+	else if(figure == BOX) ilLoadImage((ILstring) "box.jpg");
+	else if(figure == CONE) ilLoadImage((ILstring) "cilinder.jpg");
 	else ilLoadImage((ILstring) "cilinder.jpg");
 	tw = ilGetInteger(IL_IMAGE_WIDTH);
 	th = ilGetInteger(IL_IMAGE_HEIGHT);
@@ -522,6 +523,143 @@ void prepareCilinder(float height, float radius, int sides) {
 	free(textureB);
 }
 
+void prepareCone(float height, float radius, int slices, int stacks) {
+
+	int nVertices = 100000;
+
+	float *vertexB = (float*)malloc(sizeof(float) * 3 * nVertices);
+	float *normalB = (float*)malloc(sizeof(float) * 3 * nVertices);
+	float *textureB = (float*)malloc(sizeof(float) * 2 * nVertices);
+
+	float ratio = height / radius;
+	int vertex = 0, normal = 0, texture = 0;
+
+	for (int i = 0; i < slices; i++) {
+
+		float tx = i / slices;
+
+		float alpha = i * (2 * _PI_) / slices;
+		float beta = (2 * _PI_) / slices;
+
+		// Base
+		float x1 = radius*sin(alpha);
+		float y1 = 0;
+		float z1 = radius*cos(alpha);
+
+		float x2 = radius*sin(alpha + beta);
+		float y2 = 0;
+		float z2 = radius*cos(alpha + beta);
+
+		// Base
+		vertexB[vertex++] = 0.0f; vertexB[vertex++] = 0.0f; vertexB[vertex++] = 0.0f;
+		vertexB[vertex++] = x2; vertexB[vertex++] = y2; vertexB[vertex++] = z2;
+		vertexB[vertex++] = x1; vertexB[vertex++] = y1; vertexB[vertex++] = z1;
+
+		normalB[normal++] = 0.0f; normalB[normal++] = -1.0f; normalB[normal++] = 0.0f;
+		normalB[normal++] = 0.0f; normalB[normal++] = -1.0f; normalB[normal++] = 0.0f;
+		normalB[normal++] = 0.0f; normalB[normal++] = -1.0f; normalB[normal++] = 0.0f;
+
+		textureB[texture++] = 0.5f; textureB[texture++] = 0.5f;
+		textureB[texture++] = 0.5f + sin(alpha + beta) * 0.5f; textureB[texture++] = 0.5f + cos(alpha + beta) * 0.5f;
+		textureB[texture++] = 0.5f + sin(alpha) * 0.5f; textureB[texture++] = 0.5f + cos(alpha) * 0.5f;
+
+		float radiusBot = radius;
+		float radiusTop;
+
+		for (int j = 0; j < stacks; j++, radiusBot = radiusTop) {
+
+			float ty = j / stacks;
+
+			// Sides
+			float y = j * (height / stacks);
+			float yn = (j + 1) * (height / stacks);
+
+			float h = height - yn; // altura do triangulo superior
+			radiusTop = h / ratio; // radius do triangulo superior
+
+			float x1 = radiusBot*sin(alpha);
+			float y1 = y;
+			float z1 = radiusBot*cos(alpha);
+
+			float x2 = radiusBot*sin(alpha + beta);
+			float y2 = y;
+			float z2 = radiusBot*cos(alpha + beta);
+
+			float x3 = radiusTop*sin(alpha);
+			float y3 = yn;
+			float z3 = radiusTop*cos(alpha);
+
+			float x4 = radiusTop*sin(alpha + beta);
+			float y4 = yn;
+			float z4 = radiusTop*cos(alpha + beta);
+
+			if (j == stacks - 1) { // top slice
+				vertexB[vertex++] = x3; vertexB[vertex++] = y3; vertexB[vertex++] = z3;
+				vertexB[vertex++] = x1; vertexB[vertex++] = y1; vertexB[vertex++] = z1;
+				vertexB[vertex++] = x2; vertexB[vertex++] = y2; vertexB[vertex++] = z2;
+
+				normalB[normal++] = sin(alpha); normalB[normal++] = 0.0f; normalB[normal++] = cos(alpha);
+				normalB[normal++] = sin(alpha); normalB[normal++] = 0.0f; normalB[normal++] = cos(alpha);
+				normalB[normal++] = sin(alpha + beta); normalB[normal++] = 0.0f; normalB[normal++] = cos(alpha + beta);
+
+				textureB[texture++] = 0.5f; textureB[texture++] = 0.5f;
+				textureB[texture++] = sin(alpha); textureB[texture++] = cos(alpha);
+				textureB[texture++] = sin(alpha + beta); textureB[texture++] = cos(alpha + beta);
+
+			}
+			else {
+				vertexB[vertex++] = x1; vertexB[vertex++] = y1; vertexB[vertex++] = z1;
+				vertexB[vertex++] = x2; vertexB[vertex++] = y2; vertexB[vertex++] = z2;
+				vertexB[vertex++] = x3; vertexB[vertex++] = y3; vertexB[vertex++] = z3;
+
+				normalB[normal++] = sin(alpha); normalB[normal++] = 0.0f; normalB[normal++] = cos(alpha);
+				normalB[normal++] = sin(alpha + beta); normalB[normal++] = 0.0f; normalB[normal++] = cos(alpha + beta);
+				normalB[normal++] = sin(alpha); normalB[normal++] = 0.0f; normalB[normal++] = cos(alpha);
+
+				textureB[texture++] = i + 1; textureB[texture++] = j;
+				textureB[texture++] = i + 1; textureB[texture++] = j + 1;
+				textureB[texture++] = i; textureB[texture++] = j;
+
+				/*textureB[texture++] = 0.5f + sin(alpha); textureB[texture++] = 0.5f + cos(alpha);
+				textureB[texture++] = 0.5f + sin(alpha); textureB[texture++] = 0.5f + cos(alpha);
+				textureB[texture++] = 0.5f + sin(alpha + beta); textureB[texture++] = 0.5f + cos(alpha + beta);*/
+
+				vertexB[vertex++] = x2; vertexB[vertex++] = y2; vertexB[vertex++] = z2;
+				vertexB[vertex++] = x3; vertexB[vertex++] = y3; vertexB[vertex++] = z3;
+				vertexB[vertex++] = x4; vertexB[vertex++] = y4; vertexB[vertex++] = z4;
+
+				normalB[normal++] = sin(alpha + beta); normalB[normal++] = 0.0f; normalB[normal++] = cos(alpha + beta);
+				normalB[normal++] = sin(alpha); normalB[normal++] = 0.0f; normalB[normal++] = cos(alpha);
+				normalB[normal++] = sin(alpha + beta); normalB[normal++] = 0.0f; normalB[normal++] = cos(alpha + beta);
+
+				textureB[texture++] = i; textureB[texture++] = j + 1;
+				textureB[texture++] = i + 1; textureB[texture++] = j;
+				textureB[texture++] = i + 1; textureB[texture++] = j + 1;		
+			}
+		}
+	}
+
+	vertexCount = vertex;
+
+	glGenBuffers(3, buffers);
+
+	// Save data on the array of vertices
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount * 3, vertexB, GL_STATIC_DRAW);
+
+	// Save data on the array of vertex
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount * 3, normalB, GL_STATIC_DRAW);
+
+	// Sava data on the texture array
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * vertexCount, textureB, GL_STATIC_DRAW);
+
+	free(normalB);
+	free(vertexB);
+	free(textureB);
+}
+
 void drawFigure() {
 	glBindTexture(GL_TEXTURE_2D, texID);
 
@@ -631,6 +769,7 @@ void initGL() {
 
 	if (figure == PLANE) preparePlane(5, 5);
 	else if (figure == BOX) prepareBox(1, 1, 1);
+	else if (figure == CONE) prepareCone(2, 1, 30, 30);
 	else prepareCilinder(2, 1, 16);
 }
 
