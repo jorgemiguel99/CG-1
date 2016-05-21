@@ -14,13 +14,16 @@
 #include <math.h>
 //#include <GLUT/glut.h> //-- MAC
 
+#define _PI_ 3.14159
+
 using namespace std;
 
 // Global variable for handling files
 string filename;
 
 // Dimensions of the figures
-float radius, slices, stacks;
+float radius, slices, stacks, width, length, height;
+int sides;
 
 // Global variable process input
 vector<string> splitted;
@@ -613,7 +616,265 @@ void printSphere3d() {
 		sphere.close();
 }
 
+void printPlaneFigure3d() {
+	ofstream plane;
+	plane.open(filename.c_str());
 
+	plane << "6" << endl;
+
+	plane << "0.0 " << "0.0 " << "0.0" << endl;
+	plane << "0.0 " << "0.0 " << "1.0" << endl;
+	plane << "0.0 " << "0.0" << endl;
+
+	plane << length << ".0" << " 0.0 " << "0.0" << endl;
+	plane << "0.0 " << "0.0 " << "1.0" << endl;
+	plane << "1.0 " << "0.0" << endl;
+
+	plane << "0.0 " << width << ".0" << " 0.0" << endl;
+	plane << "0.0 " << "0.0 " << "1.0" << endl;
+	plane << "0.0 " << "1.0" << endl;
+
+	plane << length << ".0" << " 0.0 " << "0.0" << endl;
+	plane << "0.0 " << "0.0 " << "1.0" << endl;
+	plane << "1.0 " << "0.0" << endl;
+
+	plane << length << ".0" << " " << width << ".0" << " 0.0" << endl;
+	plane << "0.0 " << "0.0 " << "1.0" << endl;
+	plane << "1.0 " << "1.0" << endl;
+
+	plane << "0.0 " << width << ".0" << " 0.0" << endl;
+	plane << "0.0 " << "0.0 " << "1.0" << endl;
+	plane << "0.0 " << "1.0" << endl;
+
+	plane.close();
+}
+
+void printBoxFigure3d() {
+	ofstream box;
+	box.open(filename.c_str());
+
+	box << "36" << endl;
+
+	box << "0.0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "0.0 " << "1.0" << endl;
+	box << "0.0 " << "0.0" << endl;
+
+	box << width << ".0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "0.0 " << "1.0" << endl;
+	box << "1.0 " << "0.0" << endl;
+
+	box << "0.0 " << height << ".0 " << "0.0" << endl;
+	box << "0.0 " << "0.0 " << "1.0" << endl;
+	box << "0.0 " << "1.0" << endl;
+
+	box << width << ".0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "0.0 " << "1.0" << endl;
+	box << "1.0 " << "0.0" << endl;
+
+	box << width << ".0 " << height << ".0 " << "0.0" << endl;
+	box << "0.0 " << "0.0 " << "1.0" << endl;
+	box << "1.0 " << "1.0" << endl;
+
+	box << "0.0 " << height << ".0 " << "0.0" << endl;
+	box << "0.0 " << "0.0 " << "1.0" << endl;
+	box << "0.0 " << "1.0" << endl;
+
+	box << width << ".0 " << "0.0 " << -length << ".0" << endl;
+	box << "0.0 " << "0.0 " << "-1.0" << endl;
+	box << "0.0 " << "0.0" << endl;
+
+	box << "0.0 " << "0.0 " << -length << ".0" << endl;
+	box << "0.0 " << "0.0 " << "-1.0" << endl;
+	box << "1.0 " << "0.0" << endl;
+
+	box << "0.0 " << height << ".0 " << -length << ".0" << endl;
+	box << "0.0 " << "0.0 " << "-1.0" << endl;
+	box << "1.0 " << "1.0" << endl;
+
+	box << "0.0 " << height << ".0 " << -length << ".0" << endl;
+	box << "0.0 " << "0.0 " << "-1.0" << endl;
+	box << "1.0 " << "1.0" << endl;
+
+	box << width << ".0 " << height << ".0 " << -length << ".0" << endl;
+	box << "0.0 " << "0.0 " << "-1.0" << endl;
+	box << "0.0 " << "1.0" << endl;
+
+	box << width << ".0 " << "0.0 " << -length << ".0" << endl;
+	box << "0.0 " << "0.0 " << "-1.0" << endl;
+	box << "0.0 " << "0.0" << endl;
+
+	box << width << ".0 " << "0.0 " << "0.0" << endl;
+	box << "1.0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "0.0" << endl;
+
+	box << width << ".0 " << "0.0 " << -length << ".0" << endl;
+	box << "1.0 " << "0.0 " << "0.0" << endl;
+	box << "1.0 " << "0.0" << endl;
+
+	box << width << ".0 " << height << ".0 " << "0.0" << endl;
+	box << "1.0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "1.0" << endl;
+
+	box << width << ".0 " << "0.0 " << -length << ".0" << endl;
+	box << "1.0 " << "0.0 " << "0.0" << endl;
+	box << "1.0 " << "0.0" << endl;
+
+	box << width << ".0 " << height << ".0 " << -length << ".0" << endl;
+	box << "1.0 " << "0.0 " << "0.0" << endl;
+	box << "1.0 " << "1.0" << endl;
+
+	box << width << ".0 " << height << ".0 " << "0.0" << endl;
+	box << "1.0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "1.0" << endl;
+
+	box << "0.0 " << "0.0 " << "0.0" << endl;
+	box << "-1.0 " << "0.0 " << "0.0" << endl;
+	box << "1.0 " << "0.0" << endl;
+
+	box << "0.0 " << height << ".0 " << "0.0" << endl;
+	box << "-1.0 " << "0.0 " << "0.0" << endl;
+	box << "1.0 " << "1.0" << endl;
+
+	box << "0.0 " << "0.0 " << -length << ".0" << endl;
+	box << "-1.0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "0.0" << endl;
+
+	box << "0.0 " << "0.0 " << -length << ".0" << endl;
+	box << "-1.0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "0.0" << endl;
+
+	box << "0.0 " << height << ".0 " << "0.0" << endl;
+	box << "-1.0 " << "0.0 " << "0.0" << endl;
+	box << "1.0 " << "1.0" << endl;
+
+	box << width << ".0 " << height << ".0 " << -length << ".0" << endl;
+	box << "-1.0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "1.0" << endl;
+
+	box << "0.0 " << height << ".0 " << "0.0" << endl;
+	box << "0.0 " << "1.0 " << "0.0" << endl;
+	box << "0.0 " << "0.0" << endl;
+
+	box << width << ".0 " << height << ".0 " << "0.0" << endl;
+	box << "0.0 " << "1.0 " << "0.0" << endl;
+	box << "1.0 " << "0.0" << endl;
+
+	box << "0.0 " << height << ".0 " << -length << ".0" << endl;
+	box << "0.0 " << "1.0 " << "0.0" << endl;
+	box << "0.0 " << "1.0" << endl;
+
+	box << "0.0 " << height << ".0 " << -length << ".0" << endl;
+	box << "0.0 " << "1.0 " << "0.0" << endl;
+	box << "0.0 " << "1.0" << endl;
+
+	box << width << ".0 " << height << ".0 " << "0.0" << endl;
+	box << "0.0 " << "1.0 " << "0.0" << endl;
+	box << "1.0 " << "0.0" << endl;
+
+	box << width << ".0 " << height << ".0 " << -length << ".0" << endl;
+	box << "0.0 " << "1.0 " << "0.0" << endl;
+	box << "1.0 " << "1.0" << endl;
+
+	box << "0.0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "-1.0 " << "0.0" << endl;
+	box << "0.0 " << "1.0" << endl;
+
+	box << "0.0 " << "0.0 " << -length << ".0" << endl;
+	box << "0.0 " << "-1.0 " << "0.0" << endl;
+	box << "0.0 " << "0.0" << endl;
+
+	box << width << ".0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "-1.0 " << "0.0" << endl;
+	box << "1.0 " << "1.0" << endl;
+
+	box << "0.0 " << "0.0 " << -length << ".0" << endl;
+	box << "0.0 " << "-1.0 " << "0.0" << endl;
+	box << "0.0 " << "0.0" << endl;
+
+	box << width << ".0 " << "0.0 " << -length << ".0" << endl;
+	box << "0.0 " << "-1.0 " << "0.0" << endl;
+	box << "1.0 " << "0.0" << endl;
+
+	box << width << ".0 " << "0.0 " << "0.0" << endl;
+	box << "0.0 " << "-1.0 " << "0.0" << endl;
+	box << "1.0 " << "1.0" << endl;
+
+	box.close();
+}
+
+void printCilinderFigure3d() {
+	ofstream cilinder;
+	cilinder.open(filename.c_str());
+
+	int numpontos = 12 * sides;
+
+	cilinder << numpontos << endl;
+
+	float delta = 2.0f * _PI_ / sides;
+	for (int i = 0; i < sides; ++i) {
+		float vx1 = radius * sin(i * delta), vy1 = height / 2, vz1 = radius * cos(i * delta);
+		float vx2 = radius * sin((i + 1) * delta), vy2 = -height / 2, vz2 = radius * cos((i + 1) * delta);
+		
+		float nx1 = sin((i + 1) * delta), nz1 = cos((i + 1) * delta);
+		float nx2 = sin(i * delta), nz2 = cos(i * delta);
+
+		float tx1 = 0.4375 + 0.1875 * sin(i * delta), ty1 = 0.1875 - 0.1875 * cos(i * delta);
+		float tx2 = 0.4375 + 0.1875 * sin((i + 1) * delta), ty2 = 0.1875 - 0.1875 * cos((i + 1) * delta);
+		float tx3 = (i + 1) / sides, ty3 = 0.1875 + 0.1875 * cos((i + 1) * delta);
+		float tx4 = i / sides;
+		float tx5 = 0.8125 + 0.1875 * sin((i + 1) * delta);
+
+		cilinder << "0.0 " << vy1 << " 0.0" << endl;
+		cilinder << "0.0 " << "1.0" << " 0.0" << endl;
+		cilinder << "0.4375 " << "0.1875" << endl;
+
+		cilinder << vx1 << " " << vy1 << " " << vz2 << endl;
+		cilinder << "0.0 " << "1.0" << " 0.0" << endl;
+		cilinder << tx1 << " " << ty1 << endl;
+
+		cilinder << vx2 << " " << vy1 << " " << vz2 << endl;
+		cilinder << "0.0 " << "1.0" << " 0.0" << endl;
+		cilinder << tx2 << " " << ty2 << endl;
+
+		cilinder << vx2 << " " << vy1 << " " << vz2 << endl;
+		cilinder << nx1 << " 0.0 " << nz1 << endl;
+		cilinder << tx3 << " 1.0" << endl;
+
+		cilinder << vx1 << " " << vy1 << " " << vz1 << endl;
+		cilinder << nx2 << " 0.0 " << nz2 << endl;
+		cilinder << tx4 << " 1.0" << endl;
+
+		cilinder << vx1 << " " << vy2 << " " << vz1 << endl;
+		cilinder << nx2 << " 0.0 " << nz2 << endl;
+		cilinder << tx4 << " 0.375" << endl;
+
+		cilinder << vx2 << " " << vy2 << " " << vz2 << endl;
+		cilinder << nx1 << " 0.0 " << nz1 << endl;
+		cilinder << tx3 << " 0.375" << endl;
+
+		cilinder << vx2 << " " << vy1 << " " << vz2 << endl;
+		cilinder << nx1 << " 0.0 " << nz1 << endl;
+		cilinder << tx3 << " 1.0" << endl;
+
+		cilinder << vx1 << " " << vy2 << " " << vz1 << endl;
+		cilinder << nx2 << " 0.0 " << nz2 << endl;
+		cilinder << tx4 << " 0.375" << endl;
+
+		cilinder << "0.0 " << vy2 << " 0.0" <<  endl;
+		cilinder << "0.0 " << " -1.0 " << "0.0" << endl;
+		cilinder << "0.8125" << " 0.1875" << endl;
+
+		cilinder << vx2 << " " << vy2 << " " << vz2 << endl;
+		cilinder << "0.0 " << " -1.0 " << "0.0" << endl;
+		cilinder << tx5 << " " << ty3 << endl;
+
+		cilinder << vx1 << " " << vy1 << " " << vz1 << endl;
+		cilinder << "0.0 " << " -1.0 " << "0.0" << endl;
+		cilinder << tx5 << " " << ty3 << endl;
+	}
+
+	cilinder.close();
+}
 
 // Main function
 int main(int argc, char **argv) {
@@ -816,8 +1077,28 @@ int main(int argc, char **argv) {
 				printSphere3d();
 				cout << "ProteusMoon.3d created" << endl;
 
+				filename = "planeFigure.3d";
+				width = 10;
+				length = 10;
+				printPlaneFigure3d();
+				cout << "planeFigure.3d created" << endl;
+
+				filename = "boxFigure.3d";
+				width = 10;
+				length = 10;
+				height = 10;
+				printBoxFigure3d();
+				cout << "boxFigure.3d created" << endl;
+
+				filename = "cilinderFigure.3d";
+				height = 2;
+				radius = 1;
+				sides = 16;
+				printCilinderFigure3d();
+				cout << "cilinderFigure.3d created" << endl;
+
 				do {
-					cout << "Do you wish adding more Planets or Moons? Type yes or no" << endl;
+					cout << "Do you wish adding more Planets, Moons or Figures? Type yes or no" << endl;
 					getline(cin, answer);
 					if (answer == "yes" || answer == "YES") {
 						cout << "Type filename.3d please" << endl;
