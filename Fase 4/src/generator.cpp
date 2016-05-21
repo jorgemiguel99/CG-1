@@ -9,10 +9,10 @@
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
-#include <windows.h>
-#include <GL/glut.h>
+// #include <windows.h>
+// #include <GL/glut.h>
 #include <math.h>
-//#include <GLUT/glut.h> //-- MAC
+#include <GLUT/glut.h> //-- MAC
 
 #define _PI_ 3.14159
 
@@ -649,39 +649,6 @@ void printPlaneFigure3d() {
 	plane.close();
 }
 
-void printPlaneFigure3d() {
-	ofstream plane;
-	plane.open(filename.c_str());
-
-	plane << "6" << endl;
-
-	plane << "0 " << "0 " << "0" << endl;
-	plane << "0 " << "0 " << "1" << endl;
-	plane << "0 " << "0" << endl;
-
-	plane << length << " 0 " << "0" << endl;
-	plane << "0 " << "0 " << "1" << endl;
-	plane << "1 " << "0" << endl;
-
-	plane << "0 " << width << " 0" << endl;
-	plane << "0 " << "0 " << "1" << endl;
-	plane << "0 " << "1" << endl;
-
-	plane << length << " 0 " << "0" << endl;
-	plane << "0 " << "0 " << "1" << endl;
-	plane << "1 " << "0" << endl;
-
-	plane << length << " " << width << " 0" << endl;
-	plane << "0 " << "0 " << "1" << endl;
-	plane << "1 " << "1" << endl;
-
-	plane << "0 " << width << " 0" << endl;
-	plane << "0 " << "0 " << "1" << endl;
-	plane << "0 " << "1" << endl;
-
-	plane.close();
-}
-
 void printBoxFigure3d() {
 	ofstream box;
 	box.open(filename.c_str());
@@ -1123,7 +1090,7 @@ int main(int argc, char **argv) {
 				cout << "cilinderFigure.3d created" << endl;
 
 				do {
-					cout << "Do you wish adding more Planets, Moons or Figures? Type yes or no" << endl;
+					cout << "Do you wish adding more Planets, Moons? Type yes or no" << endl;
 					getline(cin, answer);
 					if (answer == "yes" || answer == "YES") {
 						cout << "Type filename.3d please" << endl;
