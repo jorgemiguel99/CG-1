@@ -1,0 +1,196 @@
+void prepareBox(float length, float width, float height) {
+	float *vertexB = (float*)malloc(sizeof(float) * 6 * 6 * 3);
+	float *normalB = (float*)malloc(sizeof(float) * 6 * 6 * 3);
+	float *textureB = (float*)malloc(sizeof(float) * 6 * 6 * 2);
+
+	int i = 0;
+
+	// Vertices -------------------------------------------------------------
+	// Front face
+	vertexB[i++] = 0.0f; vertexB[i++] = 0.0f; vertexB[i++] = 0.0f;
+	vertexB[i++] = width; vertexB[i++] = 0.0f; vertexB[i++] = 0.0f;
+	vertexB[i++] = 0.0f; vertexB[i++] = height; vertexB[i++] = 0.0f;
+
+	vertexB[i++] = width; vertexB[i++] = 0.0f; vertexB[i++] = 0.0f;
+	vertexB[i++] = width; vertexB[i++] = height; vertexB[i++] = 0.0f;
+	vertexB[i++] = 0.0f; vertexB[i++] = height; vertexB[i++] = 0.0f;
+
+	// Back face
+	vertexB[i++] = width; vertexB[i++] = 0.0f; vertexB[i++] = -length;
+	vertexB[i++] = 0.0f; vertexB[i++] = 0.0f; vertexB[i++] = -length;
+	vertexB[i++] = 0.0f; vertexB[i++] = height; vertexB[i++] = -length;
+
+	vertexB[i++] = 0.0f; vertexB[i++] = height; vertexB[i++] = -length;
+	vertexB[i++] = width; vertexB[i++] = height; vertexB[i++] = -length;
+	vertexB[i++] = width; vertexB[i++] = 0.0f; vertexB[i++] = -length;
+
+	// Right face
+	vertexB[i++] = width; vertexB[i++] = 0.0f; vertexB[i++] = 0.0f;
+	vertexB[i++] = width; vertexB[i++] = 0.0f; vertexB[i++] = -length;
+	vertexB[i++] = width; vertexB[i++] = height; vertexB[i++] = 0.0f;
+
+	vertexB[i++] = width; vertexB[i++] = 0.0f; vertexB[i++] = -length;
+	vertexB[i++] = width; vertexB[i++] = height; vertexB[i++] = -length;
+	vertexB[i++] = width; vertexB[i++] = height; vertexB[i++] = 0.0f;
+
+	// Left face
+	vertexB[i++] = 0.0f; vertexB[i++] = 0.0f; vertexB[i++] = 0.0f;
+	vertexB[i++] = 0.0f; vertexB[i++] = height; vertexB[i++] = 0.0f;
+	vertexB[i++] = 0.0f; vertexB[i++] = 0.0f; vertexB[i++] = -length;
+
+	vertexB[i++] = 0.0f; vertexB[i++] = 0.0f; vertexB[i++] = -length;
+	vertexB[i++] = 0.0f; vertexB[i++] = height; vertexB[i++] = 0.0f;
+	vertexB[i++] = 0.0f; vertexB[i++] = height; vertexB[i++] = -length;
+
+	// Upper face
+	vertexB[i++] = 0.0f; vertexB[i++] = height; vertexB[i++] = 0.0f;
+	vertexB[i++] = width; vertexB[i++] = height; vertexB[i++] = 0.0f;
+	vertexB[i++] = 0.0f; vertexB[i++] = height; vertexB[i++] = -length;
+
+	vertexB[i++] = 0.0f; vertexB[i++] = height; vertexB[i++] = -length;
+	vertexB[i++] = width; vertexB[i++] = height; vertexB[i++] = 0.0f;
+	vertexB[i++] = width; vertexB[i++] = height; vertexB[i++] = -length;
+
+	// Lower face
+	vertexB[i++] = 0.0f; vertexB[i++] = 0.0f; vertexB[i++] = 0.0f;
+	vertexB[i++] = 0.0f; vertexB[i++] = 0.0f; vertexB[i++] = -length;
+	vertexB[i++] = width; vertexB[i++] = 0.0f; vertexB[i++] = 0.0f;
+
+	vertexB[i++] = 0.0f; vertexB[i++] = 0.0f; vertexB[i++] = -length;
+	vertexB[i++] = width; vertexB[i++] = 0.0f; vertexB[i++] = -length;
+	vertexB[i++] = width; vertexB[i++] = 0.0f; vertexB[i++] = 0.0f;
+
+	i = 0;
+
+	// Normals --------------------------------------------------------------
+	// Front face
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = 1.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = 1.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = 1.0f;
+
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = 1.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = 1.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = 1.0f;
+
+	// Back face
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = -1.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = -1.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = -1.0f;
+
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = -1.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = -1.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 0.0f; normalB[i++] = -1.0f;
+
+	// Right face
+	normalB[i++] = 1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+
+	normalB[i++] = 1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+
+	// Left face
+	normalB[i++] = -1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+	normalB[i++] = -1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+	normalB[i++] = -1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+
+	normalB[i++] = -1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+	normalB[i++] = -1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+	normalB[i++] = -1.0f; normalB[i++] = 0.0f; normalB[i++] = 0.0f;
+
+	// Upper face
+	normalB[i++] = 0.0f; normalB[i++] = 1.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 1.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 1.0f; normalB[i++] = 0.0f;
+
+	normalB[i++] = 0.0f; normalB[i++] = 1.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 1.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 0.0f; normalB[i++] = 1.0f; normalB[i++] = 0.0f;
+
+	// Lower face
+	normalB[i++] = 0.0f; normalB[i++] = -1.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 0.0f; normalB[i++] = -1.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 0.0f; normalB[i++] = -1.0f; normalB[i++] = 0.0f;
+
+	normalB[i++] = 0.0f; normalB[i++] = -1.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 0.0f; normalB[i++] = -1.0f; normalB[i++] = 0.0f;
+	normalB[i++] = 0.0f; normalB[i++] = -1.0f; normalB[i++] = 0.0f;
+
+	i = 0;
+
+	// Textures -------------------------------------------------------------
+	// Front face
+	textureB[i++] = 0.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 0.0f; textureB[i++] = 1.0f;
+
+	textureB[i++] = 1.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 1.0f;
+	textureB[i++] = 0.0f; textureB[i++] = 1.0f;
+
+	// Back face
+	textureB[i++] = 0.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 1.0f;
+
+	textureB[i++] = 1.0f; textureB[i++] = 1.0f;
+	textureB[i++] = 0.0f; textureB[i++] = 1.0f;
+	textureB[i++] = 0.0f; textureB[i++] = 0.0f;
+
+	// Right face
+	textureB[i++] = 0.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 0.0f; textureB[i++] = 1.0f;
+
+	textureB[i++] = 1.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 1.0f;
+	textureB[i++] = 0.0f; textureB[i++] = 1.0f;
+
+	// Left face
+	textureB[i++] = 1.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 1.0f;
+	textureB[i++] = 0.0f; textureB[i++] = 0.0f;
+
+	textureB[i++] = 0.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 1.0f;
+	textureB[i++] = 0.0f; textureB[i++] = 1.0f;
+
+	// Upper face
+	textureB[i++] = 0.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 0.0f; textureB[i++] = 1.0f;
+
+	textureB[i++] = 0.0f; textureB[i++] = 1.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 1.0f;
+
+	// Lower face
+	textureB[i++] = 0.0f; textureB[i++] = 1.0f; 
+	textureB[i++] = 0.0f; textureB[i++] = 0.0f; 
+	textureB[i++] = 1.0f; textureB[i++] = 1.0f; 
+
+	textureB[i++] = 0.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 0.0f;
+	textureB[i++] = 1.0f; textureB[i++] = 1.0f;
+
+	vertexCount = 36;
+
+	glGenBuffers(3, buffers);
+
+	// Save data on the array of vertices
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount * 3, vertexB, GL_STATIC_DRAW);
+
+	// Save data on the array of vertex
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount * 3, normalB, GL_STATIC_DRAW);
+
+	// Sava data on the texture array
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * vertexCount, textureB, GL_STATIC_DRAW);
+
+	free(normalB);
+	free(vertexB);
+	free(textureB);
+}
