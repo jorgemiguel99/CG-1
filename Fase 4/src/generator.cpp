@@ -649,155 +649,188 @@ void printPlaneFigure3d() {
 	plane.close();
 }
 
+void printPlaneFigure3d() {
+	ofstream plane;
+	plane.open(filename.c_str());
+
+	plane << "6" << endl;
+
+	plane << "0 " << "0 " << "0" << endl;
+	plane << "0 " << "0 " << "1" << endl;
+	plane << "0 " << "0" << endl;
+
+	plane << length << " 0 " << "0" << endl;
+	plane << "0 " << "0 " << "1" << endl;
+	plane << "1 " << "0" << endl;
+
+	plane << "0 " << width << " 0" << endl;
+	plane << "0 " << "0 " << "1" << endl;
+	plane << "0 " << "1" << endl;
+
+	plane << length << " 0 " << "0" << endl;
+	plane << "0 " << "0 " << "1" << endl;
+	plane << "1 " << "0" << endl;
+
+	plane << length << " " << width << " 0" << endl;
+	plane << "0 " << "0 " << "1" << endl;
+	plane << "1 " << "1" << endl;
+
+	plane << "0 " << width << " 0" << endl;
+	plane << "0 " << "0 " << "1" << endl;
+	plane << "0 " << "1" << endl;
+
+	plane.close();
+}
+
 void printBoxFigure3d() {
 	ofstream box;
 	box.open(filename.c_str());
 
 	box << "36" << endl;
 
-	box << "0.0 " << "0.0 " << "0.0" << endl; // Vertex
-	box << "0.0 " << "0.0 " << "1.0" << endl; // Normals
-	box << "0.0 " << "0.0" << endl; // Texture
+	box << "0 " << "0 " << "0" << endl;
+	box << "0 " << "0 " << "1" << endl;
+	box << "0 " << "0" << endl;
 
-	box << width << ".0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "0.0 " << "1.0" << endl;
-	box << "1.0 " << "0.0" << endl;
+	box << width << " 0 " << "0" << endl;
+	box << "0 " << "0 " << "1" << endl;
+	box << "1 " << "0" << endl;
 
-	box << "0.0 " << height << ".0 " << "0.0" << endl;
-	box << "0.0 " << "0.0 " << "1.0" << endl;
-	box << "0.0 " << "1.0" << endl;
+	box << "0 " << height << " 0" << endl;
+	box << "0 " << "0 " << "1" << endl;
+	box << "0 " << "1" << endl;
 
-	box << width << ".0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "0.0 " << "1.0" << endl;
-	box << "1.0 " << "0.0" << endl;
+	box << width << " 0 " << "0" << endl;
+	box << "0 " << "0 " << "1" << endl;
+	box << "1 " << "0" << endl;
 
-	box << width << ".0 " << height << ".0 " << "0.0" << endl;
-	box << "0.0 " << "0.0 " << "1.0" << endl;
-	box << "1.0 " << "1.0" << endl;
+	box << width << " " << height << " 0" << endl;
+	box << "0 " << "0 " << "1" << endl;
+	box << "1 " << "1" << endl;
 
-	box << "0.0 " << height << ".0 " << "0.0" << endl;
-	box << "0.0 " << "0.0 " << "1.0" << endl;
-	box << "0.0 " << "1.0" << endl;
+	box << "0 " << height << " 0" << endl;
+	box << "0 " << "0 " << "1" << endl;
+	box << "0 " << "1" << endl;
 
-	box << width << ".0 " << "0.0 " << -length << ".0" << endl;
-	box << "0.0 " << "0.0 " << "-1.0" << endl;
-	box << "0.0 " << "0.0" << endl;
+	box << width << " 0 " << -length << endl;
+	box << "0 " << "0 " << "-1" << endl;
+	box << "0 " << "0" << endl;
 
-	box << "0.0 " << "0.0 " << -length << ".0" << endl;
-	box << "0.0 " << "0.0 " << "-1.0" << endl;
-	box << "1.0 " << "0.0" << endl;
+	box << "0 " << "0 " << -length << endl;
+	box << "0 " << "0 " << "-1" << endl;
+	box << "1 " << "0" << endl;
 
-	box << "0.0 " << height << ".0 " << -length << ".0" << endl;
-	box << "0.0 " << "0.0 " << "-1.0" << endl;
-	box << "1.0 " << "1.0" << endl;
+	box << "0 " << height << " " << -length << endl;
+	box << "0 " << "0 " << "-1" << endl;
+	box << "1 " << "1" << endl;
 
-	box << "0.0 " << height << ".0 " << -length << ".0" << endl;
-	box << "0.0 " << "0.0 " << "-1.0" << endl;
-	box << "1.0 " << "1.0" << endl;
+	box << "0 " << height << " " << -length << endl;
+	box << "0 " << "0 " << "-1" << endl;
+	box << "1 " << "1" << endl;
 
-	box << width << ".0 " << height << ".0 " << -length << ".0" << endl;
-	box << "0.0 " << "0.0 " << "-1.0" << endl;
-	box << "0.0 " << "1.0" << endl;
+	box << width << " " << height << " " << -length << endl;
+	box << "0 " << "0 " << "-1" << endl;
+	box << "0 " << "1" << endl;
 
-	box << width << ".0 " << "0.0 " << -length << ".0" << endl;
-	box << "0.0 " << "0.0 " << "-1.0" << endl;
-	box << "0.0 " << "0.0" << endl;
+	box << width << " 0 " << -length << endl;
+	box << "0 " << "0 " << "-1" << endl;
+	box << "0 " << "0" << endl;
 
-	box << width << ".0 " << "0.0 " << "0.0" << endl;
-	box << "1.0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "0.0" << endl;
+	box << width << " 0 " << "0" << endl;
+	box << "1 " << "0 " << "0" << endl;
+	box << "0 " << "0" << endl;
 
-	box << width << ".0 " << "0.0 " << -length << ".0" << endl;
-	box << "1.0 " << "0.0 " << "0.0" << endl;
-	box << "1.0 " << "0.0" << endl;
+	box << width << " 0 " << -length << endl;
+	box << "1 " << "0 " << "0" << endl;
+	box << "1 " << "0" << endl;
 
-	box << width << ".0 " << height << ".0 " << "0.0" << endl;
-	box << "1.0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "1.0" << endl;
+	box << width << " " << height << " 0" << endl;
+	box << "1 " << "0 " << "0" << endl;
+	box << "0 " << "1" << endl;
 
-	box << width << ".0 " << "0.0 " << -length << ".0" << endl;
-	box << "1.0 " << "0.0 " << "0.0" << endl;
-	box << "1.0 " << "0.0" << endl;
+	box << width << " 0 " << -length << endl;
+	box << "1 " << "0 " << "0" << endl;
+	box << "1 " << "0" << endl;
 
-	box << width << ".0 " << height << ".0 " << -length << ".0" << endl;
-	box << "1.0 " << "0.0 " << "0.0" << endl;
-	box << "1.0 " << "1.0" << endl;
+	box << width << " " << height << " " << -length << endl;
+	box << "1 " << "0 " << "0" << endl;
+	box << "1 " << "1" << endl;
 
-	box << width << ".0 " << height << ".0 " << "0.0" << endl;
-	box << "1.0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "1.0" << endl;
+	box << width << " " << height << " 0" << endl;
+	box << "1 " << "0 " << "0" << endl;
+	box << "0 " << "1" << endl;
 
-	box << "0.0 " << "0.0 " << "0.0" << endl;
-	box << "-1.0 " << "0.0 " << "0.0" << endl;
-	box << "1.0 " << "0.0" << endl;
+	box << "0 " << "0 " << "0" << endl;
+	box << "-1 " << "0 " << "0" << endl;
+	box << "1 " << "0" << endl;
 
-	box << "0.0 " << height << ".0 " << "0.0" << endl;
-	box << "-1.0 " << "0.0 " << "0.0" << endl;
-	box << "1.0 " << "1.0" << endl;
+	box << "0 " << height << " 0" << endl;
+	box << "-1 " << "0 " << "0" << endl;
+	box << "1 " << "1" << endl;
 
-	box << "0.0 " << "0.0 " << -length << ".0" << endl;
-	box << "-1.0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "0.0" << endl;
+	box << "0 " << "0 " << -length << endl;
+	box << "-1 " << "0 " << "0" << endl;
+	box << "0 " << "0" << endl;
 
-	box << "0.0 " << "0.0 " << -length << ".0" << endl;
-	box << "-1.0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "0.0" << endl;
+	box << "0 " << "0 " << -length << endl;
+	box << "-1 " << "0 " << "0" << endl;
+	box << "0 " << "0" << endl;
 
-	box << "0.0 " << height << ".0 " << "0.0" << endl;
-	box << "-1.0 " << "0.0 " << "0.0" << endl;
-	box << "1.0 " << "1.0" << endl;
+	box << "0 " << height << " 0" << endl;
+	box << "-1 " << "0 " << "0" << endl;
+	box << "1 " << "1" << endl;
 
-	box << width << ".0 " << height << ".0 " << -length << ".0" << endl;
-	box << "-1.0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "1.0" << endl;
+	box << width << " " << height << " " << -length << endl;
+	box << "-1 " << "0 " << "0" << endl;
+	box << "0 " << "1" << endl;
 
-	box << "0.0 " << height << ".0 " << "0.0" << endl;
-	box << "0.0 " << "1.0 " << "0.0" << endl;
-	box << "0.0 " << "0.0" << endl;
+	box << "0 " << height << " 0" << endl;
+	box << "0 " << "1 " << "0" << endl;
+	box << "0 " << "0" << endl;
 
-	box << width << ".0 " << height << ".0 " << "0.0" << endl;
-	box << "0.0 " << "1.0 " << "0.0" << endl;
-	box << "1.0 " << "0.0" << endl;
+	box << width << " " << height << " 0" << endl;
+	box << "0 " << "1 " << "0" << endl;
+	box << "1 " << "0" << endl;
 
-	box << "0.0 " << height << ".0 " << -length << ".0" << endl;
-	box << "0.0 " << "1.0 " << "0.0" << endl;
-	box << "0.0 " << "1.0" << endl;
+	box << "0 " << height << " " << -length << endl;
+	box << "0 " << "1 " << "0" << endl;
+	box << "0 " << "1" << endl;
 
-	box << "0.0 " << height << ".0 " << -length << ".0" << endl;
-	box << "0.0 " << "1.0 " << "0.0" << endl;
-	box << "0.0 " << "1.0" << endl;
+	box << "0 " << height << " " << -length << endl;
+	box << "0 " << "1 " << "0" << endl;
+	box << "0 " << "1" << endl;
 
-	box << width << ".0 " << height << ".0 " << "0.0" << endl;
-	box << "0.0 " << "1.0 " << "0.0" << endl;
-	box << "1.0 " << "0.0" << endl;
+	box << width << " " << height << " 0" << endl;
+	box << "0 " << "1 " << "0" << endl;
+	box << "1 " << "0" << endl;
 
-	box << width << ".0 " << height << ".0 " << -length << ".0" << endl;
-	box << "0.0 " << "1.0 " << "0.0" << endl;
-	box << "1.0 " << "1.0" << endl;
+	box << width << " " << height << " " << -length << endl;
+	box << "0 " << "1 " << "0" << endl;
+	box << "1 " << "1" << endl;
 
-	box << "0.0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "-1.0 " << "0.0" << endl;
-	box << "0.0 " << "1.0" << endl;
+	box << "0 " << "0 " << "0" << endl;
+	box << "0 " << "-1 " << "0" << endl;
+	box << "0 " << "1" << endl;
 
-	box << "0.0 " << "0.0 " << -length << ".0" << endl;
-	box << "0.0 " << "-1.0 " << "0.0" << endl;
-	box << "0.0 " << "0.0" << endl;
+	box << "0 " << "0 " << -length << endl;
+	box << "0 " << "-1 " << "0" << endl;
+	box << "0 " << "0" << endl;
 
-	box << width << ".0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "-1.0 " << "0.0" << endl;
-	box << "1.0 " << "1.0" << endl;
+	box << width << " 0 " << "0" << endl;
+	box << "0 " << "-1 " << "0" << endl;
+	box << "1 " << "1" << endl;
 
-	box << "0.0 " << "0.0 " << -length << ".0" << endl;
-	box << "0.0 " << "-1.0 " << "0.0" << endl;
-	box << "0.0 " << "0.0" << endl;
+	box << "0 " << "0 " << -length << endl;
+	box << "0 " << "-1 " << "0" << endl;
+	box << "0 " << "0" << endl;
 
-	box << width << ".0 " << "0.0 " << -length << ".0" << endl;
-	box << "0.0 " << "-1.0 " << "0.0" << endl;
-	box << "1.0 " << "0.0" << endl;
+	box << width << " 0 " << -length << endl;
+	box << "0 " << "-1 " << "0" << endl;
+	box << "1 " << "0" << endl;
 
-	box << width << ".0 " << "0.0 " << "0.0" << endl;
-	box << "0.0 " << "-1.0 " << "0.0" << endl;
-	box << "1.0 " << "1.0" << endl;
+	box << width << " 0 " << "0" << endl;
+	box << "0 " << "-1 " << "0" << endl;
+	box << "1 " << "1" << endl;
 
 	box.close();
 }
