@@ -5,14 +5,6 @@
  </lights>
  <group>
  <!-- Solar System center -->	
-  <!-- PLANE -->
-  <group>
-    <colour R=255 G=255 B=255/> 	  
-    <models>
-    <!-- ambR=0.2 ambG=0.2 ambB=0.2 or diffR=1.0 diffG=1.0 diffB=1.0 or specR=0.5 specG=0.5 specB=0.5 or emsR=0.8 emsG=0.8 emsB=0.8  -->
-      <model file="plane.3d" ambR=0.2 ambG=0.2 ambB=0.2/>
-    </models>	      
-  </group>
   <!-- SUN -->
   <group>
       <colour R=255 G=165 B=0/> 

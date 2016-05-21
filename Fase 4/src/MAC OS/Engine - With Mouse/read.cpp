@@ -18,8 +18,14 @@ node_group* initNodeGroup() {
 	r->rotateAxis = (vector<float>*)malloc(sizeof(vector<float>));
 	r->rotateAxis = new vector<float>();
 
+	r->scale = (vector<float>*)malloc(sizeof(vector<float>));
+	r->scale = new vector<float>();
+
 	r->vboIndex = (vector<int>*)malloc(sizeof(vector<int>));
 	r->vboIndex = new vector<int>();
+
+	r->imageIndex = (vector<int>*)malloc(sizeof(vector<int>));
+	r->imageIndex = new vector<int>();
 
 	r->model_file = (vector<string>*)malloc(sizeof(vector<string>));
 	r->model_file = new vector<string>();
@@ -52,21 +58,6 @@ node_group* initNodeGroup() {
 	return r;
 }
 
-node_group_light* initNodeGroupLight() { //Lights
-    node_group_light* r = (node_group_light*)malloc(sizeof(struct node_group_light));
-
-    r->light_type = (vector<string>*)malloc(sizeof(vector<string>));
-    r->light_type = new vector<string>();
-    
-    r->position = (vector<float>*)malloc(sizeof(vector<float>));
-    r->position = new vector<float>();
-
-    r->child = (node_group_light**)malloc(10 * sizeof(struct node_group_light));
-    r->childIndex = 0;
-    
-    return r;
-}
-
 int numberOfModels(node_group* node) {
 	int r = 0;
 	for (int i = 0; i < node->childIndex; i++) {
@@ -85,35 +76,53 @@ int tree_high(node_group* node) {
 }
 
 
-scene* readXML(const char* f, int* vboNbuffers, int* vboNbuffersLights) {
+scene* readXML(const char* f, int* vboNbuffers, int* vboNbuffersTextures) {
 
 	TiXmlDocument XMLdoc(f);
 	bool loadOkay = XMLdoc.LoadFile();
 	if (!loadOkay)	return nullptr;
+
 	TiXmlElement *pRoot = XMLdoc.FirstChildElement("scene");
 	scene* sceneData = (scene*)malloc(sizeof(struct scene));
-	
+		
+	//Groups
 	node_group* firstGroup = initNodeGroup();
-
 	sceneData->transformation_tree = firstGroup;
 	TiXmlElement *pGroup = pRoot->FirstChildElement("group");
 
-	readGroup(pGroup, firstGroup, vboNbuffers);
+	readGroup(pGroup, firstGroup, vboNbuffers, vboNbuffersTextures);
+	
+	//Lights
 
-    //Lights
-    node_group_light* firstGroupLight = initNodeGroupLight();
-    
-    sceneData->lights_tree = firstGroupLight;
-    TiXmlElement *pGroupLight = pRoot->FirstChildElement("lights");
-    
-    readGroupLight(pGroupLight, firstGroupLight, vboNbuffersLights);
+	sceneData->lights = (light_source**)malloc(20 * sizeof(light_source*));
+	sceneData->light_counter = 0;
+
+	TiXmlElement *pGroupLight = pRoot->FirstChildElement("lights");
+	TiXmlElement* pLight = pGroupLight->FirstChildElement("light");
+	while (pLight) {
+		light_source* light = (light_source*)malloc(sizeof(light_source));
+
+		string typeL = (string)pLight->Attribute("type");
+		light->light_type = strdup(typeL.data());
+
+		light->position = (float*)malloc(4 * sizeof(float));
+		light->position[0] = (atof(pLight->Attribute("posX")));
+		light->position[1] = (atof(pLight->Attribute("posY")));
+		light->position[2] = (atof(pLight->Attribute("posZ")));
+		light->position[4] = (atof(pLight->Attribute("posZ")));
+
+
+		sceneData->lights[sceneData->light_counter++] = light;
+		pLight = pLight->NextSiblingElement("light");
+	}
+
 
 	return sceneData;
 }
 
 
 
-void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers) {
+void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers,int* imageCount) {
 	TiXmlElement* pTranslate = pGroup->FirstChildElement("translate");
 	if (pTranslate) {
 		const char* time = pTranslate->Attribute("time");
@@ -128,18 +137,13 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers) {
 				}
 				node->p[node->pointIndex] = (float*)malloc(3 * sizeof(float));
 				float x = atof(pPoint->Attribute("X"));
-				node->p[node->pointIndex][0] = 4;
 				float y = atof(pPoint->Attribute("Y"));
 				float z = atof(pPoint->Attribute("Z"));
 
 				node->p[node->pointIndex][0] = x;
 				node->p[node->pointIndex][1] = y;
 				node->p[node->pointIndex][2] = z;
-				/*
-				node->p[node->pointIndex][0] = atof(pPoint->Attribute("X"));
-				node->p[node->pointIndex][1] = (atof(pPoint->Attribute("Y")));
-				node->p[node->pointIndex][2] = (atof(pPoint->Attribute("Z")));
-				*/
+	
 				pPoint = pPoint->NextSiblingElement("point");
 				node->pointIndex++;
 			}
@@ -169,6 +173,17 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers) {
 		pRotate = pRotate->NextSiblingElement("rotate");
 	}
 
+
+	TiXmlElement* pScale = pGroup->FirstChildElement("scale");
+	if(pScale){
+
+			node->scale->push_back(atof(pScale->Attribute("X")));
+			node->scale->push_back(atof(pScale->Attribute("Y")));
+			node->scale->push_back(atof(pScale->Attribute("Z")));
+		
+		//pScale = pScale->NextSiblingElement("scale");
+	}
+
 	TiXmlElement* pCor = pGroup->FirstChildElement("colour");
 	if (pCor) {
 		node->colour[0] = atoi(pCor->Attribute("R"));
@@ -188,26 +203,28 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers) {
                 node->model_coloured_ambient->push_back(atof(pModelFileAndTexture->Attribute("ambG")));
                 node->model_coloured_ambient->push_back(atof(pModelFileAndTexture->Attribute("ambB")));
             }
-            else if (const char* diffuse = pRotate->Attribute("diffR")) {
+            else if (const char* diffuse = pModelFileAndTexture->Attribute("diffR")) {
                 node->model_coloured_diffuse->push_back(atof(diffuse));
                 node->model_coloured_diffuse->push_back(atof(pModelFileAndTexture->Attribute("diffG")));
                 node->model_coloured_diffuse->push_back(atof(pModelFileAndTexture->Attribute("diffB")));
             }
-            else if (const char* specular = pRotate->Attribute("specR")) {
+            else if (const char* specular = pModelFileAndTexture->Attribute("specR")) {
                 node->model_coloured_specular->push_back(atof(specular));
                 node->model_coloured_specular->push_back(atof(pModelFileAndTexture->Attribute("specG")));
                 node->model_coloured_specular->push_back(atof(pModelFileAndTexture->Attribute("specB")));
             }
-            else if (const char* emissive = pRotate->Attribute("emsR")) {
+            else if (const char* emissive = pModelFileAndTexture->Attribute("emsR")) {
                 node->model_coloured_emissive->push_back(atof(emissive));
                 node->model_coloured_emissive->push_back(atof(pModelFileAndTexture->Attribute("emsG")));
                 node->model_coloured_emissive->push_back(atof(pModelFileAndTexture->Attribute("emsB")));
             }
-            else if (const char* texture = (string)pModelFileAndTexture->Attribute("texture");){
+            
+			if (const char* texture = pModelFileAndTexture->Attribute("texture")){
                 node->model_texture->push_back(texture);
+				(*imageCount) = (*imageCount)+1;
             }
             
-			(*vboNbuffers)=(*vboNbuffers)+1;// +2 no caso textura ??
+			(*vboNbuffers)=(*vboNbuffers)+1;
 
 			pModelFileAndTexture = pModelFileAndTexture->NextSiblingElement("model");
 		}
@@ -218,39 +235,11 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers) {
 	{
 		node_group* newChild = initNodeGroup();
 		node->child[node->childIndex++] = newChild;
-		readGroup(child_group, newChild,vboNbuffers);
+		readGroup(child_group, newChild,vboNbuffers,imageCount);
 
 		child_group = child_group->NextSiblingElement();
 	}
 }
-
-
-void readGroupLight(TiXmlElement *pGroupLight, node_group_light* nodeL, int* vboNbuffersLights) {
-    TiXmlElement* pLight= pGroupLight->FirstChildElement("light");
-    while (pLight) {
-        string typeL = (string)pLight->Attribute("type");
-        nodeL->light_type->push_back(typeL);
-        
-        nodeL->position->push_back(atof(pLight->Attribute("posX")));
-        nodeL->position->push_back(atof(pLight->Attribute("posY")));
-        nodeL->position->push_back(atof(pLight->Attribute("posZ")));
-        
-        (*vboNbuffersLights)=(*vboNbuffersLights)+1;
-        
-        pLight = pLight->NextSiblingElement("light");
-    }
-    
-    TiXmlElement* child_group_light = pGroupLight->FirstChildElement("light");
-    while (child_group_light)
-    {
-        node_group_light* newChild = initNodeGroupLight();
-        nodeL->childLight[nodeL->childIndexLight++] = newChild;
-        readGroupLight(child_group_light, newChild, vboNbuffersLights);
-        
-        child_group_light = child_group_light->NextSiblingElement();
-    }
-}
-
 
 string reading(vector<string> aux) {
 	int size = stoi(aux[0]); // number of vertex
@@ -292,3 +281,27 @@ vector<float> read3Dfile(string filename) {
 	return r;
 }
 
+/*
+	Separates Vertexs, Normals and Texture points and stores them on array
+	File pointes order 
+		for each:
+			Vertex = 3 points
+			Normals = 3 points
+			Texture = 2 points
+*/
+vector<float>** dividePoints(vector<float> filepoints) {
+    
+	vector<float>** r = (vector<float>**) malloc(3 * sizeof(vector<float>*));
+	for (int j = 0; j < 3;j++)
+		r[j] = new vector<float>();
+	
+	int i=0;
+	for (float p : filepoints) {
+		// 3 3 2
+		int pos = i++ % 8;
+		if (pos < 3) r[0]->push_back(p);
+		else if (pos < 6) r[1]->push_back(p);
+		else if (pos < 8) r[2]->push_back(p);
+	}
+	return r;
+}

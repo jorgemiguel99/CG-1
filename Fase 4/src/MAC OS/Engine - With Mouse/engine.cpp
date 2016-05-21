@@ -1,24 +1,30 @@
+#include "read.h"
 
 /* MAC INCLUDES */
 #include <GL/glew.h>
 #include <GLUT/glut.h>
 #include <OpenGL/glu.h>
 #include <OpenGL/gl.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
 
 /* tinyxml is included in file transformationTree.h
-		MAC -> Change location path
+MAC -> Change location path
 */
 
 //windows includeS
-//  #include <windows.h>
+// #include <IL/il.h>
+// #pragma comment(lib, "devil.lib")
+//
+// #include <windows.h>
 // #include<Glew\glew.h>
-//  #include <GL/glut.h>
+// #include <GL/glut.h>
 // #include <GL/glu.h>
-//  #include <GL/gl.h>
+// #include <GL/gl.h>
+//
+// #pragma comment(lib,"glew32.lib")
 
-#include "read.h"
-
-#pragma comment(lib,"glew32.lib")
 
 // Declared here and implemented after main in order to better organization of the code
 void initGl();
@@ -26,20 +32,15 @@ void initVBOS();
 void changeSize(int, int);
 void renderScene(void);
 void keyPressed(unsigned char, int, int);
-void processMouseButtons(int, int, int, int);
-void processMouseMotion(int, int);
 void newMenu (int id_op);
 void keyboardExtra(int key_code, int x, int y);
-void bufferData(node_group* group, int* bufferIndex);
-
+void bufferData(node_group* group, int* bufferIndex,int* imageIndex);
 
 /* scene is a structure with xml group information*/
 scene* sceneData;
 
 // Global Variables to Transformations
 float px = 0.0, py = 100.0, pz = 100.0;
-int startX, startY, tracking = 0;
-int alpha = 0, beta = 0, r = 50;
 
 float rotate_y = 0;
 float rotate_x = 0;
@@ -52,13 +53,18 @@ float translate_z = 0;
 // Global variable process input
 vector<string> splitted;
 
-// VBOS variables
-#define MAX_STACKS 100
-#define MAX_SLICES 100
-#define VERTEX_MAX_SIZE (((MAX_STACKS - 2)*MAX_SLICES * 6 + 2 * MAX_SLICES * 3) * 3)
-float vboVerticeBuffer[VERTEX_MAX_SIZE];
 int nBuffers; // Planetas + luas
 GLuint *vertexCount, *buffer;
+
+/* Texture related variables. */
+int imageCount;
+GLuint* texID;
+int cols, rows;
+
+// Files Path
+const char* Path3d = "3d/";
+const char* PathTextures = "textures/";
+const char* PathXml = "xml/";
 
 
 // Splits a string into its substrings accordingly to its delimiter that must be provided
@@ -76,18 +82,19 @@ vector<string> split(string str, char delimiter) {
 
 int main(int argc, char **argv) {
   string operationLine, operation;
-/*
-	cout << "Insert your operation:" << endl;
+  /*
+	cout << "Insert the xml file name" << endl;
 
 	getline(cin, operationLine);
-	splitted = split(operationLine, ' '); // Save a string on a vector with the substrings separated by a space
-
-	// The function "stoff" transforms the content of a string in a float
-
-  if (splitted[0] == "Draw" || splitted[0] == "draw") {	// Draw -> receives the name of the .3d file
-    if (splitted.size() == 1){
-  */
-  sceneData = readXML("SolarSystem.xml",&nBuffers);
+	char* xmlName = (char*)malloc((5 + operationLine.size())*sizeof(char)); xmlName[0] = '\0';
+	strcat(xmlName, PathXml);
+	strcat(xmlName, operationLine.data());
+	*/
+    //sceneData = readXML("earth.xml",&nBuffers,&imageCount);
+	sceneData = readXML("SolarSystem.xml",&nBuffers,&imageCount);
+	if (!sceneData) { printf("Failed to read XML\n"); return 0; }
+	else
+	 printf("Loading file data\n");
 
 	  //testTree(sceneData);
 
@@ -103,7 +110,7 @@ int main(int argc, char **argv) {
   glutInitWindowPosition(0, 0);
 
   // Creates a window using internal glut functionality
-  glutCreateWindow("Solar System - Stage 2");
+  glutCreateWindow("Solar System - Stage 4");
 
   // Callback function responsible for the window's contents.
   glutDisplayFunc(renderScene);
@@ -114,9 +121,7 @@ int main(int argc, char **argv) {
   // Function called when a key is pressed.
   glutKeyboardFunc(keyPressed);
   glutSpecialFunc(keyboardExtra);
-  // mouse callbacks
-  glutMouseFunc(processMouseButtons);
-  glutMotionFunc(processMouseMotion);
+
   //menu
   glutCreateMenu(newMenu);
   glutAddMenuEntry("Increase Translate x value",'j');
@@ -143,9 +148,8 @@ int main(int argc, char **argv) {
   glutAddMenuEntry("Change Colour to Yellow",'6');
   glutAddMenuEntry("Change Colour to Bright Blue",'7');
   //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
-  glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-
+	//ilInit();
   glewInit();
   initGl();
   initVBOS();
@@ -165,9 +169,20 @@ void initGl () {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
   //default
-	glPolygonMode(GL_FRONT,GL_LINE);
+	glPolygonMode(GL_FRONT, GL_FILL);
+	//glPolygonMode(GL_FRONT,GL_LINE);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+
+	//Light
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+// Texturas.
+	glEnable(GL_TEXTURE_2D);
 }
 
 void changeSize(int w, int h) {
@@ -198,33 +213,120 @@ void changeSize(int w, int h) {
 	Coloca os pontos dos planetas no buffer* seguidos
 	No mesmo buffer, no final dos planetas coloca as luas seguidas
 */
-void initVBOS() {
-	buffer =(GLuint*) malloc(nBuffers * sizeof(GLuint));
-	vertexCount = (GLuint*)malloc(nBuffers * sizeof(GLuint));
-	glGenBuffers(nBuffers, buffer);
 
-	int bufferIndex = 0; node_group* root = sceneData->transformation_tree;
-	bufferData(root,&bufferIndex);
+
+void initVBOS() {
+	int Nb = nBuffers + imageCount * 3;
+
+	buffer =(GLuint*) malloc(Nb * sizeof(GLuint));
+	vertexCount = (GLuint*)malloc(Nb * sizeof(GLuint));
+	glGenBuffers(Nb, buffer);
+
+
+	texID = (GLuint*)malloc(imageCount * sizeof(GLuint));
+	glGenTextures(imageCount, texID);
+
+
+	int bufferIndex = 0,imageIndex = 0;
+	node_group* root = sceneData->transformation_tree;
+	bufferData(root,&bufferIndex,&imageIndex);
 
 }
+
 /* Buffer models points from files to vbos*/
-void bufferData(node_group* group, int* bufferIndex) {
+void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 
-	for (int i = 0; i < group->model_file->size(); i++) {
-		string filename = group->model_file->at(i);
-		vector<float> points = read3Dfile(filename);
+	for (int i = 0; i < (int)group->model_file->size(); i++) {
 
-		for (int p = 0; p < points.size(); p++)
-			vboVerticeBuffer[p] = points[p];
+		if ( i < (int)group->model_texture->size()) {
 
-		vertexCount[*bufferIndex] = points.size() / 3;
-		glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount[*bufferIndex] * 3, vboVerticeBuffer, GL_STATIC_DRAW);
-		group->vboIndex->push_back(*bufferIndex);
-		(*bufferIndex)++;
+		/*
+			char* texName = (char*)malloc((5 + group->model_texture->at(i).size())*sizeof(char)); texName[0] = '\0';
+			strcat(texName,PathTextures);
+			strcat(texName,group->model_texture->at(i).data());
+			*/
+		//	printf("\n%s\n", group->model_texture->at(i).data());
+
+		//	free(texName);
+
+
+			// Textures MAC OS X
+		  cv::Mat img = cv::imread(group->model_texture->at(i).data());
+		  cols        = img.cols;
+		  rows        = img.rows;
+
+			glBindTexture(GL_TEXTURE_2D, texID[*imageIndex]);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cols, rows, 0, GL_BGR, GL_UNSIGNED_BYTE, img.data);
+
+			/*
+			char* pointsfile = (char*)malloc((5 + group->model_file->at(i).size())*sizeof(char));  pointsfile[0] = '\0';
+			strcat(pointsfile,Path3d);
+			strcat(pointsfile, group->model_file->at(i).data());
+			*/
+	//		printf("\n%s\n", group->model_file->at(i).data());
+
+
+			vector<float> filePoints = read3Dfile(group->model_file->at(i).data());
+			//free(pointsfile);
+
+
+			vector<float>** vnt = dividePoints(filePoints);
+
+			vertexCount[*bufferIndex] =  vnt[0]->size() / 3;
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vnt[0]->size()  , vnt[0]->data(), GL_DYNAMIC_DRAW);
+			vertexCount[*bufferIndex] = vnt[0]->size() / 3;
+			group->vboIndex->push_back(*bufferIndex);
+			(*bufferIndex)++;
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vnt[1]->size(), vnt[1]->data(), GL_DYNAMIC_DRAW);
+			(*bufferIndex)++;
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vnt[2]->size(), vnt[2]->data(), GL_DYNAMIC_DRAW);
+
+
+			group->imageIndex->push_back(*imageIndex);
+			*imageIndex = *imageIndex + 1;
+			(*bufferIndex)++;
+		}
+		else {
+			// Non texture model
+			/*
+			char* pointsfile = (char*)malloc((5 + group->model_file->at(i).size())*sizeof(char));  pointsfile[0] = '\0';
+			strcat(pointsfile, Path3d);
+			strcat(pointsfile, group->model_file->at(i).data());
+			*/
+	//		printf("\n%s\n", group->model_file->at(i).data());
+
+
+			vector<float> filePoints = read3Dfile(group->model_file->at(i).data());
+			//free(pointsfile);
+
+			vector<float>** vnt = dividePoints(filePoints);
+			vector<float> points = *vnt[0];
+
+			/*
+			float* vboVerticeBuffer = (float*)malloc(points.size() * sizeof(float));
+			for (int p = 0; p < (int)points.size(); p++)
+				vboVerticeBuffer[p] = points[p];
+				*/
+			vertexCount[*bufferIndex] = points.size() / 3;
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount[*bufferIndex] * 3, points.data(), GL_STATIC_DRAW);
+			group->vboIndex->push_back(*bufferIndex);
+			(*bufferIndex)++;
+		}
 	}
+
 	for (int i = 0; i < group->childIndex; i++) {
-		bufferData(group->child[i], bufferIndex);
+		bufferData(group->child[i], bufferIndex,imageIndex);
 	}
 }
 
@@ -277,16 +379,12 @@ void renderCatmullRomCurve(float** p,int point_count) {
 	glEnd();
 }
 
-
 void renderTree(node_group* node) {
-	float res[3];
 	if (node->pointIndex > 0) {
-
-		node->start_time = glutGet(GLUT_ELAPSED_TIME) * 0.001;
-
-		float taux = node->start_time/node->translation_period;
+		float taux = glutGet(GLUT_ELAPSED_TIME) * 0.001 /node->translation_period;
 		float t = taux - (int)taux;
 
+		float res[3];
 		renderCatmullRomCurve(node->p, node->pointIndex);
 		getGlobalCatmullRomPoint(t, res,node->p,node->pointIndex);
 
@@ -297,6 +395,9 @@ void renderTree(node_group* node) {
 	}
 	if (node->rotateAxis->size() > 0) {
 		glRotatef(node->rotateAxis->at(0), node->rotateAxis->at(1), node->rotateAxis->at(2), node->rotateAxis->at(3));
+	}
+	if (node->scale->size() > 0) {
+		glScalef(node->scale->at(0), node->scale->at(1), node->scale->at(2));
 	}
 	if (node->rotate_period->size() > 0) {
 		float currentTime = glutGet(GLUT_ELAPSED_TIME) * 0.001;
@@ -311,12 +412,33 @@ void renderTree(node_group* node) {
 
 		glRotatef(angle, node->rotate_period->at(1), node->rotate_period->at(2), node->rotate_period->at(3));
 	}
-	for (int i = 0; i < node->vboIndex->size(); i++) {
-		glColor3f((float)node->colour[0]/255, (float) node->colour[1] / 255,(float) node->colour[2] / 255);
-		glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i)]);
-		glVertexPointer(3, GL_FLOAT, 0, 0);
-		glDrawArrays(GL_TRIANGLES, 0, vertexCount[node->vboIndex->at(i)]);
-		glColor3f(1,1,1);
+
+	for (int i = 0; i < (int)node->vboIndex->size(); i++) {
+		if (i < (int)node->model_texture->size() ) {
+
+			glBindTexture(GL_TEXTURE_2D, texID[node->imageIndex->at(i)]);
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i)]);
+			glVertexPointer(3, GL_FLOAT, 0, 0);
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i) + 1]);
+		    glNormalPointer(GL_FLOAT, 0, 0);
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i) + 2]);
+			glTexCoordPointer(2, GL_FLOAT, 0, 0);
+
+			glDrawArrays(GL_TRIANGLES, 0, vertexCount[node->vboIndex->at(i)]);
+			glBindTexture(GL_TEXTURE_2D, 0 );
+		}
+		else {
+
+			glColor3f((float)node->colour[0] / 255, (float)node->colour[1] / 255, (float)node->colour[2] / 255);
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i)]);
+			glVertexPointer(3, GL_FLOAT, 0, 0);
+			glDrawArrays(GL_TRIANGLES, 0, vertexCount[node->vboIndex->at(i)]);
+
+			glColor3f(1, 1, 1);
+		}
 	}
 
 	for (int i = 0; i < node->childIndex; i++) {
@@ -331,6 +453,14 @@ void renderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Set the camera.
 	glLoadIdentity();
+
+
+	for (int i = 0; i < sceneData->light_counter; i++)
+		glLightfv(GL_LIGHT0, GL_POSITION, sceneData->lights[i]->position);
+
+	//printf("Position light y:%f\n", sceneData->lights->at(0)->position[1]);
+	//printf("type %s\n", sceneData->lights->at(0)->light_type);
+
 	gluLookAt(px, py, pz,0.0,0.0,-1.0,0.0f,1.0f,0.0f);
 
 	glRotatef( rotate_x, 1.0, 0.0, 0.0 );
@@ -419,69 +549,4 @@ void keyboardExtra(int key_code, int x, int y) {
 	//when camera moves
 
 	glutPostRedisplay();
-}
-
-void processMouseButtons(int button, int state, int xx, int yy)
-{
-	if (state == GLUT_DOWN)  {
-		startX = xx;
-		startY = yy;
-		if (button == GLUT_LEFT_BUTTON)
-			tracking = 1;
-		else if (button == GLUT_RIGHT_BUTTON)
-			tracking = 2;
-		else
-			tracking = 0;
-	}
-	else if (state == GLUT_UP) {
-		if (tracking == 1) {
-			alpha += (xx - startX);
-			beta += (yy - startY);
-		}
-		else if (tracking == 2) {
-
-			r -= yy - startY;
-			if (r < 3)
-				r = 3.0;
-		}
-		tracking = 0;
-	}
-}
-
-
-void processMouseMotion(int xx, int yy)
-{
-	int deltaX, deltaY;
-	int alphaAux, betaAux;
-	int rAux;
-
-	if (!tracking)
-		return;
-
-	deltaX = xx - startX;
-	deltaY = yy - startY;
-
-	if (tracking == 1) {
-
-		alphaAux = alpha + deltaX;
-		betaAux = beta + deltaY;
-
-		if (betaAux > 85.0)
-			betaAux = 85.0;
-		else if (betaAux < -85.0)
-			betaAux = -85.0;
-
-		rAux = r;
-	}
-	else if (tracking == 2) {
-
-		alphaAux = alpha;
-		betaAux = beta;
-		rAux = r - deltaY;
-		if (rAux < 50)
-			rAux = 50;
-	}
-	px = rAux * sin(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
-  pz = rAux * cos(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
-	py = rAux *	sin(betaAux * 3.14 / 180.0);
 }
