@@ -1,24 +1,29 @@
 
+
+
+#include "read.h"
+
 /* MAC INCLUDES */
 //#include <GLUT/glut.h>    
 //#include <OpenGL/glu.h>   
 //#include <OpenGL/gl.h>    
 
-/* tinyxml is included in file transformationTree.h 
-		MAC -> Change location path
+/* tinyxml is included in file transformationTree.h
+MAC -> Change location path
 */
 
 //windows includeS
- #include <windows.h>
+#include <IL/il.h>
+#pragma comment(lib, "devil.lib")
+
+#include <windows.h>
 #include<Glew\glew.h>
- #include <GL/glut.h>
+#include <GL/glut.h>
 #include <GL/glu.h>
- #include <GL/gl.h>
-
-
-#include "read.h"
+#include <GL/gl.h>
 
 #pragma comment(lib,"glew32.lib")
+
 
 // Declared here and implemented after main in order to better organization of the code
 void initGl();
@@ -28,7 +33,7 @@ void renderScene(void);
 void keyPressed(unsigned char, int, int);
 void newMenu (int id_op);
 void keyboardExtra(int key_code, int x, int y);
-void bufferData(node_group* group, int* bufferIndex);
+void bufferData(node_group* group, int* bufferIndex,int* imageIndex);
 
 /* scene is a structure with xml group information*/
 scene* sceneData;
@@ -50,6 +55,15 @@ vector<string> splitted;
 int nBuffers; // Planetas + luas
 GLuint *vertexCount, *buffer;
 
+// Textures
+int imageCount;
+GLuint* texID;
+
+// Files Path
+const char* Path3d = "3d/";
+const char* PathTextures = "textures/";
+const char* PathXml = "xml/";
+
 
 // Splits a string into its substrings accordingly to its delimiter that must be provided
 vector<string> split(string str, char delimiter) {
@@ -66,18 +80,19 @@ vector<string> split(string str, char delimiter) {
 
 int main(int argc, char **argv) {
   string operationLine, operation;
-/*
-	cout << "Insert your operation:" << endl;
+  /*
+	cout << "Insert the xml file name" << endl;
 
 	getline(cin, operationLine);
-	splitted = split(operationLine, ' '); // Save a string on a vector with the substrings separated by a space
-
-	// The function "stoff" transforms the content of a string in a float
-
-  if (splitted[0] == "Draw" || splitted[0] == "draw") {	// Draw -> receives the name of the .3d file
-    if (splitted.size() == 1){
-  */
-  sceneData = readXML("SolarSystem.xml",&nBuffers);
+	char* xmlName = (char*)malloc((5 + operationLine.size())*sizeof(char)); xmlName[0] = '\0';
+	strcat(xmlName, PathXml);
+	strcat(xmlName, operationLine.data());
+	*/
+    sceneData = readXML("earth.xml",&nBuffers,&imageCount);
+	
+	if (!sceneData) { printf("Failed to read XML\n"); return 0; }
+	else
+	 printf("Loading file data\n");
 
 	  //testTree(sceneData);
 				
@@ -133,9 +148,11 @@ int main(int argc, char **argv) {
 	glutAddMenuEntry("Stop Translation around Sun",'s');
 	glutAddMenuEntry("Restart Translation around Sun",'r');
   //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
-  glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+  
 
 
+	ilInit();
   glewInit();
   initGl();
   initVBOS();
@@ -155,9 +172,20 @@ void initGl () {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
   //default
-	glPolygonMode(GL_FRONT,GL_LINE);
+	glPolygonMode(GL_FRONT, GL_FILL);
+	//glPolygonMode(GL_FRONT,GL_LINE);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+
+	//Light
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+// Texturas.
+	glEnable(GL_TEXTURE_2D);
 }
 
 void changeSize(int w, int h) {
@@ -188,35 +216,123 @@ void changeSize(int w, int h) {
 	Coloca os pontos dos planetas no buffer* seguidos
 	No mesmo buffer, no final dos planetas coloca as luas seguidas
 */
+
+
 void initVBOS() {
-	buffer =(GLuint*) malloc(nBuffers * sizeof(GLuint));
-	vertexCount = (GLuint*)malloc(nBuffers * sizeof(GLuint));
-	glGenBuffers(nBuffers, buffer);
+	int Nb = nBuffers + imageCount * 3;
 
-	int bufferIndex = 0; node_group* root = sceneData->transformation_tree;
-	bufferData(root,&bufferIndex);
+	buffer =(GLuint*) malloc(Nb * sizeof(GLuint));
+	vertexCount = (GLuint*)malloc(Nb * sizeof(GLuint));
+	glGenBuffers(Nb, buffer); 
 
+	
+	texID = (GLuint*)malloc(imageCount * sizeof(GLuint));
+	glGenTextures(imageCount, texID);
+
+
+	int bufferIndex = 0,imageIndex = 0; 
+	node_group* root = sceneData->transformation_tree;
+	bufferData(root,&bufferIndex,&imageIndex);
+	
 }
+
 /* Buffer models points from files to vbos*/
-void bufferData(node_group* group, int* bufferIndex) {
+void bufferData(node_group* group, int* bufferIndex, int* imageIndex){ 
 
-	for (int i = 0; i < group->model_file->size(); i++) {
-		string filename = group->model_file->at(i);
-		vector<float> points = read3Dfile(filename);
+	for (int i = 0; i < (int)group->model_file->size(); i++) {
+	
+		if ( i < (int)group->model_texture->size()) {
+			unsigned int t;
+			ilGenImages(1, &t);
+			ilBindImage(t);
+		/*
+			char* texName = (char*)malloc((5 + group->model_texture->at(i).size())*sizeof(char)); texName[0] = '\0';
+			strcat(texName,PathTextures);
+			strcat(texName,group->model_texture->at(i).data());
+			*/
+		//	printf("\n%s\n", group->model_texture->at(i).data());
+			
+			ilLoadImage((ILstring)group->model_texture->at(i).data());
+		//	free(texName);
 
-		float* vboVerticeBuffer = (float*)malloc(points.size() * sizeof(float));
+			unsigned int cols = ilGetInteger(IL_IMAGE_WIDTH);
+			unsigned int rows = ilGetInteger(IL_IMAGE_HEIGHT);
 
-		for (int p = 0; p < points.size(); p++)
-			vboVerticeBuffer[p] = points[p];
+			ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 
-		vertexCount[*bufferIndex] = points.size() / 3;
-		glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount[*bufferIndex] * 3, vboVerticeBuffer, GL_STATIC_DRAW);
-		group->vboIndex->push_back(*bufferIndex);
-		(*bufferIndex)++;
+			unsigned char *texData = ilGetData();
+			glBindTexture(GL_TEXTURE_2D, texID[*imageIndex]);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
+			/*
+			char* pointsfile = (char*)malloc((5 + group->model_file->at(i).size())*sizeof(char));  pointsfile[0] = '\0';
+			strcat(pointsfile,Path3d);
+			strcat(pointsfile, group->model_file->at(i).data());
+			*/
+	//		printf("\n%s\n", group->model_file->at(i).data());
+
+
+			vector<float> filePoints = read3Dfile(group->model_file->at(i).data());
+			//free(pointsfile);
+
+
+			vector<float>** vnt = dividePoints(filePoints);
+
+			vertexCount[*bufferIndex] =  vnt[0]->size() / 3;
+			
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vnt[0]->size()  , vnt[0]->data(), GL_DYNAMIC_DRAW);
+			vertexCount[*bufferIndex] = vnt[0]->size() / 3;
+			group->vboIndex->push_back(*bufferIndex);
+			(*bufferIndex)++;
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vnt[1]->size(), vnt[1]->data(), GL_DYNAMIC_DRAW);
+			(*bufferIndex)++;
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vnt[2]->size(), vnt[2]->data(), GL_DYNAMIC_DRAW);
+
+
+			group->imageIndex->push_back(*imageIndex);
+			*imageIndex = *imageIndex + 1;
+			(*bufferIndex)++;
+		}
+		else {
+			// Non texture model
+			/*
+			char* pointsfile = (char*)malloc((5 + group->model_file->at(i).size())*sizeof(char));  pointsfile[0] = '\0';
+			strcat(pointsfile, Path3d);
+			strcat(pointsfile, group->model_file->at(i).data());
+			*/
+	//		printf("\n%s\n", group->model_file->at(i).data());
+
+
+			vector<float> filePoints = read3Dfile(group->model_file->at(i).data());
+			//free(pointsfile);
+
+			vector<float>** vnt = dividePoints(filePoints);
+			vector<float> points = *vnt[0];
+
+			/*
+			float* vboVerticeBuffer = (float*)malloc(points.size() * sizeof(float));
+			for (int p = 0; p < (int)points.size(); p++)
+				vboVerticeBuffer[p] = points[p];
+				*/
+			vertexCount[*bufferIndex] = points.size() / 3;
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount[*bufferIndex] * 3, points.data(), GL_STATIC_DRAW);
+			group->vboIndex->push_back(*bufferIndex);
+			(*bufferIndex)++;
+		}
 	}
+	
 	for (int i = 0; i < group->childIndex; i++) {
-		bufferData(group->child[i], bufferIndex);
+		bufferData(group->child[i], bufferIndex,imageIndex);
 	}
 }
 
@@ -269,7 +385,6 @@ void renderCatmullRomCurve(float** p,int point_count) {
 	glEnd();
 }
 
-
 void renderTree(node_group* node) {
 	if (node->pointIndex > 0) {
 		float taux = glutGet(GLUT_ELAPSED_TIME) * 0.001 /node->translation_period;
@@ -287,6 +402,9 @@ void renderTree(node_group* node) {
 	if (node->rotateAxis->size() > 0) {
 		glRotatef(node->rotateAxis->at(0), node->rotateAxis->at(1), node->rotateAxis->at(2), node->rotateAxis->at(3));
 	}
+	if (node->scale->size() > 0) {
+		glScalef(node->scale->at(0), node->scale->at(1), node->scale->at(2));
+	}
 	if (node->rotate_period->size() > 0) {
 		float currentTime = glutGet(GLUT_ELAPSED_TIME) * 0.001;
 		int voltas = currentTime / node->rotate_period->at(0);
@@ -301,13 +419,33 @@ void renderTree(node_group* node) {
 		glRotatef(angle, node->rotate_period->at(1), node->rotate_period->at(2), node->rotate_period->at(3));
 	}
 
-	glColor3f((float)node->colour[0] / 255, (float)node->colour[1] / 255, (float)node->colour[2] / 255);
-	for (int i = 0; i < node->vboIndex->size(); i++) {
-		glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i)]);
-		glVertexPointer(3, GL_FLOAT, 0, 0);
-		glDrawArrays(GL_TRIANGLES, 0, vertexCount[node->vboIndex->at(i)]);
+	for (int i = 0; i < (int)node->vboIndex->size(); i++) {
+		if (i < (int)node->model_texture->size() ) {
+
+			glBindTexture(GL_TEXTURE_2D, texID[node->imageIndex->at(i)]); 
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i)]);
+			glVertexPointer(3, GL_FLOAT, 0, 0);
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i) + 1]);
+		    glNormalPointer(GL_FLOAT, 0, 0);
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i) + 2]);
+			glTexCoordPointer(2, GL_FLOAT, 0, 0);
+
+			glDrawArrays(GL_TRIANGLES, 0, vertexCount[node->vboIndex->at(i)]);
+			glBindTexture(GL_TEXTURE_2D, 0 );
+		}
+		else {
+
+			glColor3f((float)node->colour[0] / 255, (float)node->colour[1] / 255, (float)node->colour[2] / 255);
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i)]);
+			glVertexPointer(3, GL_FLOAT, 0, 0);
+			glDrawArrays(GL_TRIANGLES, 0, vertexCount[node->vboIndex->at(i)]);
+
+			glColor3f(1, 1, 1);
+		}
 	}
-	glColor3f(1, 1, 1);
 
 	for (int i = 0; i < node->childIndex; i++) {
 		glPushMatrix();
@@ -321,6 +459,14 @@ void renderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Set the camera.
 	glLoadIdentity();
+
+
+	for (int i = 0; i < sceneData->light_counter; i++) 
+		glLightfv(GL_LIGHT0, GL_POSITION, sceneData->lights[i]->position);
+	
+	//printf("Position light y:%f\n", sceneData->lights->at(0)->position[1]);
+	//printf("type %s\n", sceneData->lights->at(0)->light_type);
+
 	gluLookAt(px, py, pz,0.0,0.0,-1.0,0.0f,1.0f,0.0f);
 
 	glRotatef( rotate_x, 1.0, 0.0, 0.0 );
