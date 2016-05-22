@@ -210,7 +210,7 @@ void changeSize(int w, int h) {
 
 
 void initVBOS() {
-	int Nb = nBuffers + imageCount * 3;
+    int Nb = nBuffers * 2 + imageCount * 3; // nBuffers = nModelos sem textura
 
 	buffer =(GLuint*) malloc(Nb * sizeof(GLuint));
 	vertexCount = (GLuint*)malloc(Nb * sizeof(GLuint));
