@@ -521,8 +521,8 @@ void printSphere3d() {
 	float longitudeIncrement = 360/stacks;
 	float latitudeIncrement = 180/slices;
 
-	int totalLines = 18*(360/longitudeIncrement)*(180/latitudeIncrement);
-	sphere << totalLines << endl;
+	//int totalLines = 18*(360/longitudeIncrement)*(180/latitudeIncrement);
+	//sphere << totalLines << endl;
 
 	for (float latitude = 0; latitude < 180; latitude += latitudeIncrement){
 
@@ -620,7 +620,7 @@ void printPlaneFigure3d() {
 	ofstream plane;
 	plane.open(filename.c_str());
 
-	plane << "6" << endl;
+	//plane << "18" << endl;
 
 	plane << "0.0 " << "0.0 " << "0.0" << endl; // Vertex
 	plane << "0.0 " << "0.0 " << "1.0" << endl; // Normals
@@ -653,7 +653,7 @@ void printBoxFigure3d() {
 	ofstream box;
 	box.open(filename.c_str());
 
-	box << "36" << endl;
+	//box << "108" << endl;
 
 	box << "0 " << "0 " << "0" << endl;
 	box << "0 " << "0 " << "1" << endl;
@@ -804,7 +804,8 @@ void printBoxFigure3d() {
 
 void printCilinderFigure3d() {
 	ofstream cilindro;
-	cilindro.open("cilindro.3d");
+	cilindro.open(filename.c_str());
+	//cilindro << 36*sides << endl;
 
 	float delta = 2.0f * _PI_ / sides;
 
@@ -867,6 +868,112 @@ void printCilinderFigure3d() {
 	cilindro.close();
 }
 
+void printConeFigure3d() {
+	ofstream cone;
+	cone.open(filename.c_str());
+	float ratio = height / radius;
+
+	for (int i = 0; i < slices; i++) {
+
+		float tx = i / slices;
+
+		float alpha = i * (2 * _PI_) / slices;
+		float beta = (2 * _PI_) / slices;
+
+		// Base
+		float x1 = radius*sin(alpha);
+		float y1 = 0;
+		float z1 = radius*cos(alpha);
+
+		float x2 = radius*sin(alpha + beta);
+		float y2 = 0;
+		float z2 = radius*cos(alpha + beta);
+
+		// Base
+		cone << "0.0 " << "0.0 " << "0.0" << endl; // vertex
+		cone << "0.0 " << "-1.0 " << "0.0" << endl; // normal
+		cone << "0.5 " << "0.5 " << endl; // texture
+
+		cone << x2 << " " << y2 << " " << z2 << endl; // vertex
+		cone << "0.0 " << "-1.0 " << "0.0" << endl; // normal
+		cone <<  0.5 + sin(alpha + beta) * 0.5 << " " << 0.5 + cos(alpha + beta) * 0.5 << endl; // texture
+
+		cone << x1 << " " << y1 << " " << z1 << endl; // vertex
+		cone << "0.0 " << "-1.0 " << "0.0" << endl; // normal
+		cone <<  0.5 + sin(alpha) * 0.5 << " " << 0.5 + cos(alpha) * 0.5 << endl; // texture
+
+		float radiusBot = radius;
+		float radiusTop;
+
+		for (int j = 0; j < stacks; j++, radiusBot = radiusTop) {
+
+			float ty = j / stacks;
+
+			// Sides
+			float y = j * (height / stacks);
+			float yn = (j + 1) * (height / stacks);
+
+			float h = height - yn; // altura do triangulo superior
+			radiusTop = h / ratio; // radius do triangulo superior
+
+			float x1 = radiusBot*sin(alpha);
+			float y1 = y;
+			float z1 = radiusBot*cos(alpha);
+
+			float x2 = radiusBot*sin(alpha + beta);
+			float y2 = y;
+			float z2 = radiusBot*cos(alpha + beta);
+
+			float x3 = radiusTop*sin(alpha);
+			float y3 = yn;
+			float z3 = radiusTop*cos(alpha);
+
+			float x4 = radiusTop*sin(alpha + beta);
+			float y4 = yn;
+			float z4 = radiusTop*cos(alpha + beta);
+
+			if (j == stacks - 1) { // top slice
+				cone << x3 << " " << y3 << " " << z3 << endl; // vertex
+				cone << sin(alpha) << " 0.0 " << cos(alpha) << endl; // normal
+				cone << "0.5 " << "0.5 " << endl; // texture
+
+				cone << x1 << " " << y1 << " " << z1 << endl; // vertex
+				cone << sin(alpha) << " 0.0 " << cos(alpha) << endl; // normal
+				cone << sin(alpha) << " " << cos(alpha) << endl; // texture
+
+				cone << x2 << " " << y2 << " " << z2 << endl; // vertex
+				cone << sin(alpha + beta) << " 0.0 " << cos(alpha + beta) << endl; // normal
+				cone << sin(alpha + beta) << " " << cos(alpha + beta) << endl; // texture
+			}
+			else {
+				cone << x1 << " " << y1 << " " << z1 << endl; // vertex
+				cone << sin(alpha) << " 0.0 " << cos(alpha) << endl; // normal
+				cone << i+1 << " " << j << endl; // texture
+
+				cone << x2 << " " << y2 << " " << z2 << endl; // vertex
+				cone << sin(alpha + beta) << " 0.0 " << cos(alpha + beta) << endl; // normal
+				cone << i+1 << " " << j+1 << endl; // texture
+
+				cone << x3 << " " << y3 << " " << z3 << endl; // vertex
+				cone << sin(alpha) << " 0.0 " << cos(alpha) << endl; // normal
+				cone << i << " " << j << endl; // texture
+
+				cone << x2 << " " << y2 << " " << z2 << endl; // vertex
+				cone << sin(alpha + beta) << " 0.0 " << cos(alpha + beta) << endl; // normal
+				cone << i << " " << j+1 << endl; // texture
+
+				cone << x3 << " " << y3 << " " << z3 << endl; // vertex
+				cone << sin(alpha) << " 0.0 " << cos(alpha) << endl; // normal
+				cone << i+1 << " " << j << endl; // texture
+
+				cone << x4<< " " << y4 << " " << z4 << endl; // vertex
+				cone << sin(alpha + beta) << " 0.0 " << cos(alpha + beta) << endl; // normal
+				cone << i+1 << " " << j+1 << endl; // texture
+			}
+		}
+	}
+	cone.close();
+}
 
 // Main function
 int main(int argc, char **argv) {
@@ -882,238 +989,270 @@ int main(int argc, char **argv) {
 		// The function "stof" transforms the content of a string in a float
 
 		if (splitted[0] == "Generate" || splitted[0] == "generate") {
-			if (splitted.size() == 1) {
-				// Teapot/Comet
-				patchFile = readPatchFile("teapot.patch");
-				filename = "teapot.3d";
-				separeContent();
-				preencheVectors(1);
-				preencheVectors(2);
-				printTeapot();
-				cout << "teapot.3d created" << endl;
 
-				// Sun and planets
-				filename = "sun.3d";
-				radius = SunRadius;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "sun.3d created" << endl;
-
-				filename = "mercury.3d";
-				radius = MercuryRadius;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "mercury.3d created" << endl;
-
-				filename = "venus.3d";
-				radius = VenusRadius;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "venus.3d created" << endl;
-
-				filename = "earth.3d";
-				radius = EarthRadius;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "earth.3d created" << endl;
-
-				filename = "mars.3d";
-				radius = MarsRadius;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "mars.3d created" << endl;
-
-				filename = "jupiter.3d";
-				radius = JupiterRadius;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "jupiter.3d created" << endl;
-
-				filename = "saturn.3d";
-				radius = SaturnRadius;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "saturn.3d created" << endl;
-
-				filename = "uranus.3d";
-				radius = UranusRadius;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "uranus.3d created" << endl;
-
-				filename = "neptune.3d";
-				radius = NeptuneRadius;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "neptune.3d created" << endl;
-
-				// Moons
-				filename = "earthMoon.3d";
-				radius = radius_earthMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "earthMoon.3d created" << endl;
-
-				filename = "PhobosMoon.3d";
-				radius = radius_PhobosMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "PhobosMoon.3d created" << endl;
-
-				filename = "DeimosMoon.3d";
-				radius = radius_DeimosMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "DeimosMoon.3d created" << endl;
-
-				filename = "GanymedeMoon.3d";
-				radius = radius_GanymedeMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "GanymedeMoon.3d created" << endl;
-
-				filename = "CallistoMoon.3d";
-				radius = radius_CallistoMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "CallistoMoon.3d created" << endl;
-
-				filename = "EuropaMoon.3d";
-				radius = radius_EuropaMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "EuropaMoon.3d created" << endl;
-
-				filename = "IoMoon.3d";
-				radius = radius_IoMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "IoMoon.3d created" << endl;
-
-				filename = "TitanMoon.3d";
-				radius = radius_TitanMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "TitanMoon.3d created" << endl;
-
-				filename = "EnceladusMoon.3d";
-				radius = radius_EnceladusMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "EnceladusMoon.3d created" << endl;
-
-				filename = "TitaniaMoon.3d";
-				radius = radius_TitaniaMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "TitaniaMoon.3d created" << endl;
-
-				filename = "OberonMoon.3d";
-				radius = radius_OberonMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "OberonMoon.3d created" << endl;
-
-				filename = "UmbrielMoon.3d";
-				radius = radius_UmbrielMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "UmbrielMoon.3d created" << endl;
-
-				filename = "ArielMoon.3d";
-				radius = radius_ArielMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "ArielMoon.3d created" << endl;
-
-				filename = "MirandaMoon.3d";
-				radius = radius_MirandaMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "MirandaMoon.3d created" << endl;
-
-				filename = "TritonMoon.3d";
-				radius = radius_TritonMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "TritonMoon.3d created" << endl;
-
-				filename = "ProteusMoon.3d";
-				radius = radius_ProteusMoon;
-				slices = 30;
-				stacks = 30;
-				printSphere3d();
-				cout << "ProteusMoon.3d created" << endl;
-
-				filename = "planeFigure.3d";
-				width = 10;
-				length = 10;
-				printPlaneFigure3d();
-				cout << "planeFigure.3d created" << endl;
-
-				filename = "boxFigure.3d";
-				width = 10;
-				length = 10;
-				height = 10;
-				printBoxFigure3d();
-				cout << "boxFigure.3d created" << endl;
-
-				filename = "cilinderFigure.3d";
-				height = 2;
-				radius = 1;
-				sides = 16;
-				printCilinderFigure3d();
-				cout << "cilinderFigure.3d created" << endl;
-
-				do {
-					cout << "Do you wish adding more Planets, Moons? Type yes or no" << endl;
-					getline(cin, answer);
-					if (answer == "yes" || answer == "YES") {
-						cout << "Type filename.3d please" << endl;
-						getline(cin, filename);
-						cout << "Type radius please" << endl;
-						getline(cin, answer2);
-						radius = stof(answer2);
-						cout << "Type slices please" << endl;
-						getline(cin, answer2);
-						slices = stof(answer2);
-						cout << "Type stacks please" << endl;
-						getline(cin, answer2);
-						stacks = stof(answer2);
-						printSphere3d();
-						cout << filename << " created" << endl;
-					}
-				} while (answer == "yes" || answer == "YES");
-				cout << "GoodBye!!" << endl;
+			if (splitted[1] == "Plane" || splitted[1] == "plane"){
+				if (splitted.size() == 5) {
+						width    = stof(splitted[2]);
+						length   = stof(splitted[3]);
+						filename = splitted[4];
+						printPlaneFigure3d();
+						cout << "Plane: " << filename << " created" << endl;
+				} else { cout << "Number of arguments wrong!" << endl; }
 			}
-		}
-		else { cout << "Number of arguments wrong!" << endl; }
+			else if (splitted[1] == "Box" || splitted[1] == "box"){
+				if (splitted.size() == 6) {
+						width    = stof(splitted[2]);
+						length   = stof(splitted[3]);
+						height	 = stof(splitted[4]);
+						filename = splitted[5];
+						printBoxFigure3d();
+						cout << "Box: " << filename << " created" << endl;
+				} else { cout << "Number of arguments wrong!" << endl; }
+			}
+			else if (splitted[1] == "Sphere" || splitted[1] == "sphere"){
+				if (splitted.size() == 6) {
+						radius    = stof(splitted[2]);
+						slices   = stof(splitted[3]);
+						stacks	 = stof(splitted[4]);
+						filename = splitted[5];
+						printSphere3d();
+						cout << "Sphere: " << filename << " created" << endl;
+				} else { cout << "Number of arguments wrong!" << endl; }
+			}
+			else if (splitted[1] == "Cilinder" || splitted[1] == "cilinder"){
+				if (splitted.size() == 6) {
+						radius   = stof(splitted[2]);
+						height	 = stof(splitted[3]);
+						sides	 	 = stof(splitted[4]);
+						filename = splitted[5];
+						printCilinderFigure3d();
+						cout << "Cilinder: " << filename << " created" << endl;
+				} else { cout << "Number of arguments wrong!" << endl; }
+			}
+			else if (splitted[1] == "Cone" || splitted[1] == "cone"){
+				if (splitted.size() == 7) {
+						height	 = stof(splitted[2]);
+						radius   = stof(splitted[3]);
+						slices	 = stof(splitted[4]);
+						stacks	 = stof(splitted[5]);
+						filename = splitted[6];
+						printConeFigure3d();
+						cout << "Cone: " << filename << " created" << endl;
+				} else { cout << "Number of arguments wrong!" << endl; }
+			}
+			else if (splitted[1] == "Sistema" || splitted[1] == "sistema"){
+						// Teapot/Comet
+						patchFile = readPatchFile("teapot.patch");
+						filename = "teapot.3d";
+						separeContent();
+						preencheVectors(1);
+						preencheVectors(2);
+						printTeapot();
+						cout << "teapot.3d created" << endl;
 
-	} while (true);
+						// Sun and planets
+						filename = "sun.3d";
+						radius = SunRadius;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "sun.3d created" << endl;
+
+						filename = "mercury.3d";
+						radius = MercuryRadius;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "mercury.3d created" << endl;
+
+						filename = "venus.3d";
+						radius = VenusRadius;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "venus.3d created" << endl;
+
+						filename = "earth.3d";
+						radius = EarthRadius;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "earth.3d created" << endl;
+
+						filename = "mars.3d";
+						radius = MarsRadius;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "mars.3d created" << endl;
+
+						filename = "jupiter.3d";
+						radius = JupiterRadius;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "jupiter.3d created" << endl;
+
+						filename = "saturn.3d";
+						radius = SaturnRadius;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "saturn.3d created" << endl;
+
+						filename = "uranus.3d";
+						radius = UranusRadius;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "uranus.3d created" << endl;
+
+						filename = "neptune.3d";
+						radius = NeptuneRadius;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "neptune.3d created" << endl;
+
+						// Moons
+						filename = "earthMoon.3d";
+						radius = radius_earthMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "earthMoon.3d created" << endl;
+
+						filename = "PhobosMoon.3d";
+						radius = radius_PhobosMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "PhobosMoon.3d created" << endl;
+
+						filename = "DeimosMoon.3d";
+						radius = radius_DeimosMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "DeimosMoon.3d created" << endl;
+
+						filename = "GanymedeMoon.3d";
+						radius = radius_GanymedeMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "GanymedeMoon.3d created" << endl;
+
+						filename = "CallistoMoon.3d";
+						radius = radius_CallistoMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "CallistoMoon.3d created" << endl;
+
+						filename = "EuropaMoon.3d";
+						radius = radius_EuropaMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "EuropaMoon.3d created" << endl;
+
+						filename = "IoMoon.3d";
+						radius = radius_IoMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "IoMoon.3d created" << endl;
+
+						filename = "TitanMoon.3d";
+						radius = radius_TitanMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "TitanMoon.3d created" << endl;
+
+						filename = "EnceladusMoon.3d";
+						radius = radius_EnceladusMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "EnceladusMoon.3d created" << endl;
+
+						filename = "TitaniaMoon.3d";
+						radius = radius_TitaniaMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "TitaniaMoon.3d created" << endl;
+
+						filename = "OberonMoon.3d";
+						radius = radius_OberonMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "OberonMoon.3d created" << endl;
+
+						filename = "UmbrielMoon.3d";
+						radius = radius_UmbrielMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "UmbrielMoon.3d created" << endl;
+
+						filename = "ArielMoon.3d";
+						radius = radius_ArielMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "ArielMoon.3d created" << endl;
+
+						filename = "MirandaMoon.3d";
+						radius = radius_MirandaMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "MirandaMoon.3d created" << endl;
+
+						filename = "TritonMoon.3d";
+						radius = radius_TritonMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "TritonMoon.3d created" << endl;
+
+						filename = "ProteusMoon.3d";
+						radius = radius_ProteusMoon;
+						slices = 30;
+						stacks = 30;
+						printSphere3d();
+						cout << "ProteusMoon.3d created" << endl;
+
+						do {
+							cout << "Do you wish adding more Planets, Moons? Type yes or no" << endl;
+							getline(cin, answer);
+							if (answer == "yes" || answer == "YES") {
+								cout << "Type filename.3d please" << endl;
+								getline(cin, filename);
+								cout << "Type radius please" << endl;
+								getline(cin, answer2);
+								radius = stof(answer2);
+								cout << "Type slices please" << endl;
+								getline(cin, answer2);
+								slices = stof(answer2);
+								cout << "Type stacks please" << endl;
+								getline(cin, answer2);
+								stacks = stof(answer2);
+								printSphere3d();
+								cout << filename << " created" << endl;
+							}
+						} while (answer == "yes" || answer == "YES");
+						cout << "GoodBye!!" << endl;
+
+			}
+			else { cout << "Operation not valid!! Try Again!" << endl; }
+
+		}
+	}while (true);
 
 	return 1;
 }
