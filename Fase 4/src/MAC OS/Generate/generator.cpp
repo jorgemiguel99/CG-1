@@ -814,14 +814,10 @@ void printCilinderFigure3d() {
 }
 
 void printConeFigure3d() {
-	ofstream cone;
-	cone.open(filename.c_str());
+  ofstream cone;
+  cone.open(filename.c_str());
 	float ratio = height / radius;
-
 	for (int i = 0; i < slices; i++) {
-
-		float tx = i / slices;
-
 		float alpha = i * (2 * _PI_) / slices;
 		float beta = (2 * _PI_) / slices;
 
@@ -835,25 +831,22 @@ void printConeFigure3d() {
 		float z2 = radius*cos(alpha + beta);
 
 		// Base
-		cone << "0.0 " << "0.0 " << "0.0" << endl; // vertex
-		cone << "0.0 " << "-1.0 " << "0.0" << endl; // normal
-		cone << "0.5 " << "0.5 " << endl; // texture
+    cone << "0.0 0.0 0.0" << endl; // vertex
+    cone << "0.0 -1.0 0.0" << endl; // normal
+    cone << "0.5 0.5" << endl; // texture
 
-		cone << x2 << " " << y2 << " " << z2 << endl; // vertex
-		cone << "0.0 " << "-1.0 " << "0.0" << endl; // normal
-		cone <<  0.5 + sin(alpha + beta) * 0.5 << " " << 0.5 + cos(alpha + beta) * 0.5 << endl; // texture
+    cone << x2 << " " << y2 << " " << z2 << endl;
+    cone << "0.0 -1.0 0.0" << endl;
+    cone << 0.5f + sin(alpha + beta) * 0.5f << " " << 0.5f + cos(alpha + beta) * 0.5f << endl;
 
-		cone << x1 << " " << y1 << " " << z1 << endl; // vertex
-		cone << "0.0 " << "-1.0 " << "0.0" << endl; // normal
-		cone <<  0.5 + sin(alpha) * 0.5 << " " << 0.5 + cos(alpha) * 0.5 << endl; // texture
+    cone << x1 << " " << y1 << " " << z1 << endl;
+    cone << "0.0 -1.0 0.0" << endl;
+    cone << 0.5f + sin(alpha) * 0.5f << " " << 0.5f + cos(alpha) * 0.5f;
 
 		float radiusBot = radius;
 		float radiusTop;
 
 		for (int j = 0; j < stacks; j++, radiusBot = radiusTop) {
-
-			float ty = j / stacks;
-
 			// Sides
 			float y = j * (height / stacks);
 			float yn = (j + 1) * (height / stacks);
@@ -876,49 +869,120 @@ void printConeFigure3d() {
 			float x4 = radiusTop*sin(alpha + beta);
 			float y4 = yn;
 			float z4 = radiusTop*cos(alpha + beta);
-
+			float v1[3], v2[3],v[3];
 			if (j == stacks - 1) { // top slice
-				cone << x3 << " " << y3 << " " << z3 << endl; // vertex
-				cone << sin(alpha) << " 0.0 " << cos(alpha) << endl; // normal
-				cone << "0.5 " << "0.5 " << endl; // texture
+        cone << x3 << " " << y3<< " " << z3 << endl;
+        cone << sin(alpha) << " 0.0 " << cos(alpha) << endl;
+        cone << "0.5 0.5" << endl;
 
-				cone << x1 << " " << y1 << " " << z1 << endl; // vertex
-				cone << sin(alpha) << " 0.0 " << cos(alpha) << endl; // normal
-				cone << sin(alpha) << " " << cos(alpha) << endl; // texture
+        cone << x1 << " " << y1 << " " << z1 << endl;
+        cone << sin(alpha) << " 0.0 " << cos(alpha) << endl;
+        cone << sin(alpha) << " " << cos(alpha) << endl;
 
-				cone << x2 << " " << y2 << " " << z2 << endl; // vertex
-				cone << sin(alpha + beta) << " 0.0 " << cos(alpha + beta) << endl; // normal
-				cone << sin(alpha + beta) << " " << cos(alpha + beta) << endl; // texture
+        cone << x2 << " " << y2 << " " << z2 << endl;
+        cone << sin(alpha + beta) << " 0.0 " << cos(alpha + beta) << endl;
+        cone << sin(alpha + beta) << " " << cos(alpha + beta) << endl;
 			}
 			else {
-				cone << x1 << " " << y1 << " " << z1 << endl; // vertex
-				cone << sin(alpha) << " 0.0 " << cos(alpha) << endl; // normal
-				cone << i+1 << " " << j << endl; // texture
+        // 1º Triangle
+        v1[0]=x2-x1;
+        v1[1]=y2-y1;
+        v1[2]=z2-z1;
 
-				cone << x2 << " " << y2 << " " << z2 << endl; // vertex
-				cone << sin(alpha + beta) << " 0.0 " << cos(alpha + beta) << endl; // normal
-				cone << i+1 << " " << j+1 << endl; // texture
+        v2[0]=x3-x1;
+        v2[1]=y3-y1;
+				v2[2]=z3-z1;
 
-				cone << x3 << " " << y3 << " " << z3 << endl; // vertex
-				cone << sin(alpha) << " 0.0 " << cos(alpha) << endl; // normal
-				cone << i << " " << j << endl; // texture
+				cross(v2, v1, v);
+				normalize(v);
 
-				cone << x2 << " " << y2 << " " << z2 << endl; // vertex
-				cone << sin(alpha + beta) << " 0.0 " << cos(alpha + beta) << endl; // normal
-				cone << i << " " << j+1 << endl; // texture
+        cone << x1 << " " << y1 << " " << z1 << endl;
+        cone << v[0] << " " << v[1] << " " << v[2] << endl;
+        cone << j+1 << " " << i << endl;
 
-				cone << x3 << " " << y3 << " " << z3 << endl; // vertex
-				cone << sin(alpha) << " 0.0 " << cos(alpha) << endl; // normal
-				cone << i+1 << " " << j << endl; // texture
+        v1[0]=x3-x2;
+        v1[1]=y3-y2;
+        v1[2]=z3-z2;
 
-				cone << x4<< " " << y4 << " " << z4 << endl; // vertex
-				cone << sin(alpha + beta) << " 0.0 " << cos(alpha + beta) << endl; // normal
-				cone << i+1 << " " << j+1 << endl; // texture
+        v2[0]=x1-x2;
+        v2[1]=y1-y2;
+				v2[2]=z1-z2;
+
+				cross(v2, v1, v);
+				normalize(v);
+
+        cone << x2 << " " << y2 << " " << z2 << endl;
+        cone << v[0] << " " << v[1] << " " << v[2] << endl;
+        cone << j+1 << " " << i+1 << endl;
+
+        v1[0]=x1-x3;
+        v1[1]=y1-y3;
+        v1[2]=z1-z3;
+
+        v2[0]=x2-x3;
+        v2[1]=y2-y3;
+				v2[2]=z2-z3;
+
+				cross(v2, v1, v);
+				normalize(v);
+
+        cone << x3 << " " << y3 << " " << z3 << endl;
+        cone << v[0] << " " << v[1] << " " << v[2] << endl;
+        cone << j << " " << i << endl;
+
+        // 2º Triangle
+
+        cone << x3 << " " << y3 << " " << z3 << endl;
+        cone << v[0] << " " << v[1] << " " << v[2] << endl;
+        cone << j << " " << i+1 << endl;
+
+        v1[0]=x3-x2;
+        v1[1]=y3-y2;
+        v1[2]=z3-z2;
+
+        v2[0]=x4-x2;
+        v2[1]=y4-y2;
+        v2[2]=z4-z2;
+
+				cross(v1, v2, v);
+				normalize(v);
+
+        cone << x2 << " " << y2 << " " << z2 << endl;
+        cone << v[0] << " " << v[1] << " " << v[2] << endl;
+        cone << j+1 << " " << i << endl;
+
+        v1[0]=x4-x3;
+        v1[1]=y4-y3;
+        v1[2]=z4-z3;
+
+        v2[0]=x2-x3;
+        v2[1]=y2-y3;
+        v2[2]=z2-z3;
+
+				cross(v1, v2, v);
+				normalize(v);
+
+        cone << x4 << " " << y4 << " " << z4 << endl;
+        cone << v[0] << " " << v[1] << " " << v[2] << endl;
+        cone << j+1 << " " << i+1 << endl;
+
+        v1[0]=x2-x4;
+        v1[1]=y2-y4;
+        v1[2]=z2-z4;
+
+        v2[0]=x3-x4;
+        v2[1]=y3-y4;
+        v2[2]=z3-z4;
+
+				cross(v1, v2, v);
+				normalize(v);
+
+
 			}
 		}
 	}
-	cone << "End" << endl;
-	cone.close();
+  cone << "End" << endl;
+  cone.close();
 }
 
 // Main function
