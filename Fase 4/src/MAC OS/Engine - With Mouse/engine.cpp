@@ -86,16 +86,11 @@ vector<string> split(string str, char delimiter) {
 
 int main(int argc, char **argv) {
   string operationLine, operation;
-  /*
-	cout << "Insert the xml file name" << endl;
 
+	cout << "Insert the xml file name" << endl;
 	getline(cin, operationLine);
-	char* xmlName = (char*)malloc((5 + operationLine.size())*sizeof(char)); xmlName[0] = '\0';
-	strcat(xmlName, PathXml);
-	strcat(xmlName, operationLine.data());
-	*/
-    //sceneData = readXML("earth.xml",&nBuffers,&imageCount);
-	sceneData = readXML("SolarSystem.xml",&nBuffers,&imageCount);
+
+	sceneData = readXML(operationLine.data(),&nBuffers,&imageCount);
 	if (!sceneData) { printf("Failed to read XML\n"); return 0; }
 	else
 	 printf("Loading file data\n");
@@ -148,7 +143,6 @@ int main(int argc, char **argv) {
   //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-	//ilInit();
   glewInit();
   initGl();
   initVBOS();
@@ -179,6 +173,7 @@ void initGl () {
 	//Light
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
+	//glDisable(GL_COLOR_MATERIAL); // to enable light materials
 
 // Texturas.
 	glEnable(GL_TEXTURE_2D);
@@ -238,17 +233,6 @@ void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 	for (int i = 0; i < (int)group->model_file->size(); i++) {
 
 		if ( i < (int)group->model_texture->size()) {
-
-		/*
-			char* texName = (char*)malloc((5 + group->model_texture->at(i).size())*sizeof(char)); texName[0] = '\0';
-			strcat(texName,PathTextures);
-			strcat(texName,group->model_texture->at(i).data());
-			*/
-		//	printf("\n%s\n", group->model_texture->at(i).data());
-
-		//	free(texName);
-
-
 			// Textures MAC OS X
 		  cv::Mat img = cv::imread(group->model_texture->at(i).data());
 		  cols        = img.cols;
@@ -261,17 +245,7 @@ void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cols, rows, 0, GL_BGR, GL_UNSIGNED_BYTE, img.data);
 
-			/*
-			char* pointsfile = (char*)malloc((5 + group->model_file->at(i).size())*sizeof(char));  pointsfile[0] = '\0';
-			strcat(pointsfile,Path3d);
-			strcat(pointsfile, group->model_file->at(i).data());
-			*/
-	//		printf("\n%s\n", group->model_file->at(i).data());
-
-
 			vector<float> filePoints = read3Dfile(group->model_file->at(i).data());
-			//free(pointsfile);
-
 
 			vector<float>** vnt = dividePoints(filePoints);
 
@@ -296,26 +270,12 @@ void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 			(*bufferIndex)++;
 		}
 		else {
-			// Non texture model
-			/*
-			char* pointsfile = (char*)malloc((5 + group->model_file->at(i).size())*sizeof(char));  pointsfile[0] = '\0';
-			strcat(pointsfile, Path3d);
-			strcat(pointsfile, group->model_file->at(i).data());
-			*/
-	//		printf("\n%s\n", group->model_file->at(i).data());
-
 
 			vector<float> filePoints = read3Dfile(group->model_file->at(i).data());
-			//free(pointsfile);
 
 			vector<float>** vnt = dividePoints(filePoints);
 			vector<float> points = *vnt[0];
 
-			/*
-			float* vboVerticeBuffer = (float*)malloc(points.size() * sizeof(float));
-			for (int p = 0; p < (int)points.size(); p++)
-				vboVerticeBuffer[p] = points[p];
-				*/
 			vertexCount[*bufferIndex] = points.size() / 3;
 			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount[*bufferIndex] * 3, points.data(), GL_STATIC_DRAW);
@@ -410,6 +370,25 @@ void renderTree(node_group* node) {
 		float angle = t * 360 / node->rotate_period->at(0);
 
 		glRotatef(angle, node->rotate_period->at(1), node->rotate_period->at(2), node->rotate_period->at(3));
+	}
+
+	if (node->model_coloured_specular->size() > 0) {
+		GLfloat lightColor[] = { node->model_coloured_specular->at(0), node->model_coloured_specular->at(1), node->model_coloured_specular->at(2), 1.0f };
+		//Specular light component
+		glLightfv(GL_LIGHT0, GL_SPECULAR, lightColor);
+
+	}
+	if (node->model_coloured_diffuse->size() > 0) {
+		GLfloat lightColor[] = { node->model_coloured_diffuse->at(0), node->model_coloured_diffuse->at(1), node->model_coloured_diffuse->at(2), 1.0f };
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
+	}
+	if (node->model_coloured_emissive->size() > 0) {
+		GLfloat lightColor[] = { node->model_coloured_emissive->at(0), node->model_coloured_emissive->at(1), node->model_coloured_emissive->at(2), 1.0f };
+		glLightfv(GL_LIGHT0, GL_EMISSION, lightColor);
+	}
+	if (node->model_coloured_ambient->size() > 0) {
+		GLfloat lightColor[] = { node->model_coloured_ambient->at(0), node->model_coloured_ambient->at(1), node->model_coloured_ambient->at(2), 1.0f };
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lightColor);
 	}
 
 	for (int i = 0; i < (int)node->vboIndex->size(); i++) {
