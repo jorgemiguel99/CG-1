@@ -1,12 +1,9 @@
-
-
-
 #include "read.h"
 
 /* MAC INCLUDES */
-//#include <GLUT/glut.h>    
-//#include <OpenGL/glu.h>   
-//#include <OpenGL/gl.h>    
+//#include <GLUT/glut.h>
+//#include <OpenGL/glu.h>
+//#include <OpenGL/gl.h>
 
 /* tinyxml is included in file transformationTree.h
 MAC -> Change location path
@@ -30,9 +27,11 @@ void initGl();
 void initVBOS();
 void changeSize(int, int);
 void renderScene(void);
-void keyPressed(unsigned char, int, int);
 void newMenu (int id_op);
+void keyPressed(unsigned char, int, int);
 void keyboardExtra(int key_code, int x, int y);
+void processMouseButtons(int, int, int, int);
+void processMouseMotion(int, int);
 void bufferData(node_group* group, int* bufferIndex,int* imageIndex);
 
 /* scene is a structure with xml group information*/
@@ -40,6 +39,8 @@ scene* sceneData;
 
 // Global Variables to Transformations
 float px = 0.0, py = 100.0, pz = 100.0;
+int startX, startY, tracking = 0;
+int alpha = 0, beta = 0, r = 50;
 
 float rotate_y = 0;
 float rotate_x = 0;
@@ -89,13 +90,13 @@ int main(int argc, char **argv) {
 	strcat(xmlName, operationLine.data());
 	*/
     sceneData = readXML("earth.xml",&nBuffers,&imageCount);
-	
+
 	if (!sceneData) { printf("Failed to read XML\n"); return 0; }
 	else
 	 printf("Loading file data\n");
 
 	  //testTree(sceneData);
-				
+
   glutInit(&argc, argv);
 
   // Sets up a double buffer with RGBA components and a depth component
@@ -108,7 +109,7 @@ int main(int argc, char **argv) {
   glutInitWindowPosition(0, 0);
 
   // Creates a window using internal glut functionality
-  glutCreateWindow("Solar System - Stage 2");
+  glutCreateWindow("Solar System - Stage 4");
 
   // Callback function responsible for the window's contents.
   glutDisplayFunc(renderScene);
@@ -116,41 +117,32 @@ int main(int argc, char **argv) {
   glutReshapeFunc(changeSize);
   // Function called when the event queue is empty.
   glutIdleFunc(renderScene);
-  // Function called when a key is pressed.
-  glutKeyboardFunc(keyPressed);
-  glutSpecialFunc(keyboardExtra);
 
-  //menu
-  glutCreateMenu(newMenu);
-  glutAddMenuEntry("Increase Translate x value",'j');
-  glutAddMenuEntry("Increase Translate y value",'k');
-  glutAddMenuEntry("Increase Translate z value",'l');
-  glutAddMenuEntry("Decrease Translate x value",'q');
-  glutAddMenuEntry("Decrease Translate y value",'w');
-  glutAddMenuEntry("Decrease Translate z value",'e');
-  glutAddMenuEntry("GL_FRONT & GL_FILL",'z');
-  glutAddMenuEntry("GL_FRONT & GL_POINT",'x');
-  glutAddMenuEntry("GL_FRONT & GL_FILL",'c');
-  glutAddMenuEntry("GL_BACK & GL_LINE",'v');
-  glutAddMenuEntry("GL_BACK & GL_POINT",'b');
-  glutAddMenuEntry("GL_BACK & GL_FILL",'n');
-  glutAddMenuEntry("GL_FRONT_AND_BACK & GL_LINE",'m');
-  glutAddMenuEntry("GL_FRONT_AND_BACK & GL_POINT",'o');
-  glutAddMenuEntry("GL_FRONT_AND_BACK & GL_FILL",'p');
-  glutAddMenuEntry("Change Colour to Default",'0');
-  glutAddMenuEntry("Change Colour to Red",'1');
-  glutAddMenuEntry("Change Colour to Blue",'2');
-  glutAddMenuEntry("Change Colour to Green",'3');
-  glutAddMenuEntry("Change Colour to Orange",'4');
-  glutAddMenuEntry("Change Colour to Pink",'5');
-  glutAddMenuEntry("Change Colour to Yellow",'6');
-  glutAddMenuEntry("Change Colour to Bright Blue",'7');
-	glutAddMenuEntry("Stop Translation around Sun",'s');
-	glutAddMenuEntry("Restart Translation around Sun",'r');
-  //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
-
-  
-
+	// Function called when a key is pressed.
+	glutKeyboardFunc(keyPressed);
+	glutSpecialFunc(keyboardExtra);
+	// mouse callbacks
+	glutMouseFunc(processMouseButtons);
+	glutMotionFunc(processMouseMotion);
+	//menu
+	glutCreateMenu(newMenu);
+	glutAddMenuEntry("Increase Translate x value",'j');
+	glutAddMenuEntry("Increase Translate y value",'k');
+	glutAddMenuEntry("Increase Translate z value",'l');
+	glutAddMenuEntry("Decrease Translate x value",'q');
+	glutAddMenuEntry("Decrease Translate y value",'w');
+	glutAddMenuEntry("Decrease Translate z value",'e');
+	glutAddMenuEntry("GL_FRONT & GL_FILL",'z');
+	glutAddMenuEntry("GL_FRONT & GL_POINT",'x');
+	glutAddMenuEntry("GL_FRONT & GL_FILL",'c');
+	glutAddMenuEntry("GL_BACK & GL_LINE",'v');
+	glutAddMenuEntry("GL_BACK & GL_POINT",'b');
+	glutAddMenuEntry("GL_BACK & GL_FILL",'n');
+	glutAddMenuEntry("GL_FRONT_AND_BACK & GL_LINE",'m');
+	glutAddMenuEntry("GL_FRONT_AND_BACK & GL_POINT",'o');
+	glutAddMenuEntry("GL_FRONT_AND_BACK & GL_FILL",'p');
+	//button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	ilInit();
   glewInit();
@@ -160,7 +152,7 @@ int main(int argc, char **argv) {
   // enter GLUT's main cycle.
 	glutMainLoop();
   /*
- 
+
  else cout << "Try again! Amount of arguments incorrect" << endl;
 }
 else cout << "Try again! Use: draw <filename.3d>" << endl;
@@ -223,24 +215,24 @@ void initVBOS() {
 
 	buffer =(GLuint*) malloc(Nb * sizeof(GLuint));
 	vertexCount = (GLuint*)malloc(Nb * sizeof(GLuint));
-	glGenBuffers(Nb, buffer); 
+	glGenBuffers(Nb, buffer);
 
-	
+
 	texID = (GLuint*)malloc(imageCount * sizeof(GLuint));
 	glGenTextures(imageCount, texID);
 
 
-	int bufferIndex = 0,imageIndex = 0; 
+	int bufferIndex = 0,imageIndex = 0;
 	node_group* root = sceneData->transformation_tree;
 	bufferData(root,&bufferIndex,&imageIndex);
-	
+
 }
 
 /* Buffer models points from files to vbos*/
-void bufferData(node_group* group, int* bufferIndex, int* imageIndex){ 
+void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 
 	for (int i = 0; i < (int)group->model_file->size(); i++) {
-	
+
 		if ( i < (int)group->model_texture->size()) {
 			unsigned int t;
 			ilGenImages(1, &t);
@@ -251,7 +243,7 @@ void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 			strcat(texName,group->model_texture->at(i).data());
 			*/
 		//	printf("\n%s\n", group->model_texture->at(i).data());
-			
+
 			ilLoadImage((ILstring)group->model_texture->at(i).data());
 		//	free(texName);
 
@@ -283,7 +275,7 @@ void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 			vector<float>** vnt = dividePoints(filePoints);
 
 			vertexCount[*bufferIndex] =  vnt[0]->size() / 3;
-			
+
 			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vnt[0]->size()  , vnt[0]->data(), GL_DYNAMIC_DRAW);
 			vertexCount[*bufferIndex] = vnt[0]->size() / 3;
@@ -330,7 +322,7 @@ void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 			(*bufferIndex)++;
 		}
 	}
-	
+
 	for (int i = 0; i < group->childIndex; i++) {
 		bufferData(group->child[i], bufferIndex,imageIndex);
 	}
@@ -393,7 +385,7 @@ void renderTree(node_group* node) {
 		float res[3];
 		renderCatmullRomCurve(node->p, node->pointIndex);
 		getGlobalCatmullRomPoint(t, res,node->p,node->pointIndex);
-	
+
 		glTranslatef(res[0], res[1], res[2]);
 	}
 	else if (node->translate->size() > 0) {
@@ -422,7 +414,7 @@ void renderTree(node_group* node) {
 	for (int i = 0; i < (int)node->vboIndex->size(); i++) {
 		if (i < (int)node->model_texture->size() ) {
 
-			glBindTexture(GL_TEXTURE_2D, texID[node->imageIndex->at(i)]); 
+			glBindTexture(GL_TEXTURE_2D, texID[node->imageIndex->at(i)]);
 			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i)]);
 			glVertexPointer(3, GL_FLOAT, 0, 0);
 
@@ -461,9 +453,9 @@ void renderScene(void) {
 	glLoadIdentity();
 
 
-	for (int i = 0; i < sceneData->light_counter; i++) 
+	for (int i = 0; i < sceneData->light_counter; i++)
 		glLightfv(GL_LIGHT0, GL_POSITION, sceneData->lights[i]->position);
-	
+
 	//printf("Position light y:%f\n", sceneData->lights->at(0)->position[1]);
 	//printf("type %s\n", sceneData->lights->at(0)->light_type);
 
@@ -508,30 +500,6 @@ void keyPressed(unsigned char key, int x, int y) {
 			else if (key == 'h') py -= 50;
 			else if (key == 'i') pz += 50;
 			else if (key == 'u') pz += 50;
-			else if (key == '0'){ // DEFAULT IS WHITE
-          glColor3f(1.0f,1.0f,1.0f);
-      }
-      else if (key == '1'){ // RED
-          glColor3f(1.0f,0.0f,0.0f);
-      }
-      else if (key == '2'){ // BLUE
-          glColor3f(0.0f,0.0f,1.0f);
-      }
-      else if (key == '3'){ // GREEN
-          glColor3f(0.0f,1.0f,0.0f);
-      }
-      else if (key == '4'){ // ORANGE
-          glColor3f(1.0f,0.5f,0.0f);
-      }
-      else if (key == '5'){ // PINK
-          glColor3f(1.0f,0.5f,0.5f);
-      }
-      else if (key == '6'){ // YELLOW
-          glColor3f(1.0f,1.0f,0.0f);
-      }
-      else if (key == '7'){ // BRIGHT BLUE
-          glColor3f(0.0f,1.0f,1.0f);
-      }
       else if (key==27) exit(-1);
 
       //when camera moves
@@ -557,3 +525,67 @@ void keyboardExtra(int key_code, int x, int y) {
 	glutPostRedisplay();
 }
 
+void processMouseButtons(int button, int state, int xx, int yy)
+{
+	if (state == GLUT_DOWN)  {
+		startX = xx;
+		startY = yy;
+		if (button == GLUT_LEFT_BUTTON)
+			tracking = 1;
+		else if (button == GLUT_RIGHT_BUTTON)
+			tracking = 2;
+		else
+			tracking = 0;
+	}
+	else if (state == GLUT_UP) {
+		if (tracking == 1) {
+			alpha += (xx - startX);
+			beta += (yy - startY);
+		}
+		else if (tracking == 2) {
+
+			r -= yy - startY;
+			if (r < 3)
+				r = 3.0;
+		}
+		tracking = 0;
+	}
+}
+
+
+void processMouseMotion(int xx, int yy)
+{
+	int deltaX, deltaY;
+	int alphaAux, betaAux;
+	int rAux;
+
+	if (!tracking)
+		return;
+
+	deltaX = xx - startX;
+	deltaY = yy - startY;
+
+	if (tracking == 1) {
+
+		alphaAux = alpha + deltaX;
+		betaAux = beta + deltaY;
+
+		if (betaAux > 85.0)
+			betaAux = 85.0;
+		else if (betaAux < -85.0)
+			betaAux = -85.0;
+
+		rAux = r;
+	}
+	else if (tracking == 2) {
+
+		alphaAux = alpha;
+		betaAux = beta;
+		rAux = r - deltaY;
+		if (rAux < 50)
+			rAux = 50;
+	}
+	px = rAux * sin(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
+  pz = rAux * cos(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
+	py = rAux *	sin(betaAux * 3.14 / 180.0);
+}
