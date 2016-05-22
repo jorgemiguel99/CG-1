@@ -218,7 +218,7 @@ void changeSize(int w, int h) {
 
 
 void initVBOS() {
-	int Nb = nBuffers + imageCount * 3;
+	int Nb = nBuffers * 2 + imageCount * 3; // nBuffers = nModelos sem textura
 
 	buffer =(GLuint*) malloc(Nb * sizeof(GLuint));
 	vertexCount = (GLuint*)malloc(Nb * sizeof(GLuint));
@@ -306,6 +306,10 @@ void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexCount[*bufferIndex] * 3, points.data(), GL_STATIC_DRAW);
 			group->vboIndex->push_back(*bufferIndex);
+			(*bufferIndex)++;
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[*bufferIndex]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vnt[1]->size(), vnt[1]->data(), GL_DYNAMIC_DRAW);
 			(*bufferIndex)++;
 		}
 	}
@@ -440,6 +444,10 @@ void renderTree(node_group* node) {
 
 			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i)]);
 			glVertexPointer(3, GL_FLOAT, 0, 0);
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i) + 1]);
+			glNormalPointer(GL_FLOAT, 0, 0);
+
 			glDrawArrays(GL_TRIANGLES, 0, vertexCount[node->vboIndex->at(i)]);
 
 			glColor3f(1, 1, 1);
