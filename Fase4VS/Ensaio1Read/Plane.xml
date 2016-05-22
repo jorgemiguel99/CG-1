@@ -1,0 +1,14 @@
+<scene>
+ <!-- Central Light Source-->
+ <lights>
+    <light type="POINT" posX=8 posY=8 posZ=8 />
+ </lights>
+ <group>
+    <group>
+      <models>
+	 <model file="fase4plane.3d" specR=0.2 specG=1.0 specB=1.0 ambR=0.2 ambG=0 ambB=1.0/> 
+	 <!-- <model file="fase4plane.3d" texture="phobosMoon.jpg"/> -->
+      </models>
+    </group>
+ </group>
+</scene>

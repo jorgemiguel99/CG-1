@@ -15,19 +15,19 @@ MAC -> Change location path
 */
 
 //windows includeS
-#include <IL/il.h>
-#pragma comment(lib, "devil.lib")
-
 #include <windows.h>
 #include <Glew\glew.h>
+#pragma comment(lib,"glew32.lib")
+
 #include <GL/glut.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
 
-#pragma comment(lib,"glew32.lib")
 
+#include <IL/il.h>
+#pragma comment(lib, "devil.lib")
 
-// Declared here and implemented after main in order to better organization of the code
+// Declared here and implemented after main in order to better organize the code
 void initGl();
 void initVBOS();
 void changeSize(int, int);
@@ -90,12 +90,6 @@ int main(int argc, char **argv) {
 	cout << "Insert the xml file name" << endl;
 
 	getline(cin, operationLine);
-	/*
-	char* xmlName = (char*)malloc((5 + operationLine.size())*sizeof(char)); xmlName[0] = '\0';
-	strcat(xmlName, PathXml);
-	strcat(xmlName, operationLine.data());
-	*/
-    //sceneData = readXML("earth.xml",&nBuffers,&imageCount);
 	sceneData = readXML(operationLine.data(),&nBuffers,&imageCount);
 	if (!sceneData) { printf("Failed to read XML\n"); return 0; }
 	else
@@ -154,6 +148,7 @@ int main(int argc, char **argv) {
   glewInit();
   initGl();
   initVBOS();
+  
 
   // enter GLUT's main cycle.
 	glutMainLoop();
@@ -181,10 +176,10 @@ void initGl () {
 	//Light
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	//glDisable(GL_COLOR_MATERIAL); // to enable light materials
 
 // Texturas.
 	glEnable(GL_TEXTURE_2D);
+
 }
 
 void changeSize(int w, int h) {
@@ -208,6 +203,9 @@ void changeSize(int w, int h) {
 
 	// return to the model view matrix mode
 	glMatrixMode(GL_MODELVIEW);
+
+
+
 }
 
 
@@ -401,25 +399,28 @@ void renderTree(node_group* node) {
 
 		glRotatef(angle, node->rotate_period->at(1), node->rotate_period->at(2), node->rotate_period->at(3));
 	}
+	// Reset or set Material Components
 
 	if (node->model_coloured_specular->size() > 0) {
-		GLfloat lightColor[] = { node->model_coloured_specular->at(0), node->model_coloured_specular->at(1), node->model_coloured_specular->at(2), 1.0f };
+		GLfloat lightColor[] = { node->model_coloured_specular->at(0), node->model_coloured_specular->at(1), node->model_coloured_specular->at(2), 0 };
 		//Specular light component
-		glLightfv(GL_LIGHT0, GL_SPECULAR, lightColor);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, lightColor);	
+	} 
 
-	}
 	if (node->model_coloured_diffuse->size() > 0) {
 		GLfloat lightColor[] = { node->model_coloured_diffuse->at(0), node->model_coloured_diffuse->at(1), node->model_coloured_diffuse->at(2), 1.0f };
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, lightColor);
 	}
+
 	if (node->model_coloured_emissive->size() > 0) {
 		GLfloat lightColor[] = { node->model_coloured_emissive->at(0), node->model_coloured_emissive->at(1), node->model_coloured_emissive->at(2), 1.0f };
-		glLightfv(GL_LIGHT0, GL_EMISSION, lightColor);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, lightColor);
 	}
+
 	if (node->model_coloured_ambient->size() > 0) {
 		GLfloat lightColor[] = { node->model_coloured_ambient->at(0), node->model_coloured_ambient->at(1), node->model_coloured_ambient->at(2), 1.0f };
-		glLightfv(GL_LIGHT0, GL_AMBIENT, lightColor);
-	}
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, lightColor);
+	} 
 
 
 	for (int i = 0; i < (int)node->vboIndex->size(); i++) {
@@ -467,12 +468,10 @@ void renderScene(void) {
 	// Set the camera.
 	glLoadIdentity();
 
-
 	for (int i = 0; i < sceneData->light_counter; i++)
 		glLightfv(GL_LIGHT0, GL_POSITION, sceneData->lights[i]->position);
+	glEnable(GL_LIGHT0);
 
-	//printf("Position light y:%f\n", sceneData->lights->at(0)->position[1]);
-	//printf("type %s\n", sceneData->lights->at(0)->light_type);
 
 	gluLookAt(px, py, pz,0.0,0.0,-1.0,0.0f,1.0f,0.0f);
 
@@ -484,6 +483,7 @@ void renderScene(void) {
 	glPushMatrix();
 	renderTree(sceneData->transformation_tree);
 	glPopMatrix();
+
 
 	// End of frame.
 	glutSwapBuffers();

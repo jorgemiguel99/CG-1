@@ -1,0 +1,43 @@
+﻿  engine.cpp
+  read.cpp
+read.cpp(109): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+read.cpp(110): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+read.cpp(111): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+read.cpp(106): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(552): note: see declaration of 'strdup'
+read.cpp(131): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+read.cpp(140): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+read.cpp(141): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+read.cpp(142): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+read.cpp(154): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(155): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(156): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(165): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(166): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(167): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(168): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(171): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(172): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(173): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(174): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(183): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(184): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(185): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(205): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(206): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(207): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(210): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(211): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(212): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(215): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(216): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(217): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(220): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(221): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+read.cpp(222): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating code
+  1 of 729 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Ensaio1Read.vcxproj -> C:\Users\Gustavo\Documents\Visual Studio 2015\Projects\Fase4VS\Release\Ensaio1Read.exe

@@ -109,7 +109,8 @@ scene* readXML(const char* f, int* vboNbuffers, int* vboNbuffersTextures) {
 		light->position[0] = (atof(pLight->Attribute("posX")));
 		light->position[1] = (atof(pLight->Attribute("posY")));
 		light->position[2] = (atof(pLight->Attribute("posZ")));
-		light->position[4] = (atof(pLight->Attribute("posZ")));
+		light->position[3] = 0;
+		//if(strcmp(typeL.data(),"POINT") == 0 ) light->position[3] = 1; else light->position[3] = 0;
 
 
 		sceneData->lights[sceneData->light_counter++] = light;
@@ -143,6 +144,8 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers,int* ima
 				node->p[node->pointIndex][0] = x;
 				node->p[node->pointIndex][1] = y;
 				node->p[node->pointIndex][2] = z;
+				node->p[node->pointIndex][3] = 1;
+
 
 				pPoint = pPoint->NextSiblingElement("point");
 				node->pointIndex++;

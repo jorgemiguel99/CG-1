@@ -1,0 +1,13 @@
+<scene>
+ <!-- Central Light Source-->
+ <lights>
+    <light type="POINT" posX=10 posY=0 posZ=0 />
+ </lights>
+ <group>
+      <colour R=255 G=165 B=0/> 
+      <models>
+        <model file="planeFigure.3d"/>
+      </models>
+  </group>
+</scene>
+

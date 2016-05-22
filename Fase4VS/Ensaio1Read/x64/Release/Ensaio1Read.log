@@ -1,0 +1,37 @@
+﻿  engine.cpp
+c:\users\gustavo\documents\visual studio 2015\projects\fase4vs\ensaio1read\read.h(51): warning C4091: 'extern ': ignored on left of 'light_source' when no variable is declared
+c:\users\gustavo\documents\visual studio 2015\projects\fase4vs\ensaio1read\read.h(78): warning C4091: 'extern ': ignored on left of 'node_group' when no variable is declared
+c:\users\gustavo\documents\visual studio 2015\projects\fase4vs\ensaio1read\read.h(83): warning C4091: 'extern ': ignored on left of 'scene' when no variable is declared
+engine.cpp(68): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+engine.cpp(69): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+engine.cpp(218): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+engine.cpp(224): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'double'
+engine.cpp(242): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+engine.cpp(243): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+engine.cpp(263): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+engine.cpp(264): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+engine.cpp(272): warning C4267: '=': conversion from 'size_t' to 'GLuint', possible loss of data
+engine.cpp(276): warning C4267: '=': conversion from 'size_t' to 'GLuint', possible loss of data
+engine.cpp(294): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+engine.cpp(295): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+engine.cpp(308): warning C4267: '=': conversion from 'size_t' to 'GLuint', possible loss of data
+  tinystr.cpp
+  tinyxml.cpp
+  tinyxmlerror.cpp
+  tinyxmlparser.cpp
+  read.cpp
+c:\users\gustavo\documents\visual studio 2015\projects\fase4vs\ensaio1read\read.h(51): warning C4091: 'extern ': ignored on left of 'light_source' when no variable is declared
+c:\users\gustavo\documents\visual studio 2015\projects\fase4vs\ensaio1read\read.h(78): warning C4091: 'extern ': ignored on left of 'node_group' when no variable is declared
+c:\users\gustavo\documents\visual studio 2015\projects\fase4vs\ensaio1read\read.h(83): warning C4091: 'extern ': ignored on left of 'scene' when no variable is declared
+read.cpp(66): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+read.cpp(97): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(552): note: see declaration of 'strdup'
+LINK : fatal error LNK1104: cannot open file 'devil.lib'
