@@ -286,10 +286,9 @@ float getBezierPointTangents(float u, float v, vector<float> indices, int coord,
 }
 
 
-void prepareTeapot() {
+void printTeapot() {
 	ofstream teapot;
 	teapot.open("teapot.3d");
-	initVBO();
 	float res[3], normU[3], normV[3], norm[3]; //X,Y,Z
 	float tesselation = 0.1;
 
