@@ -4,10 +4,10 @@
     <light type="POINT" posX=0 posY=10 posZ=0 />
  </lights>
  <group>
- <!-- Solar System center -->	
+ <!-- Solar System center -->
   <!-- SUN -->
   <group>
-      <colour R=255 G=165 B=0/> 
+      <colour R=255 G=165 B=0/>
       <rotate angle=7.25 axisX=1 axisY=0 axisZ=0 />
       <rotate time=36 axisX=0 axisY=1 axisZ=0/>
       <models>
@@ -74,7 +74,7 @@
       <models>
          <model file="earth.3d" texture="earth.jpg"/>
       </models>
-    </group>    
+    </group>
     <group>
        <translate time=5>
 	      <point X=45 Y=0 Z=0 />
@@ -143,10 +143,10 @@
 	      <point X=0 Y=0 Z=120 />
 	      <point X=132 Y=0 Z=90 />
       </translate>
-      <group>      
+      <group>
 	  <rotate angle=3.1 axisX=1 axisY=0 axisZ=0 />
           <rotate time=2 axisX=0 axisY=1 axisZ=0/>
-          <colour R=160 G=102 B=60/>      
+          <colour R=160 G=102 B=60/>
           <models>
             <model file="jupiter.3d" texture="jupiter.jpg"/>
           </models>
@@ -181,7 +181,7 @@
 	      <point X=0 Y=0 Z=140 />
 	      <point X=154 Y=0 Z=105 />
       </translate>
-      <group>      
+      <group>
 	<rotate angle=26.7 axisX=1 axisY=0 axisZ=0 />
         <rotate time=1.5 axisX=0 axisY=1 axisZ=0/>
         <colour R=222 G=184 B=135/>
@@ -294,11 +294,11 @@
         <point X=-490 Y=0 Z=50 />
         <point X=-270 Y=0 Z=75 />
         <point X=-50 Y=0 Z=50 />
-    </translate> 
+    </translate>
     <group>
       <models>
         <!-- ambR=0.2 ambG=0.2 ambB=0.2 or diffR=1.0 diffG=1.0 diffB=1.0 or specR=0.5 specG=0.5 specB=0.5 or emsR=0.8 emsG=0.8 emsB=0.8  -->
-        <model file="teapot.3d" diffR=1.0 diffG=1.0 diffB=1.0/>
+        <model file="teapot.3d" texture="sun.jpg"/>
       </models>
     </group>
     </group>

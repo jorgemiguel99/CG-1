@@ -250,6 +250,8 @@ float getBezierPointTangents(float u, float v, vector<float> indices, int coord,
 
 
 void prepareTeapot() {
+	ofstream teapot;
+	teapot.open("teapot.3d");
 	initVBO();
 	float res[3], normU[3], normV[3], norm[3]; //X,Y,Z
 	float tesselation = 0.1;
@@ -266,6 +268,8 @@ void prepareTeapot() {
 				res[0] = getBezierPoint(u, v, indicesPatch, 0);
 				res[1] = getBezierPoint(u, v, indicesPatch, 1);
 				res[2] = getBezierPoint(u, v, indicesPatch, 2);
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				vrt[vertexCount] = res[0];
 				vertexCount++;
 				vrt[vertexCount] = res[1];
@@ -284,6 +288,8 @@ void prepareTeapot() {
 				normalize(normV);
 				cross(normV,normU,norm);
 				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				n[normalCount] = norm[0];
 				normalCount++;
 				n[normalCount] = norm[1];
@@ -292,6 +298,7 @@ void prepareTeapot() {
 				normalCount++;
 
 				//Textures
+				teapot << countu << " " << countv << endl;
 				t[textureCount] = countu;
 				textureCount++;
 				t[textureCount] = countv;
@@ -302,6 +309,8 @@ void prepareTeapot() {
 				res[0] = getBezierPoint(u + tesselation, v, indicesPatch, 0);
 				res[1] = getBezierPoint(u + tesselation, v, indicesPatch, 1);
 				res[2] = getBezierPoint(u + tesselation, v, indicesPatch, 2);
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				vrt[vertexCount] = res[0];
 				vertexCount++;
 				vrt[vertexCount] = res[1];
@@ -320,6 +329,8 @@ void prepareTeapot() {
 				normalize(normV);
 				cross(normV,normU,norm);
 				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				n[normalCount] = norm[0];
 				normalCount++;
 				n[normalCount] = norm[1];
@@ -328,6 +339,7 @@ void prepareTeapot() {
 				normalCount++;
 
 				//Textures
+				teapot << countu+1 << " " << countv << endl;
 				t[textureCount] = countu+1;
 				textureCount++;
 				t[textureCount] = countv;
@@ -337,6 +349,8 @@ void prepareTeapot() {
 				res[0] = getBezierPoint(u, v + tesselation, indicesPatch, 0);
 				res[1] = getBezierPoint(u, v + tesselation, indicesPatch, 1);
 				res[2] = getBezierPoint(u, v + tesselation, indicesPatch, 2);
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				vrt[vertexCount] = res[0];
 				vertexCount++;
 				vrt[vertexCount] = res[1];
@@ -355,6 +369,8 @@ void prepareTeapot() {
 				normalize(normV);
 				cross(normV,normU,norm);
 				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				n[normalCount] = norm[0];
 				normalCount++;
 				n[normalCount] = norm[1];
@@ -363,6 +379,7 @@ void prepareTeapot() {
 				normalCount++;
 
 				//Textures
+				teapot << countu << " " << countv+1 << endl;
 				t[textureCount] = countu;
 				textureCount++;
 				t[textureCount] = countv+1;
@@ -372,6 +389,7 @@ void prepareTeapot() {
 				res[0] = getBezierPoint(u, v + tesselation, indicesPatch, 0);
 				res[1] = getBezierPoint(u, v + tesselation, indicesPatch, 1);
 				res[2] = getBezierPoint(u, v + tesselation, indicesPatch, 2);
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
 				vrt[vertexCount] = res[0];
 				vertexCount++;
 				vrt[vertexCount] = res[1];
@@ -390,6 +408,8 @@ void prepareTeapot() {
 				normalize(normV);
 				cross(normV,normU,norm);
 				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				n[normalCount] = norm[0];
 				normalCount++;
 				n[normalCount] = norm[1];
@@ -398,6 +418,7 @@ void prepareTeapot() {
 				normalCount++;
 
 				//Textures
+				teapot << countu << " " << countv+1 << endl;
 				t[textureCount] = countu;
 				textureCount++;
 				t[textureCount] = countv+1;
@@ -407,6 +428,8 @@ void prepareTeapot() {
 				res[0] = getBezierPoint(u + tesselation, v, indicesPatch, 0);
 				res[1] = getBezierPoint(u + tesselation, v, indicesPatch, 1);
 				res[2] = getBezierPoint(u + tesselation, v, indicesPatch, 2);
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				vrt[vertexCount] = res[0];
 				vertexCount++;
 				vrt[vertexCount] = res[1];
@@ -425,6 +448,8 @@ void prepareTeapot() {
 				normalize(normV);
 				cross(normV,normU,norm);
 				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				n[normalCount] = norm[0];
 				normalCount++;
 				n[normalCount] = norm[1];
@@ -433,6 +458,7 @@ void prepareTeapot() {
 				normalCount++;
 
 				//Textures
+				teapot << countu+1 << " " << countv << endl;
 				t[textureCount] = countu+1;
 				textureCount++;
 				t[textureCount] = countv;
@@ -442,6 +468,8 @@ void prepareTeapot() {
 				res[0] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 0);
 				res[1] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 1);
 				res[2] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 2);
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				vrt[vertexCount] = res[0];
 				vertexCount++;
 				vrt[vertexCount] = res[1];
@@ -460,6 +488,8 @@ void prepareTeapot() {
 				normalize(normV);
 				cross(normV,normU,norm);
 				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				n[normalCount] = norm[0];
 				normalCount++;
 				n[normalCount] = norm[1];
@@ -468,6 +498,7 @@ void prepareTeapot() {
 				normalCount++;
 
 				//Textures
+				teapot << countu+1 << " " << countv+1 << endl;
 				t[textureCount] = countu+1;
 				textureCount++;
 				t[textureCount] = countv+1;
@@ -481,6 +512,9 @@ void prepareTeapot() {
 			countv++;
 		}
 	}
+
+	teapot << "End" << endl;
+	teapot.close();
 
 	glBindBuffer(GL_ARRAY_BUFFER, verticesGL[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (vertexCount-1), vrt, GL_DYNAMIC_DRAW);
