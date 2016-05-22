@@ -1,25 +1,29 @@
 #include "read.h"
 
 /* MAC INCLUDES */
-//#include <GLUT/glut.h>
-//#include <OpenGL/glu.h>
-//#include <OpenGL/gl.h>
+#include <GL/glew.h>
+#include <GLUT/glut.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/gl.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
 
 /* tinyxml is included in file transformationTree.h
 MAC -> Change location path
 */
 
 //windows includeS
-#include <IL/il.h>
-#pragma comment(lib, "devil.lib")
-
-#include <windows.h>
-#include<Glew\glew.h>
-#include <GL/glut.h>
-#include <GL/glu.h>
-#include <GL/gl.h>
-
-#pragma comment(lib,"glew32.lib")
+// #include <IL/il.h>
+// #pragma comment(lib, "devil.lib")
+//
+// #include <windows.h>
+// #include<Glew\glew.h>
+// #include <GL/glut.h>
+// #include <GL/glu.h>
+// #include <GL/gl.h>
+//
+// #pragma comment(lib,"glew32.lib")
 
 
 // Declared here and implemented after main in order to better organization of the code
@@ -56,9 +60,10 @@ vector<string> splitted;
 int nBuffers; // Planetas + luas
 GLuint *vertexCount, *buffer;
 
-// Textures
+/* Texture related variables. */
 int imageCount;
 GLuint* texID;
+int cols, rows;
 
 // Files Path
 const char* Path3d = "3d/";
@@ -89,8 +94,8 @@ int main(int argc, char **argv) {
 	strcat(xmlName, PathXml);
 	strcat(xmlName, operationLine.data());
 	*/
-    sceneData = readXML("earth.xml",&nBuffers,&imageCount);
-
+    //sceneData = readXML("earth.xml",&nBuffers,&imageCount);
+	sceneData = readXML("SolarSystem.xml",&nBuffers,&imageCount);
 	if (!sceneData) { printf("Failed to read XML\n"); return 0; }
 	else
 	 printf("Loading file data\n");
@@ -117,34 +122,33 @@ int main(int argc, char **argv) {
   glutReshapeFunc(changeSize);
   // Function called when the event queue is empty.
   glutIdleFunc(renderScene);
-
 	// Function called when a key is pressed.
-	glutKeyboardFunc(keyPressed);
-	glutSpecialFunc(keyboardExtra);
-	// mouse callbacks
-	glutMouseFunc(processMouseButtons);
-	glutMotionFunc(processMouseMotion);
-	//menu
-	glutCreateMenu(newMenu);
-	glutAddMenuEntry("Increase Translate x value",'j');
-	glutAddMenuEntry("Increase Translate y value",'k');
-	glutAddMenuEntry("Increase Translate z value",'l');
-	glutAddMenuEntry("Decrease Translate x value",'q');
-	glutAddMenuEntry("Decrease Translate y value",'w');
-	glutAddMenuEntry("Decrease Translate z value",'e');
-	glutAddMenuEntry("GL_FRONT & GL_FILL",'z');
-	glutAddMenuEntry("GL_FRONT & GL_POINT",'x');
-	glutAddMenuEntry("GL_FRONT & GL_FILL",'c');
-	glutAddMenuEntry("GL_BACK & GL_LINE",'v');
-	glutAddMenuEntry("GL_BACK & GL_POINT",'b');
-	glutAddMenuEntry("GL_BACK & GL_FILL",'n');
-	glutAddMenuEntry("GL_FRONT_AND_BACK & GL_LINE",'m');
-	glutAddMenuEntry("GL_FRONT_AND_BACK & GL_POINT",'o');
-	glutAddMenuEntry("GL_FRONT_AND_BACK & GL_FILL",'p');
-	//button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
-	glutAttachMenu(GLUT_RIGHT_BUTTON);
+  glutKeyboardFunc(keyPressed);
+  glutSpecialFunc(keyboardExtra);
+  // mouse callbacks
+  glutMouseFunc(processMouseButtons);
+  glutMotionFunc(processMouseMotion);
+  //menu
+  glutCreateMenu(newMenu);
+  glutAddMenuEntry("Increase Translate x value",'j');
+  glutAddMenuEntry("Increase Translate y value",'k');
+  glutAddMenuEntry("Increase Translate z value",'l');
+  glutAddMenuEntry("Decrease Translate x value",'q');
+  glutAddMenuEntry("Decrease Translate y value",'w');
+  glutAddMenuEntry("Decrease Translate z value",'e');
+  glutAddMenuEntry("GL_FRONT & GL_FILL",'z');
+  glutAddMenuEntry("GL_FRONT & GL_POINT",'x');
+  glutAddMenuEntry("GL_FRONT & GL_FILL",'c');
+  glutAddMenuEntry("GL_BACK & GL_LINE",'v');
+  glutAddMenuEntry("GL_BACK & GL_POINT",'b');
+  glutAddMenuEntry("GL_BACK & GL_FILL",'n');
+  glutAddMenuEntry("GL_FRONT_AND_BACK & GL_LINE",'m');
+  glutAddMenuEntry("GL_FRONT_AND_BACK & GL_POINT",'o');
+  glutAddMenuEntry("GL_FRONT_AND_BACK & GL_FILL",'p');
+  //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
+  glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-	ilInit();
+	//ilInit();
   glewInit();
   initGl();
   initVBOS();
@@ -234,9 +238,7 @@ void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 	for (int i = 0; i < (int)group->model_file->size(); i++) {
 
 		if ( i < (int)group->model_texture->size()) {
-			unsigned int t;
-			ilGenImages(1, &t);
-			ilBindImage(t);
+
 		/*
 			char* texName = (char*)malloc((5 + group->model_texture->at(i).size())*sizeof(char)); texName[0] = '\0';
 			strcat(texName,PathTextures);
@@ -244,22 +246,21 @@ void bufferData(node_group* group, int* bufferIndex, int* imageIndex){
 			*/
 		//	printf("\n%s\n", group->model_texture->at(i).data());
 
-			ilLoadImage((ILstring)group->model_texture->at(i).data());
 		//	free(texName);
 
-			unsigned int cols = ilGetInteger(IL_IMAGE_WIDTH);
-			unsigned int rows = ilGetInteger(IL_IMAGE_HEIGHT);
 
-			ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+			// Textures MAC OS X
+		  cv::Mat img = cv::imread(group->model_texture->at(i).data());
+		  cols        = img.cols;
+		  rows        = img.rows;
 
-			unsigned char *texData = ilGetData();
 			glBindTexture(GL_TEXTURE_2D, texID[*imageIndex]);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cols, rows, 0, GL_BGR, GL_UNSIGNED_BYTE, img.data);
 
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
 			/*
 			char* pointsfile = (char*)malloc((5 + group->model_file->at(i).size())*sizeof(char));  pointsfile[0] = '\0';
 			strcat(pointsfile,Path3d);

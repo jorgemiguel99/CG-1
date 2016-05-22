@@ -1,3 +1,4 @@
+
 #include "read.h"
 
 void testTree(scene* sceneData) {
@@ -241,11 +242,10 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers,int* ima
 }
 
 string reading(vector<string> aux) {
-	int size = stoi(aux[0]); // number of vertex
 	int conta = 0;
 	string line; // String processed of all file3dRead strings concatenated into one of plane.3d or box.3d
 
-	for (int i = 1; i <= size; i++) {
+	for (int i = 0; aux[i]!="End"; i++) {
 		if (conta != 0) { // Adding ',' at the end of each line except the first
 			line = line + " " + aux[i];
 		}
@@ -266,9 +266,9 @@ vector<string> read3d(string figure) {
 	while (getline(fileTXT, line)) {
 		vecx.push_back(line); // Adding the line at the end of vector
 	}
-	int size = stoi(vecx[0]); // Number of total vertices. It's the first line in the .3d file
 	return vecx;
 }
+
 
 vector<float> read3Dfile(string filename) {
 	vector<string> aux2 = read3d(filename);

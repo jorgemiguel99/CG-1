@@ -29,19 +29,19 @@ node_group* initNodeGroup() {
 
 	r->model_file = (vector<string>*)malloc(sizeof(vector<string>));
 	r->model_file = new vector<string>();
-    
+
     r->model_texture = (vector<string>*)malloc(sizeof(vector<string>));
     r->model_texture = new vector<string>();
-    
+
     r->model_coloured_ambient = (vector<float>*)malloc(sizeof(vector<float>));
     r->model_coloured_ambient = new vector<float>();
-    
+
     r->model_coloured_diffuse = (vector<float>*)malloc(sizeof(vector<float>));
     r->model_coloured_diffuse = new vector<float>();
-    
+
     r->model_coloured_specular = (vector<float>*)malloc(sizeof(vector<float>));
     r->model_coloured_specular = new vector<float>();
-    
+
     r->model_coloured_emissive = (vector<float>*)malloc(sizeof(vector<float>));
     r->model_coloured_emissive = new vector<float>();
 
@@ -52,9 +52,9 @@ node_group* initNodeGroup() {
 	r->rotate_period = new vector<float>();
 
 	r->translation_period = 0;
-	
+
 	r->pointIndex=0;
-	
+
 	return r;
 }
 
@@ -84,14 +84,14 @@ scene* readXML(const char* f, int* vboNbuffers, int* vboNbuffersTextures) {
 
 	TiXmlElement *pRoot = XMLdoc.FirstChildElement("scene");
 	scene* sceneData = (scene*)malloc(sizeof(struct scene));
-		
+
 	//Groups
 	node_group* firstGroup = initNodeGroup();
 	sceneData->transformation_tree = firstGroup;
 	TiXmlElement *pGroup = pRoot->FirstChildElement("group");
 
 	readGroup(pGroup, firstGroup, vboNbuffers, vboNbuffersTextures);
-	
+
 	//Lights
 
 	sceneData->lights = (light_source**)malloc(20 * sizeof(light_source*));
@@ -130,7 +130,7 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers,int* ima
 			node->translation_period = atof(time);
 
 			TiXmlElement* pPoint = pTranslate->FirstChildElement("point");
-			
+
 			while (pPoint) {
 				if (node->pointIndex == 0) {
 					node->p = (float**)malloc(EXTENDED_SIZE * sizeof(float*));
@@ -143,7 +143,7 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers,int* ima
 				node->p[node->pointIndex][0] = x;
 				node->p[node->pointIndex][1] = y;
 				node->p[node->pointIndex][2] = z;
-	
+
 				pPoint = pPoint->NextSiblingElement("point");
 				node->pointIndex++;
 			}
@@ -180,7 +180,7 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers,int* ima
 			node->scale->push_back(atof(pScale->Attribute("X")));
 			node->scale->push_back(atof(pScale->Attribute("Y")));
 			node->scale->push_back(atof(pScale->Attribute("Z")));
-		
+
 		//pScale = pScale->NextSiblingElement("scale");
 	}
 
@@ -197,7 +197,7 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers,int* ima
 		while (pModelFileAndTexture) {
 			string filename = (string)pModelFileAndTexture->Attribute("file");
 			node->model_file->push_back(filename);
-            
+
             if (const char* ambient = pModelFileAndTexture->Attribute("ambR")) {
                 node->model_coloured_ambient->push_back(atof(ambient));
                 node->model_coloured_ambient->push_back(atof(pModelFileAndTexture->Attribute("ambG")));
@@ -218,12 +218,12 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers,int* ima
                 node->model_coloured_emissive->push_back(atof(pModelFileAndTexture->Attribute("emsG")));
                 node->model_coloured_emissive->push_back(atof(pModelFileAndTexture->Attribute("emsB")));
             }
-            
+
 			if (const char* texture = pModelFileAndTexture->Attribute("texture")){
                 node->model_texture->push_back(texture);
 				(*imageCount) = (*imageCount)+1;
             }
-            
+
 			(*vboNbuffers)=(*vboNbuffers)+1;
 
 			pModelFileAndTexture = pModelFileAndTexture->NextSiblingElement("model");
@@ -242,11 +242,10 @@ void readGroup(TiXmlElement *pGroup, node_group* node, int* vboNbuffers,int* ima
 }
 
 string reading(vector<string> aux) {
-	int size = stoi(aux[0]); // number of vertex
 	int conta = 0;
 	string line; // String processed of all file3dRead strings concatenated into one of plane.3d or box.3d
 
-	for (int i = 1; i <= size; i++) {
+	for (int i = 0; aux[i]!="End"; i++) {
 		if (conta != 0) { // Adding ',' at the end of each line except the first
 			line = line + " " + aux[i];
 		}
@@ -267,9 +266,9 @@ vector<string> read3d(string figure) {
 	while (getline(fileTXT, line)) {
 		vecx.push_back(line); // Adding the line at the end of vector
 	}
-	int size = stoi(vecx[0]); // Number of total vertices. It's the first line in the .3d file
 	return vecx;
 }
+
 
 vector<float> read3Dfile(string filename) {
 	vector<string> aux2 = read3d(filename);
@@ -283,18 +282,18 @@ vector<float> read3Dfile(string filename) {
 
 /*
 	Separates Vertexs, Normals and Texture points and stores them on array
-	File pointes order 
+	File pointes order
 		for each:
 			Vertex = 3 points
 			Normals = 3 points
 			Texture = 2 points
 */
 vector<float>** dividePoints(vector<float> filepoints) {
-    
+
 	vector<float>** r = (vector<float>**) malloc(3 * sizeof(vector<float>*));
 	for (int j = 0; j < 3;j++)
 		r[j] = new vector<float>();
-	
+
 	int i=0;
 	for (float p : filepoints) {
 		// 3 3 2

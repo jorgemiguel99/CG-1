@@ -500,7 +500,7 @@ void printTeapot() {
 			teapot << teapotNormals[i][0] << " " << teapotNormals[i][1] << " " << teapotNormals[i][2] << endl;
 			teapot << teapotTextures[i][0] << " " << teapotTextures[i][1] << endl;
 		}
-
+		teapot << "End" << endl;
 		teapot.close();
 	}
 
@@ -613,6 +613,7 @@ void printSphere3d() {
 			sphere << s4 << " " << t4 << endl;
 			}
 		}
+		sphere << "End" << endl;
 		sphere.close();
 }
 
@@ -646,6 +647,7 @@ void printPlaneFigure3d() {
 	plane << "0.0 " << "0.0 " << "1.0" << endl;
 	plane << "0.0 " << "1.0" << endl;
 
+	plane << "End" << endl;
 	plane.close();
 }
 
@@ -799,6 +801,7 @@ void printBoxFigure3d() {
 	box << "0 " << "-1 " << "0" << endl;
 	box << "1 " << "1" << endl;
 
+	box << "End" << endl;
 	box.close();
 }
 
@@ -865,6 +868,7 @@ void printCilinderFigure3d() {
 		cilindro << "0.0" << " " << "-1.0" << " " << "0.0" << endl;
 		cilindro << 0.8125 + 0.1875 * sin(i * delta) << " " << 0.1875 + 0.1875 * cos(i * delta) << endl;
 	}
+	cilindro << "End" << endl;
 	cilindro.close();
 }
 
@@ -972,6 +976,7 @@ void printConeFigure3d() {
 			}
 		}
 	}
+	cone << "End" << endl;
 	cone.close();
 }
 

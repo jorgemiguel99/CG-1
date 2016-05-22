@@ -2,7 +2,7 @@
 
 #define READ_H
 
-//#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
+#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,7 +17,7 @@
 #include <math.h>
 #include <algorithm>
 
-#include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
+//#include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
 
 #define EXTENDED_SIZE 10
 
@@ -25,7 +25,7 @@ using namespace std;
 
 struct light_source {
     char* light_type; // POINT or SPOTLIGHT or ... -> 3 types studied in class
-	  float* position;
+    float* position;
 };
 
 struct node_group {
@@ -54,7 +54,7 @@ struct node_group {
 	int childIndex;
 };
 
- extern struct scene {
+struct scene {
 	struct node_group* transformation_tree;
     light_source** lights;
 	int light_counter;
