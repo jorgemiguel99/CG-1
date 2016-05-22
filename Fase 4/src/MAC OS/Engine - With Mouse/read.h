@@ -23,12 +23,12 @@
 
 using namespace std;
 
-extern struct light_source {
+struct light_source {
     char* light_type; // POINT or SPOTLIGHT or ... -> 3 types studied in class
-	float* position;
+    float* position;
 };
 
-extern struct node_group {
+struct node_group {
 	float translation_period;
 	float** p;
 	int pointIndex;
@@ -44,18 +44,17 @@ extern struct node_group {
 
 	vector<int>* imageIndex;
 
-
 	vector<string>* model_file;
-    vector<string>* model_texture; // textured model
-    vector<float>* model_coloured_ambient; // Coloured model as ambR=0.2 ambG=0.2 ambB=0.2 or diffR=1.0 diffG=1.0 diffB=1.0 or specR=0.5 specG=0.5 specB=0.5 or emsR=0.8 emsG=0.8 emsB=0.8
-    vector<float>* model_coloured_diffuse;
-    vector<float>* model_coloured_specular;
-    vector<float>* model_coloured_emissive;
-    node_group** child; // multiple child pointers
+  vector<string>* model_texture; // textured model
+  vector<float>* model_coloured_ambient; // Coloured model as ambR=0.2 ambG=0.2 ambB=0.2 or diffR=1.0 diffG=1.0 diffB=1.0 or specR=0.5 specG=0.5 specB=0.5 or emsR=0.8 emsG=0.8 emsB=0.8
+  vector<float>* model_coloured_diffuse;
+  vector<float>* model_coloured_specular;
+  vector<float>* model_coloured_emissive;
+  node_group** child; // multiple child pointers
 	int childIndex;
 };
 
- extern struct scene {
+struct scene {
 	struct node_group* transformation_tree;
     light_source** lights;
 	int light_counter;

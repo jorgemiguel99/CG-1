@@ -31,9 +31,11 @@ void initGl();
 void initVBOS();
 void changeSize(int, int);
 void renderScene(void);
-void keyPressed(unsigned char, int, int);
 void newMenu (int id_op);
+void keyPressed(unsigned char, int, int);
 void keyboardExtra(int key_code, int x, int y);
+void processMouseButtons(int, int, int, int);
+void processMouseMotion(int, int);
 void bufferData(node_group* group, int* bufferIndex,int* imageIndex);
 
 /* scene is a structure with xml group information*/
@@ -41,6 +43,8 @@ scene* sceneData;
 
 // Global Variables to Transformations
 float px = 0.0, py = 100.0, pz = 100.0;
+int startX, startY, tracking = 0;
+int alpha = 0, beta = 0, r = 50;
 
 float rotate_y = 0;
 float rotate_x = 0;
@@ -118,10 +122,12 @@ int main(int argc, char **argv) {
   glutReshapeFunc(changeSize);
   // Function called when the event queue is empty.
   glutIdleFunc(renderScene);
-  // Function called when a key is pressed.
+	// Function called when a key is pressed.
   glutKeyboardFunc(keyPressed);
   glutSpecialFunc(keyboardExtra);
-
+  // mouse callbacks
+  glutMouseFunc(processMouseButtons);
+  glutMotionFunc(processMouseMotion);
   //menu
   glutCreateMenu(newMenu);
   glutAddMenuEntry("Increase Translate x value",'j');
@@ -139,15 +145,8 @@ int main(int argc, char **argv) {
   glutAddMenuEntry("GL_FRONT_AND_BACK & GL_LINE",'m');
   glutAddMenuEntry("GL_FRONT_AND_BACK & GL_POINT",'o');
   glutAddMenuEntry("GL_FRONT_AND_BACK & GL_FILL",'p');
-  glutAddMenuEntry("Change Colour to Default",'0');
-  glutAddMenuEntry("Change Colour to Red",'1');
-  glutAddMenuEntry("Change Colour to Blue",'2');
-  glutAddMenuEntry("Change Colour to Green",'3');
-  glutAddMenuEntry("Change Colour to Orange",'4');
-  glutAddMenuEntry("Change Colour to Pink",'5');
-  glutAddMenuEntry("Change Colour to Yellow",'6');
-  glutAddMenuEntry("Change Colour to Bright Blue",'7');
   //button= GLUT_LEFT_BUTTON, GLUT_RIGHT_BUTTON, or GLUT MIDDLE_BUTTON
+  glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	//ilInit();
   glewInit();
@@ -502,30 +501,6 @@ void keyPressed(unsigned char key, int x, int y) {
 			else if (key == 'h') py -= 50;
 			else if (key == 'i') pz += 50;
 			else if (key == 'u') pz += 50;
-			else if (key == '0'){ // DEFAULT IS WHITE
-          glColor3f(1.0f,1.0f,1.0f);
-      }
-      else if (key == '1'){ // RED
-          glColor3f(1.0f,0.0f,0.0f);
-      }
-      else if (key == '2'){ // BLUE
-          glColor3f(0.0f,0.0f,1.0f);
-      }
-      else if (key == '3'){ // GREEN
-          glColor3f(0.0f,1.0f,0.0f);
-      }
-      else if (key == '4'){ // ORANGE
-          glColor3f(1.0f,0.5f,0.0f);
-      }
-      else if (key == '5'){ // PINK
-          glColor3f(1.0f,0.5f,0.5f);
-      }
-      else if (key == '6'){ // YELLOW
-          glColor3f(1.0f,1.0f,0.0f);
-      }
-      else if (key == '7'){ // BRIGHT BLUE
-          glColor3f(0.0f,1.0f,1.0f);
-      }
       else if (key==27) exit(-1);
 
       //when camera moves
@@ -549,4 +524,69 @@ void keyboardExtra(int key_code, int x, int y) {
 	//when camera moves
 
 	glutPostRedisplay();
+}
+
+void processMouseButtons(int button, int state, int xx, int yy)
+{
+	if (state == GLUT_DOWN)  {
+		startX = xx;
+		startY = yy;
+		if (button == GLUT_LEFT_BUTTON)
+			tracking = 1;
+		else if (button == GLUT_RIGHT_BUTTON)
+			tracking = 2;
+		else
+			tracking = 0;
+	}
+	else if (state == GLUT_UP) {
+		if (tracking == 1) {
+			alpha += (xx - startX);
+			beta += (yy - startY);
+		}
+		else if (tracking == 2) {
+
+			r -= yy - startY;
+			if (r < 3)
+				r = 3.0;
+		}
+		tracking = 0;
+	}
+}
+
+
+void processMouseMotion(int xx, int yy)
+{
+	int deltaX, deltaY;
+	int alphaAux, betaAux;
+	int rAux;
+
+	if (!tracking)
+		return;
+
+	deltaX = xx - startX;
+	deltaY = yy - startY;
+
+	if (tracking == 1) {
+
+		alphaAux = alpha + deltaX;
+		betaAux = beta + deltaY;
+
+		if (betaAux > 85.0)
+			betaAux = 85.0;
+		else if (betaAux < -85.0)
+			betaAux = -85.0;
+
+		rAux = r;
+	}
+	else if (tracking == 2) {
+
+		alphaAux = alpha;
+		betaAux = beta;
+		rAux = r - deltaY;
+		if (rAux < 50)
+			rAux = 50;
+	}
+	px = rAux * sin(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
+  pz = rAux * cos(alphaAux * 3.14 / 180.0) * cos(betaAux * 3.14 / 180.0);
+	py = rAux *	sin(betaAux * 3.14 / 180.0);
 }
