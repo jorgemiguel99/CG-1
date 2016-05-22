@@ -2,7 +2,6 @@
 
 #define READ_H
 
-#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,7 +16,8 @@
 #include <math.h>
 #include <algorithm>
 
-//#include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
+//#include </usr/local/Cellar/tinyxml/2.6.2/include/tinyxml.h> //-- MAC
+#include "tinyxml\tinyxml.h"	// The place where the file "tinyxml.h" is located
 
 #define EXTENDED_SIZE 10
 

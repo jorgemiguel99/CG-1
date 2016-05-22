@@ -1,0 +1,15 @@
+<scene>
+ <!-- Central Light Source-->
+ <lights>
+    <light type="POINT" posX=25 posY=25 posZ=25 />
+    <light type="POINT" posX=-25 posY=25 posZ=-25 />
+    <light type="POINT" posX=0 posY=45 posZ=0 />
+ </lights>
+ <group>
+      <scale X=16 Y=20 Z=16 />	
+      <models>
+        <model file="cilindro.3d"  specR=0.2 specG=0 specB=1.0 ambR=0.2 ambG=0 ambB=1.0 />
+      </models>
+  </group>
+</scene>
+
