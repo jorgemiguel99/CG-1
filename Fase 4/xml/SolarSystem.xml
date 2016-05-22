@@ -298,7 +298,7 @@
     <group>
       <models>
         <!-- ambR=0.2 ambG=0.2 ambB=0.2 or diffR=1.0 diffG=1.0 diffB=1.0 or specR=0.5 specG=0.5 specB=0.5 or emsR=0.8 emsG=0.8 emsB=0.8  -->
-        <model file="teapot.3d" diffR=1.0 diffG=1.0 diffB=1.0/>
+        <model file="teapot.3d" texture="sun.jpg"/>
       </models>
     </group>
     </group>

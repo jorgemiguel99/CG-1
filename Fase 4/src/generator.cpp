@@ -12,7 +12,7 @@
 #include <windows.h>
 #include <GL/glut.h>
 #include <math.h>
-//#include <GLUT/glut.h> //-- MAC
+// #include <GLUT/glut.h> //-- MAC
 
 #define _PI_ 3.14159
 
@@ -208,7 +208,6 @@ vector<string> split(string str, char delimiter) {
 	return internal;
 }
 
-
 void cross(float *a, float *b, float *res) {
  res[0] = a[1]*b[2] - a[2]*b[1]; res[1] = a[2]*b[0] - a[0]*b[2]; res[2] = a[0]*b[1] - a[1]*b[0];}
 
@@ -286,36 +285,29 @@ float getBezierPointTangents(float u, float v, vector<float> indices, int coord,
   }
 }
 
-void printTeapot() {
-	float res[3], normU[3], normV[3], norm[3]; //X,Y,Z
+
+void prepareTeapot() {
 	ofstream teapot;
-	teapot.open(filename.c_str());
-	float **teapotPoints = (float**) malloc(1000000 * sizeof(float**)); // Saves the points of the teapot to be able to count their number first and print them after that
-	float **teapotNormals = (float**) malloc(1000000 * sizeof(float**)); // Saves the normals of the teapot
-	float **teapotTextures = (float**) malloc(1000000 * sizeof(float**)); // Saves the texture coordinates of the teapot
-	int pointNumber = 0; // Number of vertices of the teapot
-	int normalNumber = 0; // Number of normals of the teapot
-	int textureNumber = 0; // Number of texture coordinates of the teapot
+	teapot.open("teapot.3d");
+	initVBO();
+	float res[3], normU[3], normV[3], norm[3]; //X,Y,Z
 	float tesselation = 0.1;
 
 	for (int patch = 0; patch < numPatches; patch++) {
 		vector<float> indicesPatch = patches[patch];
 		float v = 0.0;
-    int countv=0;
+		int countv=0;
 		while (v <= 1) {
 			float u = 0.0;
-      int countu=0;
+			int countu=0;
 			while (u <= 1) {
 				//Vertex
-				teapotPoints[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				res[0] = getBezierPoint(u, v, indicesPatch, 0);
 				res[1] = getBezierPoint(u, v, indicesPatch, 1);
 				res[2] = getBezierPoint(u, v, indicesPatch, 2);
-				teapotPoints[pointNumber][0] = res[0];
-				teapotPoints[pointNumber][1] = res[1];
-				teapotPoints[pointNumber][2] = res[2];
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				//Normals
-				teapotNormals[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				normU[0] = getBezierPointTangents(u, v, indicesPatch, 0, 1);
 				normU[1] = getBezierPointTangents(u, v, indicesPatch, 1, 1);
 				normU[2] = getBezierPointTangents(u, v, indicesPatch, 2, 1);
@@ -325,27 +317,19 @@ void printTeapot() {
 				normV[2] = getBezierPointTangents(u, v, indicesPatch, 2, 0);
 				normalize(normV);
 				cross(normV,normU,norm);
-				teapotNormals[normalNumber][0] = norm[0];
-				teapotNormals[normalNumber][1] = norm[1];
-				teapotNormals[normalNumber][2] = norm[2];
+				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				//Textures
-				teapotTextures[textureNumber] = (float*) malloc(2 * sizeof(float*));
-				teapotTextures[textureNumber][0] = countu;
-				teapotTextures[textureNumber][1] = countv;
-				pointNumber++;
-				normalNumber++;
-				textureNumber++;
+				teapot << countu << " " << countv << endl;
 
 				//Vertex
-				teapotPoints[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				res[0] = getBezierPoint(u + tesselation, v, indicesPatch, 0);
 				res[1] = getBezierPoint(u + tesselation, v, indicesPatch, 1);
 				res[2] = getBezierPoint(u + tesselation, v, indicesPatch, 2);
-				teapotPoints[pointNumber][0] = res[0];
-				teapotPoints[pointNumber][1] = res[1];
-				teapotPoints[pointNumber][2] = res[2];
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				//Normals
-				teapotNormals[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				normU[0] = getBezierPointTangents(u + tesselation, v, indicesPatch, 0, 1);
 				normU[1] = getBezierPointTangents(u + tesselation, v, indicesPatch, 1, 1);
 				normU[2] = getBezierPointTangents(u + tesselation, v, indicesPatch, 2, 1);
@@ -355,27 +339,19 @@ void printTeapot() {
 				normV[2] = getBezierPointTangents(u + tesselation, v, indicesPatch, 2, 0);
 				normalize(normV);
 				cross(normV,normU,norm);
-				teapotNormals[normalNumber][0] = norm[0];
-				teapotNormals[normalNumber][1] = norm[1];
-				teapotNormals[normalNumber][2] = norm[2];
+				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				//Textures
-				teapotTextures[textureNumber] = (float*) malloc(2 * sizeof(float*));
-				teapotTextures[textureNumber][0] = countu+1;
-				teapotTextures[textureNumber][1] = countv;
-				pointNumber++;
-				normalNumber++;
-				textureNumber++;
+				teapot << countu+1 << " " << countv << endl;
 
 				//Vertex
-				teapotPoints[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				res[0] = getBezierPoint(u, v + tesselation, indicesPatch, 0);
 				res[1] = getBezierPoint(u, v + tesselation, indicesPatch, 1);
 				res[2] = getBezierPoint(u, v + tesselation, indicesPatch, 2);
-				teapotPoints[pointNumber][0] = res[0];
-				teapotPoints[pointNumber][1] = res[1];
-				teapotPoints[pointNumber][2] = res[2];
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				//Normals
-				teapotNormals[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				normU[0] = getBezierPointTangents(u, v + tesselation, indicesPatch, 0, 1);
 				normU[1] = getBezierPointTangents(u, v + tesselation, indicesPatch, 1, 1);
 				normU[2] = getBezierPointTangents(u, v + tesselation, indicesPatch, 2, 1);
@@ -385,27 +361,19 @@ void printTeapot() {
 				normV[2] = getBezierPointTangents(u, v + tesselation, indicesPatch, 2, 0);
 				normalize(normV);
 				cross(normV,normU,norm);
-				teapotNormals[normalNumber][0] = norm[0];
-				teapotNormals[normalNumber][1] = norm[1];
-				teapotNormals[normalNumber][2] = norm[2];
+				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				//Textures
-				teapotTextures[textureNumber] = (float*) malloc(2 * sizeof(float*));
-				teapotTextures[textureNumber][0] = countu;
-				teapotTextures[textureNumber][1] = countv+1;
-				pointNumber++;
-				normalNumber++;
-				textureNumber++;
+				teapot << countu << " " << countv+1 << endl;
 
 				//Vertex
-				teapotPoints[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				res[0] = getBezierPoint(u, v + tesselation, indicesPatch, 0);
 				res[1] = getBezierPoint(u, v + tesselation, indicesPatch, 1);
 				res[2] = getBezierPoint(u, v + tesselation, indicesPatch, 2);
-				teapotPoints[pointNumber][0] = res[0];
-				teapotPoints[pointNumber][1] = res[1];
-				teapotPoints[pointNumber][2] = res[2];
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				//Normals
-				teapotNormals[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				normU[0] = getBezierPointTangents(u, v + tesselation, indicesPatch, 0, 1);
 				normU[1] = getBezierPointTangents(u, v + tesselation, indicesPatch, 1, 1);
 				normU[2] = getBezierPointTangents(u, v + tesselation, indicesPatch, 2, 1);
@@ -415,27 +383,18 @@ void printTeapot() {
 				normV[2] = getBezierPointTangents(u, v + tesselation, indicesPatch, 2, 0);
 				normalize(normV);
 				cross(normV,normU,norm);
-				teapotNormals[normalNumber][0] = norm[0];
-				teapotNormals[normalNumber][1] = norm[1];
-				teapotNormals[normalNumber][2] = norm[2];
+				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				//Textures
-				teapotTextures[textureNumber] = (float*) malloc(2 * sizeof(float*));
-				teapotTextures[textureNumber][0] = countu;
-				teapotTextures[textureNumber][1] = countv+1;
-				pointNumber++;
-				normalNumber++;
-				textureNumber++;
+				teapot << countu << " " << countv+1 << endl;
 
 				//Vertex
-				teapotPoints[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				res[0] = getBezierPoint(u + tesselation, v, indicesPatch, 0);
 				res[1] = getBezierPoint(u + tesselation, v, indicesPatch, 1);
 				res[2] = getBezierPoint(u + tesselation, v, indicesPatch, 2);
-				teapotPoints[pointNumber][0] = res[0];
-				teapotPoints[pointNumber][1] = res[1];
-				teapotPoints[pointNumber][2] = res[2];
-				//Normals
-				teapotNormals[pointNumber] = (float*) malloc(3 * sizeof(float*));
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				normU[0] = getBezierPointTangents(u + tesselation, v, indicesPatch, 0, 1);
 				normU[1] = getBezierPointTangents(u + tesselation, v, indicesPatch, 1, 1);
 				normU[2] = getBezierPointTangents(u + tesselation, v, indicesPatch, 2, 1);
@@ -445,27 +404,19 @@ void printTeapot() {
 				normV[2] = getBezierPointTangents(u + tesselation, v, indicesPatch, 2, 0);
 				normalize(normV);
 				cross(normV,normU,norm);
-				teapotNormals[normalNumber][0] = norm[0];
-				teapotNormals[normalNumber][1] = norm[1];
-				teapotNormals[normalNumber][2] = norm[2];
+				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
+
 				//Textures
-				teapotTextures[textureNumber] = (float*) malloc(2 * sizeof(float*));
-				teapotTextures[textureNumber][0] = countu+1;
-				teapotTextures[textureNumber][1] = countv;
-				pointNumber++;
-				normalNumber++;
-				textureNumber++;
+				teapot << countu+1 << " " << countv << endl;
 
 				//Vertex
-				teapotPoints[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				res[0] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 0);
 				res[1] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 1);
 				res[2] = getBezierPoint(u + tesselation, v + tesselation, indicesPatch, 2);
-				teapotPoints[pointNumber][0] = res[0];
-				teapotPoints[pointNumber][1] = res[1];
-				teapotPoints[pointNumber][2] = res[2];
+				teapot << res[0] << " " << res[1] << " " << res[2] << endl;
+
 				//Normals
-				teapotNormals[pointNumber] = (float*) malloc(3 * sizeof(float*));
 				normU[0] = getBezierPointTangents(u + tesselation, v + tesselation, indicesPatch, 0, 1);
 				normU[1] = getBezierPointTangents(u + tesselation, v + tesselation, indicesPatch, 1, 1);
 				normU[2] = getBezierPointTangents(u + tesselation, v + tesselation, indicesPatch, 2, 1);
@@ -475,34 +426,25 @@ void printTeapot() {
 				normV[2] = getBezierPointTangents(u + tesselation, v + tesselation, indicesPatch, 2, 0);
 				normalize(normV);
 				cross(normV,normU,norm);
-				teapotNormals[normalNumber][0] = norm[0];
-				teapotNormals[normalNumber][1] = norm[1];
-				teapotNormals[normalNumber][2] = norm[2];
-				//Textures
-				teapotTextures[textureNumber] = (float*) malloc(2 * sizeof(float*));
-				teapotTextures[textureNumber][0] = countu+1;
-				teapotTextures[textureNumber][1] = countv+1;
-				pointNumber++;
-				normalNumber++;
-				textureNumber++;
+				normalize(norm);
+				teapot << norm[0] << " " << norm[1] << " " << norm[2] << endl;
 
-        countu++;
+				//Textures
+				teapot << countu+1 << " " << countv+1 << endl;
+
+
+				countu++;
 				u += tesselation;
 			}
 			countu=0;
 			v += tesselation;
-      countv++;
+			countv++;
 		}
 	}
-		teapot << (pointNumber+normalNumber+textureNumber) << endl;
-		for (int i = 0; i < pointNumber; i++) {
-			teapot << teapotPoints[i][0] << " " << teapotPoints[i][1] << " " << teapotPoints[i][2] << endl;
-			teapot << teapotNormals[i][0] << " " << teapotNormals[i][1] << " " << teapotNormals[i][2] << endl;
-			teapot << teapotTextures[i][0] << " " << teapotTextures[i][1] << endl;
-		}
-		teapot << "End" << endl;
-		teapot.close();
-	}
+
+	teapot << "End" << endl;
+	teapot.close();
+}
 
 // Prints the sphere vertices on the .3d file
 void printSphere3d() {
