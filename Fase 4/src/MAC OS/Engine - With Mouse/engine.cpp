@@ -26,7 +26,7 @@ MAC -> Change location path
 // #pragma comment(lib,"glew32.lib")
 
 
-// Declared here and implemented after main in order to better organization of the code
+// Declared here and implemented after main in order to better organize the code
 void initGl();
 void initVBOS();
 void changeSize(int, int);
@@ -173,7 +173,6 @@ void initGl () {
 	//Light
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	//glDisable(GL_COLOR_MATERIAL); // to enable light materials
 
 // Texturas.
 	glEnable(GL_TEXTURE_2D);
@@ -372,23 +371,24 @@ void renderTree(node_group* node) {
 		glRotatef(angle, node->rotate_period->at(1), node->rotate_period->at(2), node->rotate_period->at(3));
 	}
 
-	if (node->model_coloured_specular->size() > 0) {
-		GLfloat lightColor[] = { node->model_coloured_specular->at(0), node->model_coloured_specular->at(1), node->model_coloured_specular->at(2), 1.0f };
-		//Specular light component
-		glLightfv(GL_LIGHT0, GL_SPECULAR, lightColor);
+	// Reset or set Material Components
 
+	if (node->model_coloured_specular->size() > 0) {
+		GLfloat lightColor[] = { node->model_coloured_specular->at(0), node->model_coloured_specular->at(1), node->model_coloured_specular->at(2), 0 };
+		//Specular light component
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, lightColor);
 	}
 	if (node->model_coloured_diffuse->size() > 0) {
 		GLfloat lightColor[] = { node->model_coloured_diffuse->at(0), node->model_coloured_diffuse->at(1), node->model_coloured_diffuse->at(2), 1.0f };
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, lightColor);
 	}
 	if (node->model_coloured_emissive->size() > 0) {
 		GLfloat lightColor[] = { node->model_coloured_emissive->at(0), node->model_coloured_emissive->at(1), node->model_coloured_emissive->at(2), 1.0f };
-		glLightfv(GL_LIGHT0, GL_EMISSION, lightColor);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, lightColor);
 	}
 	if (node->model_coloured_ambient->size() > 0) {
 		GLfloat lightColor[] = { node->model_coloured_ambient->at(0), node->model_coloured_ambient->at(1), node->model_coloured_ambient->at(2), 1.0f };
-		glLightfv(GL_LIGHT0, GL_AMBIENT, lightColor);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, lightColor);
 	}
 
 	for (int i = 0; i < (int)node->vboIndex->size(); i++) {
@@ -399,7 +399,7 @@ void renderTree(node_group* node) {
 			glVertexPointer(3, GL_FLOAT, 0, 0);
 
 			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i) + 1]);
-		    glNormalPointer(GL_FLOAT, 0, 0);
+		  glNormalPointer(GL_FLOAT, 0, 0);
 
 			glBindBuffer(GL_ARRAY_BUFFER, buffer[node->vboIndex->at(i) + 2]);
 			glTexCoordPointer(2, GL_FLOAT, 0, 0);
@@ -436,8 +436,7 @@ void renderScene(void) {
 	for (int i = 0; i < sceneData->light_counter; i++)
 		glLightfv(GL_LIGHT0, GL_POSITION, sceneData->lights[i]->position);
 
-	//printf("Position light y:%f\n", sceneData->lights->at(0)->position[1]);
-	//printf("type %s\n", sceneData->lights->at(0)->light_type);
+	glEnable(GL_LIGHT0);
 
 	gluLookAt(px, py, pz,0.0,0.0,-1.0,0.0f,1.0f,0.0f);
 
