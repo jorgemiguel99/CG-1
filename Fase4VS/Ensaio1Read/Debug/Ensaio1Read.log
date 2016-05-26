@@ -1,6 +1,0 @@
-﻿  read.cpp
-c:\users\gustavo\documents\visual studio 2015\projects\fase4vs\ensaio1read\read.h(53): warning C4091: 'extern ': ignored on left of 'node_group_light' when no variable is declared
-c:\users\gustavo\documents\visual studio 2015\projects\fase4vs\ensaio1read\read.h(78): warning C4091: 'extern ': ignored on left of 'node_group' when no variable is declared
-c:\users\gustavo\documents\visual studio 2015\projects\fase4vs\ensaio1read\read.h(83): warning C4091: 'extern ': ignored on left of 'scene' when no variable is declared
-c:\users\gustavo\documents\visual studio 2015\projects\fase4vs\ensaio1read\read.cpp(317): warning C4172: returning address of local variable or temporary: r
-  Ensaio1Read.vcxproj -> C:\Users\Gustavo\Documents\Visual Studio 2015\Projects\Fase4VS\Debug\Ensaio1Read.exe

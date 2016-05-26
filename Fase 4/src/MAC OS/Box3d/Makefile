@@ -1,5 +1,0 @@
-generator:
-	g++ -framework GLUT -framework OpenGL -framework Cocoa /usr/local/Cellar/glew/1.13.0/lib/libGLEW.dylib /usr/local/Cellar/glew/1.13.0/lib/libGLEW.1.13.dylib /usr/local/Cellar/glew/1.13.0/lib/libGLEWmx.1.13.dylib /usr/local/Cellar/glew/1.13.0/lib/libGLEWmx.dylib `pkg-config --cflags --libs opencv` generator.cpp -o generator
-
-teste:
-		g++ -framework GLUT -framework OpenGL -framework Cocoa /usr/local/Cellar/glew/1.13.0/lib/libGLEW.dylib /usr/local/Cellar/glew/1.13.0/lib/libGLEW.1.13.dylib /usr/local/Cellar/glew/1.13.0/lib/libGLEWmx.1.13.dylib /usr/local/Cellar/glew/1.13.0/lib/libGLEWmx.dylib `pkg-config --cflags --libs opencv` teste.cpp -o teste
